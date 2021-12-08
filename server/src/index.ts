@@ -7,6 +7,7 @@ import { __prod__ } from "./constants/constants";
 import express from "express";
 import { buildSchema } from "type-graphql";
 import { PostResolver } from "./resolvers/post";
+import { UserResolver } from "./resolvers/user";
 
 const main = async () => {
   try {
@@ -19,7 +20,7 @@ const main = async () => {
     });
 
     const schema = await buildSchema({
-      resolvers: [PostResolver],
+      resolvers: [PostResolver, UserResolver],
       validate: false,
     });
 
