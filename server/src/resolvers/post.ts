@@ -70,7 +70,7 @@ export class PostResolver {
     } else {
       return {
         error: {
-          message: `Task does not exist.`,
+          message: "Post does not exist.",
         },
       };
     }
