@@ -17,6 +17,15 @@ export class SignupInput {
   confirmPassword!: string;
 }
 
+@InputType()
+export class LoginInput {
+  @Field()
+  usernameOrEmail!: string;
+
+  @Field()
+  password!: string;
+}
+
 @ObjectType()
 export class UserResponse {
   @Field({ nullable: true })

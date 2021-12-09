@@ -1,9 +1,9 @@
-import { SignupInput, UserResponse } from "../types/graphql/User";
+import { LoginInput, SignupInput, UserResponse } from "../types/graphql/User";
 import { Arg, Mutation, Resolver } from "type-graphql";
 import { validateEmail, validatePassword } from "../utils/validate";
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
-import { hash } from "bcryptjs";
+import { compare, hash } from "bcryptjs";
 
 @Resolver()
 export class UserResolver {
@@ -11,11 +11,11 @@ export class UserResolver {
   async signup(
     @Arg("user") { username, email, password, confirmPassword }: SignupInput
   ): Promise<UserResponse> {
-    if (!username) {
+    if (!username || username.includes("@")) {
       return {
         error: {
           field: "username",
-          message: "Username must not be empty.",
+          message: "Username must not be empty or include @.",
         },
       };
     }
@@ -48,10 +48,7 @@ export class UserResolver {
     }
 
     let user;
-    user = await getRepository(User)
-      .createQueryBuilder("user")
-      .where("user.username = :username", { username })
-      .getOne();
+    user = await getRepository(User).findOne({ where: { username } });
     if (user) {
       return {
         error: {
@@ -60,10 +57,7 @@ export class UserResolver {
         },
       };
     }
-    user = await getRepository(User)
-      .createQueryBuilder("user")
-      .where("user.email = :email", { email })
-      .getOne();
+    user = await getRepository(User).findOne({ where: { email } });
     if (user) {
       return {
         error: {
@@ -87,5 +81,35 @@ export class UserResolver {
     return {
       user: newUser.raw[0],
     };
+  }
+
+  @Mutation(() => UserResponse)
+  async login(
+    @Arg("user") { usernameOrEmail, password }: LoginInput
+  ): Promise<UserResponse> {
+    const user = await getRepository(User).findOne({
+      where: !usernameOrEmail.includes("@")
+        ? { username: usernameOrEmail }
+        : { email: usernameOrEmail },
+    });
+    if (!user) {
+      return {
+        error: {
+          field: "usernameOrEmail",
+          message: "User does not exist.",
+        },
+      };
+    }
+    const isValidPassword = await compare(password, user.password);
+    if (!isValidPassword) {
+      return {
+        error: {
+          field: "password",
+          message: "Wrong password.",
+        },
+      };
+    }
+
+    return { user };
   }
 }
