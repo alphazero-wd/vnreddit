@@ -1,18 +1,18 @@
 import { Post } from "../entity/Post";
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import { getRepository } from "typeorm";
 import { CreatePostInput, EditPostInput, PostResponse } from "../types/Post";
+import { auth } from "../middleware/auth";
 
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])
   async posts(): Promise<Post[]> {
-    const posts = await getRepository(Post)
-      .createQueryBuilder("post")
-      .getMany();
+    const posts = await getRepository(Post).find({});
     return posts;
   }
 
+  @UseMiddleware(auth)
   @Mutation(() => PostResponse)
   async createPost(
     @Arg("post") { title, body }: CreatePostInput
@@ -40,14 +40,12 @@ export class PostResolver {
     };
   }
 
+  @UseMiddleware(auth)
   @Mutation(() => PostResponse)
   async editPost(
     @Arg("post") { id, title, body }: EditPostInput
   ): Promise<PostResponse> {
-    const post = await getRepository(Post)
-      .createQueryBuilder("post")
-      .where("post.id = :id", { id: parseInt(id) })
-      .getOne();
+    const post = await getRepository(Post).findOne(parseInt(id));
     if (post) {
       const updatedPost = await getRepository(Post)
         .createQueryBuilder("post")
@@ -66,18 +64,16 @@ export class PostResolver {
     } else {
       return {
         error: {
-          message: `Task does not exist.`,
+          message: "Post does not exist.",
         },
       };
     }
   }
 
+  @UseMiddleware(auth)
   @Mutation(() => Boolean)
   async deletePost(@Arg("id") id: string): Promise<boolean> {
-    const post = await getRepository(Post)
-      .createQueryBuilder("post")
-      .where("post.id = :id", { id: parseInt(id) })
-      .getOne();
+    const post = await getRepository(Post).findOne(parseInt(id));
     if (post) {
       await getRepository(Post)
         .createQueryBuilder("post")
