@@ -1,4 +1,5 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { createAccessToken } from "../utils/token";
+import { Field, ID, ObjectType, Root } from "type-graphql";
 import {
   Column,
   CreateDateColumn,
@@ -20,6 +21,11 @@ export class User {
   @Field()
   @Column({ unique: true })
   email!: string;
+
+  @Field(() => String)
+  token(@Root() user: User) {
+    return createAccessToken(user);
+  }
 
   @Column()
   password!: string;

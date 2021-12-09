@@ -1,4 +1,4 @@
-import { Post } from "../../entity/Post";
+import { Post } from "../entity/Post";
 import { InputType, Field, ObjectType } from "type-graphql";
 import { ErrorResponse } from "./ErrorResponse";
 

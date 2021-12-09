@@ -1,11 +1,7 @@
 import { Post } from "../entity/Post";
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { getRepository } from "typeorm";
-import {
-  CreatePostInput,
-  EditPostInput,
-  PostResponse,
-} from "../types/graphql/Post";
+import { CreatePostInput, EditPostInput, PostResponse } from "../types/Post";
 
 @Resolver()
 export class PostResolver {

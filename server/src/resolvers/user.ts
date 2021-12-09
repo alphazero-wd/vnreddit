@@ -1,12 +1,33 @@
-import { LoginInput, SignupInput, UserResponse } from "../types/graphql/User";
-import { Arg, Mutation, Resolver } from "type-graphql";
+import { LoginInput, SignupInput, UserResponse } from "../types/User";
+import {
+  Arg,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from "type-graphql";
 import { validateEmail, validatePassword } from "../utils/validate";
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 import { compare, hash } from "bcryptjs";
+import { auth } from "../middleware/auth";
+import { MyContext } from "../types/MyContext";
 
 @Resolver()
 export class UserResolver {
+  @UseMiddleware(auth)
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() { payload }: MyContext): Promise<User | null> {
+    const user = await getRepository(User).findOne({
+      where: { id: payload.userId },
+    });
+    if (!user) {
+      return null;
+    }
+    return user;
+  }
+
   @Mutation(() => UserResponse)
   async signup(
     @Arg("user") { username, email, password, confirmPassword }: SignupInput

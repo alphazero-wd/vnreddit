@@ -24,7 +24,10 @@ const main = async () => {
       validate: false,
     });
 
-    const apolloServer = new ApolloServer({ schema });
+    const apolloServer = new ApolloServer({
+      schema,
+      context: ({ req, res }) => ({ req, res }),
+    });
 
     const app = express();
     await apolloServer.start();
