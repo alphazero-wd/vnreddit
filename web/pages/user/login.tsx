@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import AuthInput from "../../components/auth/AuthInput";
 import { useLoginMutation } from "../../generated/graphql";
+import { AiOutlineLoading } from "react-icons/ai";
 
 const Signup: NextPage = () => {
   const router = useRouter();
@@ -53,8 +54,11 @@ const Signup: NextPage = () => {
             <button
               disabled={loading}
               type="submit"
-              className="bg-blue-500 hover:bg-blue-400 transition-colors text-white rounded-md font-semibold w-full border-none px-3 py-2"
+              className="bg-blue-500 flex items-center justify-center hover:bg-blue-400 transition-colors text-white rounded-md font-semibold w-full border-none px-3 py-2"
             >
+              {loading && (
+                <AiOutlineLoading className="animate-spin text-xl mr-2" />
+              )}{" "}
               Login
             </button>
           </form>
