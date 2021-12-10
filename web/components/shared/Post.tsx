@@ -5,27 +5,22 @@ import { useRouter } from "next/router";
 
 const Post: FC = () => {
   const router = useRouter();
-  const readMore = (e: any) => {
-    if (!e.target.classList.contains("vote-btn")) {
-      router.push("/posts/2");
-    }
-  };
   return (
     <div
-      onClick={readMore}
-      className="cursor-pointer bg-white flex border mb-3 border-gray-300 hover:border-blue-500 rounded-md"
+      onClick={() => router.push("/posts/2")}
+      className="cursor-pointer bg-white flex  mb-3 rounded-md "
     >
-      <div className="flex flex-col hover:bg-blue-100 bg-opacity-50 items-center border-r p-3">
-        <button className="border-none vote-btn mb-3 text-gray-700 hover:text-red-700 hover:bg-gray-200 rounded-sm p-2 text-3xl">
+      <div className="flex flex-col bg-gray-100 dark:bg-gray-900 items-center p-3">
+        <button className="border-none vote-btn mb-3 text-gray-700 hover:text-red-600 hover:bg-gray-200 dark:text-gray-500 dark:hover:text-red-600 rounded-sm p-2 text-3xl">
           <FaChevronUp />
         </button>
-        <span className="font-semibold text-md">11.4k</span>
-        <button className=" hover:text-blue-600 vote-btn mt-3 text-gray-700 border-none hover:bg-gray-200 rounded-sm p-2 text-3xl">
+        <span className="font-semibold text-md dark:text-white">11.4k</span>
+        <button className=" hover:text-blue-600 mt-3 text-gray-700 dark:text-gray-500 dark:hover:text-blue-600 border-none hover:bg-gray-200  rounded-sm p-2 text-3xl">
           <FaChevronDown />
         </button>
       </div>
-      <div className="flex-grow p-3">
-        <small className="text-gray-600">
+      <div className="flex-grow p-3 dark:text-white dark:bg-gray-800">
+        <small className="text-gray-600 ">
           Posted by u/alphazero 16 hours ago
         </small>
         <h2 className="mb-2 text-2xl font-bold">My first post</h2>
@@ -38,7 +33,7 @@ const Post: FC = () => {
           repellat id dolores exercitationem, fugiat natus, a laboriosam
           dolorem!
         </p>
-        <button className="flex justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200">
+        <button className="flex justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-400">
           <BsChatSquare className="mr-2 text-xl" />
           <small>5.5k comments</small>
         </button>

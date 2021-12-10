@@ -13,11 +13,12 @@ const Comment: FC = () => {
         >
           <Image src={avatarImg} alt="Avatar" />
         </div>
-        <Link href="/user/alphazero">
-          <small>
-            <b>alphazero</b> <span className="text-gray-600">8 hr. ago</span>
-          </small>
-        </Link>
+        <small>
+          <a className="font-bold">
+            <Link href="/user/alphazero">alphazero</Link>
+          </a>{" "}
+          <span className="text-gray-600">8 hr. ago</span>
+        </small>
       </div>
       <p className="mt-2 ml-10">A great post.</p>
     </div>

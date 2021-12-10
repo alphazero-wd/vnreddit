@@ -1,6 +1,6 @@
 module.exports = {
   purge: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
-  darkMode: false, // or 'media' or 'class'
+  darkMode: "class", // or 'media' or 'class'
   theme: {
     fontFamily: {
       sans: ["Quicksand", "sans-serif"],
@@ -26,10 +26,10 @@ module.exports = {
         300: "#e2e8f0",
         400: "#cbd5e0",
         500: "#a0aec0",
-        600: "#718096",
+        600: "#818384",
         700: "#4a5568",
-        800: "#2d3748",
-        900: "#1a202c",
+        800: "#1a1a1a",
+        900: "#1a1a1b",
       },
       red: {
         100: "#fff5f5",
