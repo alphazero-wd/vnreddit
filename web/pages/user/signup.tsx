@@ -1,29 +1,13 @@
 import { gql, useMutation } from "@apollo/client";
-import { ErrorMessage, Formik } from "formik";
+import { Formik } from "formik";
 import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import AuthInput from "../../components/auth/AuthInput";
-
-const SIGNUP_MUTATION = gql`
-  mutation Signup($user: SignupInput!) {
-    signup(user: $user) {
-      user {
-        id
-        username
-        email
-        token
-      }
-      error {
-        field
-        message
-      }
-    }
-  }
-`;
+import { useSignupMutation } from "../../generated/graphql";
 
 const Signup: NextPage = () => {
-  const [signup] = useMutation(SIGNUP_MUTATION);
+  const [signup] = useSignupMutation();
   const router = useRouter();
 
   return (
@@ -44,13 +28,13 @@ const Signup: NextPage = () => {
               user: values,
             },
           });
-          const user = response?.data.signup.user;
-          const error = response?.data.signup.error;
+          const user = response.data?.signup.user;
+          const error = response.data?.signup.error;
 
           if (user) {
             router.push("/");
             localStorage.setItem("token", JSON.stringify(user.token));
-          } else if (error) {
+          } else if (error && error.field) {
             setErrors({ [error.field]: error.message });
           }
         }}
