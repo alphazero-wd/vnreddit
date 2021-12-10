@@ -26,7 +26,7 @@ const AuthInput: FC<Props> = ({
     <div className="mb-3">
       <input
         type={type || "text"}
-        className={`border py-2 px-3 w-full font-normal focus:outline-none  ${
+        className={`border py-2 px-3 w-full focus:outline-none  ${
           Object.keys(errors).indexOf(name) !== -1
             ? "border-red-600 focus:ring-red-600"
             : "border-gray-200 focus:right-blue-500"

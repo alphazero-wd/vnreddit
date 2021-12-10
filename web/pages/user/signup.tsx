@@ -6,7 +6,7 @@ import AuthInput from "../../components/auth/AuthInput";
 import { useSignupMutation } from "../../generated/graphql";
 
 const Signup: NextPage = () => {
-  const [signup] = useSignupMutation();
+  const [signup, { loading }] = useSignupMutation();
   const router = useRouter();
 
   return (
@@ -69,6 +69,7 @@ const Signup: NextPage = () => {
             <button
               type="submit"
               className="bg-blue-500 hover:bg-blue-400 transition-colors text-white rounded-md font-semibold w-full border-none px-3 py-2"
+              disabled={loading}
             >
               Sign up
             </button>

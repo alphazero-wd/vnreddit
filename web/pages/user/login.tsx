@@ -7,7 +7,7 @@ import { useLoginMutation } from "../../generated/graphql";
 
 const Signup: NextPage = () => {
   const router = useRouter();
-  const [login] = useLoginMutation();
+  const [login, { loading }] = useLoginMutation();
 
   return (
     <div className="container w-full md:w-3/6">
@@ -51,6 +51,7 @@ const Signup: NextPage = () => {
               type="password"
             />
             <button
+              disabled={loading}
               type="submit"
               className="bg-blue-500 hover:bg-blue-400 transition-colors text-white rounded-md font-semibold w-full border-none px-3 py-2"
             >
