@@ -3,11 +3,9 @@ import Post from "../components/shared/Post";
 
 const Home: NextPage = () => {
   return (
-    <section className="p-6">
-      <div className="container w-3/4">
-        <Post />
-      </div>
-    </section>
+    <div className="md:container w-full lg:w-4/5">
+      <Post />
+    </div>
   );
 };
 
