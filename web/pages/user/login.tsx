@@ -51,13 +51,13 @@ const Signup: NextPage = () => {
               onChange={handleChange}
               name="usernameOrEmail"
               errors={errors}
-              placeholder="Username or email"
+              label="Username or email"
             />
             <AuthInput
               onChange={handleChange}
               name="password"
               errors={errors}
-              placeholder="Password"
+              label="Password"
               type="password"
             />
             <button

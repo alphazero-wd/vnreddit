@@ -133,4 +133,7 @@ export class UserResolver {
 
     return { user };
   }
+
+  @Query(() => String, { nullable: true })
+  async forgotPassword(@Arg("email") email: string) {}
 }
