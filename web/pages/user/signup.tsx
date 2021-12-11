@@ -36,14 +36,7 @@ const Signup: NextPage = () => {
                 query: MeDocument,
                 data: {
                   __typename: "Query",
-                  me: data?.signup.user
-                    ? {
-                        id: data.signup.user.id,
-                        username: data.signup.user.username,
-                        email: data.signup.user.email,
-                        createdAt: data!.signup.user.createdAt,
-                      }
-                    : null,
+                  me: data?.signup.user,
                 },
               });
             },
