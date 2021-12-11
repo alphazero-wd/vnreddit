@@ -1,6 +1,7 @@
 import {
   ForgotPasswordResponse,
   LoginInput,
+  ResetPasswordInput,
   SignupInput,
   UserResponse,
 } from "../types/User";
@@ -20,6 +21,7 @@ import { auth } from "../middleware/auth";
 import { MyContext } from "../types/MyContext";
 import { sendEmail } from "../utils/sendEmail";
 import { createRefreshToken } from "../utils/token";
+import { verify } from "jsonwebtoken";
 
 @Resolver()
 export class UserResolver {
@@ -170,5 +172,53 @@ export class UserResolver {
         message: `Email ${email} does not exist.`,
       },
     };
+  }
+
+  @Mutation(() => UserResponse)
+  async resetPassword(
+    @Arg("payload") { token, password, confirmPassword }: ResetPasswordInput,
+    @Ctx() { payload }: MyContext
+  ): Promise<UserResponse> {
+    if (!validatePassword(password)) {
+      return {
+        error: {
+          field: "password",
+          message: "Password should be stronger.",
+        },
+      };
+    }
+
+    if (password !== confirmPassword) {
+      return {
+        error: {
+          field: "confirmPassword",
+          message: "Passwords do not match.",
+        },
+      };
+    }
+
+    const decodedData = verify(token, process.env.JWT_REFRESH_SECRET!);
+    payload = decodedData as any;
+    const user = await getRepository(User).findOne(payload.userId);
+    if (!user) {
+      return {
+        error: {
+          field: "token",
+          message: "No user found.",
+        },
+      };
+    }
+    const hashedPassword = await hash(password, 12);
+    const updatedUser = await getRepository(User)
+      .createQueryBuilder("user")
+      .update()
+      .set({
+        password: hashedPassword,
+      })
+      .where("id = :id", { id: payload.userId })
+      .returning("*")
+      .execute();
+
+    return { user: updatedUser.raw[0] };
   }
 }
