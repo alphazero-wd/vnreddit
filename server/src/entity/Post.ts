@@ -3,8 +3,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -24,4 +26,8 @@ export class Post {
   @Field()
   @CreateDateColumn()
   createdAt!: Date;
+
+  @Column()
+  @ManyToOne(() => User, (user) => user.id)
+  creatorId!: number;
 }
