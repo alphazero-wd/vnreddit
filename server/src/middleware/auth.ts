@@ -4,7 +4,6 @@ import { verify } from "jsonwebtoken";
 
 export const auth: MiddlewareFn<MyContext> = async ({ context }, next) => {
   const authHeaders = context.req.headers.authorization;
-  console.log(authHeaders);
 
   if (!authHeaders || !authHeaders.startsWith("Bearer ")) {
     throw new Error("You are not authorized.");

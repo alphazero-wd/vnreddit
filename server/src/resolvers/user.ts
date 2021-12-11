@@ -1,6 +1,7 @@
 import {
   ForgotPasswordResponse,
   LoginInput,
+  MeResponse,
   ResetPasswordInput,
   SignupInput,
   UserResponse,
@@ -22,19 +23,27 @@ import { MyContext } from "../types/MyContext";
 import { sendEmail } from "../utils/sendEmail";
 import { createRefreshToken } from "../utils/token";
 import { verify } from "jsonwebtoken";
+import { Post } from "../entity/Post";
 
 @Resolver()
 export class UserResolver {
   @UseMiddleware(auth)
-  @Query(() => User, { nullable: true })
-  async me(@Ctx() { payload }: MyContext): Promise<User | null> {
+  @Query(() => MeResponse, { nullable: true })
+  async me(@Ctx() { payload }: MyContext): Promise<MeResponse | null> {
     const user = await getRepository(User).findOne({
       where: { id: payload.userId },
     });
     if (!user) {
       return null;
     }
-    return user;
+    const posts = await getRepository(Post)
+      .createQueryBuilder("post")
+      .leftJoinAndSelect("post.creatorId", "user")
+      .getMany();
+    return {
+      user,
+      posts,
+    };
   }
 
   @Mutation(() => UserResponse)
