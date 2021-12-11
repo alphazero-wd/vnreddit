@@ -36,6 +36,12 @@ export type ErrorResponse = {
   message: Scalars['String'];
 };
 
+export type ForgotPasswordResponse = {
+  __typename?: 'ForgotPasswordResponse';
+  error?: Maybe<ErrorResponse>;
+  successMessage?: Maybe<Scalars['String']>;
+};
+
 export type LoginInput = {
   password: Scalars['String'];
   usernameOrEmail: Scalars['String'];
@@ -46,6 +52,7 @@ export type Mutation = {
   createPost: PostResponse;
   deletePost: Scalars['Boolean'];
   editPost: PostResponse;
+  forgotPassword: ForgotPasswordResponse;
   login: UserResponse;
   signup: UserResponse;
 };
@@ -63,6 +70,11 @@ export type MutationDeletePostArgs = {
 
 export type MutationEditPostArgs = {
   post: EditPostInput;
+};
+
+
+export type MutationForgotPasswordArgs = {
+  email: Scalars['String'];
 };
 
 
@@ -120,6 +132,13 @@ export type UserResponse = {
 export type UserFragmentFragment = { __typename?: 'User', id: string, username: string, email: string, createdAt: any };
 
 export type UserResponseFragmentFragment = { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined };
+
+export type ForgotPasswordMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: { __typename?: 'ForgotPasswordResponse', successMessage?: string | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type LoginMutationVariables = Exact<{
   user: LoginInput;
@@ -214,6 +233,7 @@ export type ResolversTypes = {
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   EditPostInput: EditPostInput;
   ErrorResponse: ResolverTypeWrapper<ErrorResponse>;
+  ForgotPasswordResponse: ResolverTypeWrapper<ForgotPasswordResponse>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   LoginInput: LoginInput;
   Mutation: ResolverTypeWrapper<{}>;
@@ -233,6 +253,7 @@ export type ResolversParentTypes = {
   DateTime: Scalars['DateTime'];
   EditPostInput: EditPostInput;
   ErrorResponse: ErrorResponse;
+  ForgotPasswordResponse: ForgotPasswordResponse;
   ID: Scalars['ID'];
   LoginInput: LoginInput;
   Mutation: {};
@@ -255,10 +276,17 @@ export type ErrorResponseResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ForgotPasswordResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ForgotPasswordResponse'] = ResolversParentTypes['ForgotPasswordResponse']> = {
+  error?: Resolver<Maybe<ResolversTypes['ErrorResponse']>, ParentType, ContextType>;
+  successMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createPost?: Resolver<ResolversTypes['PostResponse'], ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'post'>>;
   deletePost?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePostArgs, 'id'>>;
   editPost?: Resolver<ResolversTypes['PostResponse'], ParentType, ContextType, RequireFields<MutationEditPostArgs, 'post'>>;
+  forgotPassword?: Resolver<ResolversTypes['ForgotPasswordResponse'], ParentType, ContextType, RequireFields<MutationForgotPasswordArgs, 'email'>>;
   login?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'user'>>;
   signup?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'user'>>;
 };
@@ -300,6 +328,7 @@ export type UserResponseResolvers<ContextType = any, ParentType extends Resolver
 export type Resolvers<ContextType = any> = {
   DateTime?: GraphQLScalarType;
   ErrorResponse?: ErrorResponseResolvers<ContextType>;
+  ForgotPasswordResponse?: ForgotPasswordResponseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Post?: PostResolvers<ContextType>;
   PostResponse?: PostResponseResolvers<ContextType>;
@@ -329,6 +358,43 @@ export const UserResponseFragmentFragmentDoc = gql`
   }
 }
     ${UserFragmentFragmentDoc}`;
+export const ForgotPasswordDocument = gql`
+    mutation ForgotPassword($email: String!) {
+  forgotPassword(email: $email) {
+    successMessage
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type ForgotPasswordMutationFn = Apollo.MutationFunction<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
+
+/**
+ * __useForgotPasswordMutation__
+ *
+ * To run a mutation, you first call `useForgotPasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useForgotPasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [forgotPasswordMutation, { data, loading, error }] = useForgotPasswordMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useForgotPasswordMutation(baseOptions?: Apollo.MutationHookOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument, options);
+      }
+export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
+export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordMutation>;
+export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($user: LoginInput!) {
   login(user: $user) {

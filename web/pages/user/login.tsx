@@ -51,15 +51,20 @@ const Signup: NextPage = () => {
               onChange={handleChange}
               name="usernameOrEmail"
               errors={errors}
-              placeholder="Username or email"
+              label="Username or email"
             />
             <AuthInput
               onChange={handleChange}
               name="password"
               errors={errors}
-              placeholder="Password"
+              label="Password"
               type="password"
             />
+            <Link href="/user/forgot-password">
+              <a className="text-blue-500 mb-3 block hover:text-blue-300">
+                Forgot password?
+              </a>
+            </Link>
             <button
               disabled={loading}
               type="submit"
