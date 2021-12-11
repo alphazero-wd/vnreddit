@@ -60,6 +60,11 @@ const Signup: NextPage = () => {
               label="Password"
               type="password"
             />
+            <Link href="/user/forgot-password">
+              <a className="text-blue-500 mb-3 block hover:text-blue-300">
+                Forgot password?
+              </a>
+            </Link>
             <button
               disabled={loading}
               type="submit"

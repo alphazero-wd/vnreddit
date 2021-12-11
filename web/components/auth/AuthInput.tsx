@@ -30,11 +30,12 @@ const AuthInput: FC<Props> = ({ errors, name, label, type, onChange }) => {
         } shadow-sm mb-1 focus:ring-2 focus:border-transparent rounded-md `}
         onChange={onChange}
         name={name}
+        placeholder={`Enter your ${label.toLowerCase()} here`}
       />
       {Object.keys(errors).indexOf(name) !== -1 && (
         <div className="flex items-center text-red-600">
           <MdOutlineError className="mr-2" />
-          <ErrorMessage name={name}>{msg => <div>{msg}</div>}</ErrorMessage>
+          <ErrorMessage name={name}>{(msg) => <div>{msg}</div>}</ErrorMessage>
         </div>
       )}
     </div>

@@ -1,4 +1,9 @@
-import { LoginInput, SignupInput, UserResponse } from "../types/User";
+import {
+  ForgotPasswordResponse,
+  LoginInput,
+  SignupInput,
+  UserResponse,
+} from "../types/User";
 import {
   Arg,
   Ctx,
@@ -13,6 +18,8 @@ import { User } from "../entity/User";
 import { compare, hash } from "bcryptjs";
 import { auth } from "../middleware/auth";
 import { MyContext } from "../types/MyContext";
+import { sendEmail } from "../utils/sendEmail";
+import { createRefreshToken } from "../utils/token";
 
 @Resolver()
 export class UserResolver {
@@ -134,6 +141,34 @@ export class UserResolver {
     return { user };
   }
 
-  @Query(() => String, { nullable: true })
-  async forgotPassword(@Arg("email") email: string) {}
+  @Mutation(() => ForgotPasswordResponse)
+  async forgotPassword(
+    @Arg("email") email: string
+  ): Promise<ForgotPasswordResponse> {
+    const user = await getRepository(User).findOne({ where: { email } });
+
+    if (user) {
+      const info = {
+        to: email,
+        subject: "Password Reset Verification",
+        html: `
+          <h1>Password Reset Verification</h1> 
+          <p>Click on the link below to reset the password.</p>
+          <a href="http://localhost:3000/user/reset-password/${createRefreshToken(
+            user
+          )}">Reset Password</a>
+        `,
+      };
+      await sendEmail(info);
+      return {
+        successMessage: `A verification message has been sent to email ${email}.`,
+      };
+    }
+    return {
+      error: {
+        field: "email",
+        message: `Email ${email} does not exist.`,
+      },
+    };
+  }
 }

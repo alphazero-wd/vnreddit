@@ -34,3 +34,12 @@ export class UserResponse {
   @Field({ nullable: true })
   error?: ErrorResponse;
 }
+
+@ObjectType()
+export class ForgotPasswordResponse {
+  @Field({ nullable: true })
+  successMessage?: string;
+
+  @Field({ nullable: true })
+  error?: ErrorResponse;
+}
