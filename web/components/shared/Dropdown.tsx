@@ -5,26 +5,42 @@ import avatar from "../../images/avatar.png";
 import { CgProfile } from "react-icons/cg";
 import { FiMoon } from "react-icons/fi";
 import { BiLogOut } from "react-icons/bi";
+import { getTheme } from "../../utils/theme";
+import { useApolloClient } from "@apollo/client";
+import { MeDocument, MeQuery } from "../../generated/graphql";
 
-const Dropdown: FC = () => {
-  const [theme, setTheme] = useState("dark");
+interface Props {
+  me?: {
+    id: string;
+    username: string;
+    email: string;
+    createdAt: any;
+  } | null;
+  logout: () => void;
+}
+
+const Dropdown: FC<Props> = ({ me, logout }) => {
+  const [theme, setTheme] = useState<"light" | "dark">(getTheme() || "light");
   const [dropdown, setDropdown] = useState(false);
+  const apolloClient = useApolloClient();
+
   useEffect(() => {
     document.body.className = theme;
+    localStorage.setItem("theme", JSON.stringify(theme));
   }, [theme]);
+
   return (
     <div className="relative inline-block text-left">
       <div>
         <button
           type="button"
           className="flex items-center justify-center w-full rounded-md border border-gray-300 dark:border-gray-800 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          id="menu-button"
-          aria-expanded="true"
-          aria-haspopup="true"
           onClick={() => setDropdown(!dropdown)}
         >
           <Image src={avatar} className="object-cover" width={40} height={40} />
-          <small className="font-bold text-sm dark:text-white">alphazero</small>
+          <small className="font-bold text-sm dark:text-white">
+            {me?.username}
+          </small>
         </button>
       </div>
       {dropdown && (
@@ -57,7 +73,10 @@ const Dropdown: FC = () => {
                 ></div>
               </div>
             </button>
-            <button className="text-gray-700 dark:text-white w-full hover:bg-gray-400 dark:hover:bg-gray-600 font-semibold flex items-center px-4 py-2 text-sm">
+            <button
+              onClick={() => logout()}
+              className="text-gray-700 dark:text-white w-full hover:bg-gray-400 dark:hover:bg-gray-600 font-semibold flex items-center px-4 py-2 text-sm"
+            >
               <BiLogOut className="mr-3 text-xl" />
               Logout
             </button>
