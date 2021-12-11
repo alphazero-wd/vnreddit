@@ -4,14 +4,31 @@ import { FC, useEffect, useState } from "react";
 import avatar from "../../images/avatar.png";
 import { CgProfile } from "react-icons/cg";
 import { FiMoon } from "react-icons/fi";
-import { BiLogOut } from "react-icons/bi";
+import { BiChevronDown, BiLogIn, BiLogOut, BiUser } from "react-icons/bi";
+import { MdOutlineGroupWork, MdPostAdd } from "react-icons/md";
 
-const Dropdown: FC = () => {
+interface Props {
+  me?:
+    | {
+        __typename?: "User" | undefined;
+        id: string;
+        username: string;
+        email: string;
+        createdAt: any;
+      }
+    | null
+    | undefined;
+  logout: () => void;
+}
+
+const Dropdown: FC<Props> = ({ me, logout }) => {
   const [theme, setTheme] = useState("dark");
   const [dropdown, setDropdown] = useState(false);
+
   useEffect(() => {
     document.body.className = theme;
   }, [theme]);
+
   return (
     <div className="relative inline-block text-left">
       <div>
@@ -23,8 +40,24 @@ const Dropdown: FC = () => {
           aria-haspopup="true"
           onClick={() => setDropdown(!dropdown)}
         >
-          <Image src={avatar} className="object-cover" width={40} height={40} />
-          <small className="font-bold text-sm dark:text-white">alphazero</small>
+          {me ? (
+            <>
+              <Image
+                src={avatar}
+                className="object-cover"
+                width={40}
+                height={40}
+              />
+              <small className="font-bold text-sm dark:text-white">
+                {me.username}
+              </small>
+            </>
+          ) : (
+            <>
+              <BiUser className="text-gray-600 text-2xl" />
+              <BiChevronDown className="text-gray-600 text-xl " />
+            </>
+          )}
         </button>
       </div>
       {dropdown && (
@@ -33,13 +66,29 @@ const Dropdown: FC = () => {
           role="menu"
         >
           <div className="py-1">
-            <Link href="/user/profile">
-              <a className="text-gray-700 dark:text-white w-full hover:bg-gray-400 dark:hover:bg-gray-600 flex font-semibold items-center px-4 py-2 text-sm">
-                <CgProfile className="mr-3 text-xl" />
-                Profile
-              </a>
-            </Link>
-            <button className="text-gray-700 dark:text-white w-full hover:bg-gray-400 dark:hover:bg-gray-600 font-semibold flex items-center justify-between px-4 py-2 text-sm">
+            {me && (
+              <>
+                <Link href="/user/profile">
+                  <a className="text-gray-700 dark:text-white w-full hover:bg-gray-200 dark:hover:bg-gray-600 flex font-semibold items-center px-4 py-2 text-sm">
+                    <CgProfile className="mr-3 text-xl" />
+                    Profile
+                  </a>
+                </Link>
+                <Link href="/vr/create">
+                  <a className="text-gray-700 dark:text-white w-full hover:bg-gray-200 dark:hover:bg-gray-600 flex font-semibold items-center px-4 py-2 text-sm">
+                    <MdOutlineGroupWork className="mr-3 text-xl" />
+                    Create a community
+                  </a>
+                </Link>
+                <Link href="/posts/create">
+                  <a className="text-gray-700 dark:text-white w-full hover:bg-gray-200 dark:hover:bg-gray-600 flex font-semibold items-center px-4 py-2 text-sm">
+                    <MdPostAdd className="mr-3 text-xl" />
+                    Create a post
+                  </a>
+                </Link>
+              </>
+            )}
+            <button className="text-gray-700 dark:text-white w-full hover:bg-gray-200 dark:hover:bg-gray-600 font-semibold flex items-center justify-between px-4 py-2 text-sm">
               <div className="flex items-center">
                 <FiMoon className="mr-3 text-xl" />
                 Dark Mode
@@ -57,10 +106,22 @@ const Dropdown: FC = () => {
                 ></div>
               </div>
             </button>
-            <button className="text-gray-700 dark:text-white w-full hover:bg-gray-400 dark:hover:bg-gray-600 font-semibold flex items-center px-4 py-2 text-sm">
-              <BiLogOut className="mr-3 text-xl" />
-              Logout
-            </button>
+            {me ? (
+              <button
+                onClick={logout}
+                className="text-gray-700 dark:text-white w-full hover:bg-gray-200 dark:hover:bg-gray-600 font-semibold flex items-center px-4 py-2 text-sm"
+              >
+                <BiLogOut className="mr-3 text-xl" />
+                Logout
+              </button>
+            ) : (
+              <Link href="/user/login" passHref>
+                <a className="text-gray-700 dark:text-white w-full hover:bg-gray-400 dark:hover:bg-gray-600 font-semibold flex items-center px-4 py-2 text-sm">
+                  <BiLogIn className="mr-3 text-xl" />
+                  Login / Signup
+                </a>
+              </Link>
+            )}
           </div>
         </div>
       )}

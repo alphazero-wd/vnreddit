@@ -3,7 +3,11 @@ import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import AuthInput from "../../components/auth/AuthInput";
-import { useSignupMutation } from "../../generated/graphql";
+import {
+  MeDocument,
+  MeQuery,
+  useSignupMutation,
+} from "../../generated/graphql";
 import { AiOutlineLoading } from "react-icons/ai";
 
 const Signup: NextPage = () => {
@@ -26,6 +30,15 @@ const Signup: NextPage = () => {
           const response = await signup({
             variables: {
               user: values,
+            },
+            update: (cache, { data }) => {
+              cache.writeQuery<MeQuery>({
+                query: MeDocument,
+                data: {
+                  __typename: "Query",
+                  me: data?.signup.user,
+                },
+              });
             },
           });
           const user = response.data?.signup.user;
