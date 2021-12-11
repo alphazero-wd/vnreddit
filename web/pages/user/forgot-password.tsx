@@ -64,6 +64,7 @@ const ForgotPassword: NextPage = () => {
             <button
               type="submit"
               className="bg-blue-500 flex items-center justify-center hover:bg-blue-400 transition-colors text-white rounded-md font-semibold w-full border-none px-3 py-2"
+              disabled={loading}
             >
               {loading && (
                 <AiOutlineLoading className="animate-spin text-xl mr-2" />
