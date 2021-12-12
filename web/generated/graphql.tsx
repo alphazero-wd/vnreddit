@@ -97,6 +97,7 @@ export type Post = {
   __typename?: 'Post';
   body?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
+  creator: User;
   id: Scalars['ID'];
   title: Scalars['String'];
 };
@@ -131,6 +132,7 @@ export type User = {
   createdAt: Scalars['DateTime'];
   email: Scalars['String'];
   id: Scalars['ID'];
+  posts: Array<Post>;
   token: Scalars['String'];
   username: Scalars['String'];
 };
@@ -141,9 +143,11 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
+export type PostFragmentFragment = { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any };
+
 export type UserFragmentFragment = { __typename?: 'User', id: string, username: string, email: string, createdAt: any };
 
-export type UserResponseFragmentFragment = { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined };
+export type UserResponseFragmentFragment = { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -157,26 +161,31 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type ResetPasswordMutationVariables = Exact<{
   payload: ResetPasswordInput;
 }>;
 
 
-export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type SignupMutationVariables = Exact<{
   user: SignupInput;
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username: string, email: string, createdAt: any } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username: string, email: string, createdAt: any, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any }> } | null | undefined };
+
+export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PostsQuery = { __typename?: 'Query', posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string } }> };
 
 
 
@@ -316,6 +325,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
   body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -336,6 +346,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  posts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType>;
   token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -368,10 +379,21 @@ export const UserFragmentFragmentDoc = gql`
   createdAt
 }
     `;
+export const PostFragmentFragmentDoc = gql`
+    fragment PostFragment on Post {
+  id
+  title
+  body
+  createdAt
+}
+    `;
 export const UserResponseFragmentFragmentDoc = gql`
     fragment UserResponseFragment on UserResponse {
   user {
     ...UserFragment
+    posts {
+      ...PostFragment
+    }
     token
   }
   error {
@@ -379,7 +401,8 @@ export const UserResponseFragmentFragmentDoc = gql`
     message
   }
 }
-    ${UserFragmentFragmentDoc}`;
+    ${UserFragmentFragmentDoc}
+${PostFragmentFragmentDoc}`;
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
   forgotPassword(email: $email) {
@@ -520,9 +543,13 @@ export const MeDocument = gql`
     query Me {
   me {
     ...UserFragment
+    posts {
+      ...PostFragment
+    }
   }
 }
-    ${UserFragmentFragmentDoc}`;
+    ${UserFragmentFragmentDoc}
+${PostFragmentFragmentDoc}`;
 
 /**
  * __useMeQuery__
@@ -550,3 +577,41 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const PostsDocument = gql`
+    query Posts {
+  posts {
+    ...PostFragment
+    creator {
+      id
+      username
+    }
+  }
+}
+    ${PostFragmentFragmentDoc}`;
+
+/**
+ * __usePostsQuery__
+ *
+ * To run a query within a React component, call `usePostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePostsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePostsQuery(baseOptions?: Apollo.QueryHookOptions<PostsQuery, PostsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PostsQuery, PostsQueryVariables>(PostsDocument, options);
+      }
+export function usePostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PostsQuery, PostsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PostsQuery, PostsQueryVariables>(PostsDocument, options);
+        }
+export type PostsQueryHookResult = ReturnType<typeof usePostsQuery>;
+export type PostsLazyQueryHookResult = ReturnType<typeof usePostsLazyQuery>;
+export type PostsQueryResult = Apollo.QueryResult<PostsQuery, PostsQueryVariables>;

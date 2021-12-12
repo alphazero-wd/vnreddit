@@ -1,6 +1,9 @@
 fragment UserResponseFragment on UserResponse {
   user {
     ...UserFragment
+    posts {
+      ...PostFragment
+    }
     token
   }
   error {
