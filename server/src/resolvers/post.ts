@@ -82,7 +82,6 @@ export class PostResolver {
         },
       };
     }
-    const creator = await getRepository(User).findOne(payload.userId);
     const post = await getRepository(Post)
       .createQueryBuilder("post")
       .insert()
@@ -90,7 +89,7 @@ export class PostResolver {
       .values({
         title,
         body,
-        creator,
+        creatorId: payload.userId,
       })
       .returning("*")
       .execute();

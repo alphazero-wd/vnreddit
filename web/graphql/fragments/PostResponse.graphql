@@ -1,0 +1,7 @@
+fragment PostResponseFragment on Post {
+  ...PostFragment
+  creator {
+    id
+    username
+  }
+}

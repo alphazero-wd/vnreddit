@@ -1,18 +1,18 @@
 import { ErrorMessage, FormikErrors } from "formik";
 import { ChangeEvent, FC } from "react";
 import { MdOutlineError } from "react-icons/md";
+import {
+  CreatePostInput,
+  LoginInput,
+  SignupInput,
+} from "../../generated/graphql";
 
 interface Props {
   label: string;
   type?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   name: string;
-  errors: FormikErrors<{
-    username: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-  }>;
+  errors: FormikErrors<LoginInput | SignupInput | CreatePostInput>;
 }
 
 const AuthInput: FC<Props> = ({ errors, name, label, type, onChange }) => {

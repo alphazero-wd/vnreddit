@@ -163,9 +163,18 @@ export type UserResponse = {
 
 export type PostFragmentFragment = { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any };
 
+export type PostResponseFragmentFragment = { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string } };
+
 export type UserFragmentFragment = { __typename?: 'User', id: string, username: string, email: string, createdAt: any };
 
 export type UserResponseFragmentFragment = { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined };
+
+export type CreatePostMutationVariables = Exact<{
+  post: CreatePostInput;
+}>;
+
+
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string } } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -411,19 +420,28 @@ export type Resolvers<ContextType = any> = {
 };
 
 
-export const UserFragmentFragmentDoc = gql`
-    fragment UserFragment on User {
-  id
-  username
-  email
-  createdAt
-}
-    `;
 export const PostFragmentFragmentDoc = gql`
     fragment PostFragment on Post {
   id
   title
   body
+  createdAt
+}
+    `;
+export const PostResponseFragmentFragmentDoc = gql`
+    fragment PostResponseFragment on Post {
+  ...PostFragment
+  creator {
+    id
+    username
+  }
+}
+    ${PostFragmentFragmentDoc}`;
+export const UserFragmentFragmentDoc = gql`
+    fragment UserFragment on User {
+  id
+  username
+  email
   createdAt
 }
     `;
@@ -443,6 +461,45 @@ export const UserResponseFragmentFragmentDoc = gql`
 }
     ${UserFragmentFragmentDoc}
 ${PostFragmentFragmentDoc}`;
+export const CreatePostDocument = gql`
+    mutation CreatePost($post: CreatePostInput!) {
+  createPost(post: $post) {
+    post {
+      ...PostResponseFragment
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    ${PostResponseFragmentFragmentDoc}`;
+export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, CreatePostMutationVariables>;
+
+/**
+ * __useCreatePostMutation__
+ *
+ * To run a mutation, you first call `useCreatePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPostMutation, { data, loading, error }] = useCreatePostMutation({
+ *   variables: {
+ *      post: // value for 'post'
+ *   },
+ * });
+ */
+export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<CreatePostMutation, CreatePostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument, options);
+      }
+export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
+export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
+export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
   forgotPassword(email: $email) {
@@ -620,17 +677,10 @@ export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const PostDocument = gql`
     query Post($postId: String!) {
   post(id: $postId) {
-    id
-    title
-    body
-    createdAt
-    creator {
-      id
-      username
-    }
+    ...PostResponseFragment
   }
 }
-    `;
+    ${PostResponseFragmentFragmentDoc}`;
 
 /**
  * __usePostQuery__
@@ -664,15 +714,11 @@ export const PostsDocument = gql`
   posts(limit: $limit, cursor: $cursor) {
     hasMore
     posts {
-      ...PostFragment
-      creator {
-        id
-        username
-      }
+      ...PostResponseFragment
     }
   }
 }
-    ${PostFragmentFragmentDoc}`;
+    ${PostResponseFragmentFragmentDoc}`;
 
 /**
  * __usePostsQuery__

@@ -3,8 +3,10 @@ import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { BsChatSquare } from "react-icons/bs";
 import { useRouter } from "next/router";
 import moment from "moment";
+import MDEditor from "@uiw/react-md-editor";
 
 interface Props {
+  id: string;
   title: string;
   body?: string | null;
   createdAt: any;
@@ -16,6 +18,7 @@ interface Props {
 }
 
 const Post: FC<Props> = ({
+  id,
   loading,
   title,
   body,
@@ -26,7 +29,7 @@ const Post: FC<Props> = ({
 
   return (
     <div
-      onClick={() => router.push("/posts/2")}
+      onClick={() => router.push(`/posts/${id}`)}
       className={`${
         loading ? "animate-pulse" : ""
       } cursor-pointer bg-white flex  mb-3 rounded-md `}
@@ -41,12 +44,12 @@ const Post: FC<Props> = ({
         </button>
       </div>
       <div className="flex-grow p-3 dark:text-white dark:bg-gray-800">
-        <small className="text-gray-600 ">
+        <small className="text-gray-600">
           Posted by u/{username} {moment(createdAt).fromNow()}
         </small>
         <h2 className="mb-2 text-2xl font-bold">{title}</h2>
-        <p className="mb-2">{body}</p>
-        <button className="flex justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-400">
+        <MDEditor.Markdown source={body || ""} />
+        <button className="flex mt-3 justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-400">
           <BsChatSquare className="mr-2 text-xl" />
           <small>5.5k comments</small>
         </button>
