@@ -28,6 +28,9 @@ export class Post {
   createdAt!: Date;
 
   @Column()
-  @ManyToOne(() => User, (user) => user.id)
   creatorId!: number;
+
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
+  creator: User;
 }

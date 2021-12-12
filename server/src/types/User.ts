@@ -1,7 +1,6 @@
 import { User } from "../entity/User";
 import { Field, InputType, ObjectType } from "type-graphql";
 import { ErrorResponse } from "./ErrorResponse";
-import { Post } from "../entity/Post";
 
 @InputType()
 export class SignupInput {
@@ -55,13 +54,4 @@ export class ForgotPasswordResponse {
 
   @Field({ nullable: true })
   error?: ErrorResponse;
-}
-
-@ObjectType()
-export class MeResponse {
-  @Field(() => User, { nullable: true })
-  user?: User;
-
-  @Field(() => [Post!], { nullable: true })
-  posts?: Post[];
 }
