@@ -3,8 +3,20 @@ import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { BsChatSquare } from "react-icons/bs";
 import Comment from "../../components/shared/Comment";
 import Link from "next/link";
+import { usePostQuery } from "../../generated/graphql";
+import { useRouter } from "next/router";
+import moment from "moment";
 
 const PostPage: NextPage = () => {
+  const router = useRouter();
+  const { id } = router.query;
+
+  const { data } = usePostQuery({
+    variables: {
+      postId: id as string,
+    },
+  });
+
   return (
     <div className="container w-full md:w-2/3">
       <div className="bg-white dark:bg-gray-900 dark:text-white">
@@ -22,20 +34,14 @@ const PostPage: NextPage = () => {
             <small className="text-gray-600">
               Posted by{" "}
               <Link href="/user/alphazero">
-                <a className="hover:underline">u/alphazero</a>
+                <a className="hover:underline">
+                  u/{data?.post?.creator.username}
+                </a>
               </Link>{" "}
-              16 hours ago
+              {moment(data?.post?.createdAt).fromNow()}
             </small>
-            <h2 className="mb-2 text-2xl font-bold">My first post</h2>
-            <p className="mb-2">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam
-              repudiandae, iure beatae aliquid nam voluptatibus eaque inventore
-              nesciunt doloribus ipsam animi fugit consectetur neque odit,
-              dignissimos distinctio quibusdam commodi dolor ab sint ea! Dolore
-              quaerat maxime necessitatibus aspernatur expedita doloribus sunt
-              repellat id dolores exercitationem, fugiat natus, a laboriosam
-              dolorem!
-            </p>
+            <h2 className="mb-2 text-2xl font-bold">{data?.post?.title}</h2>
+            <p className="mb-2">{data?.post?.body}</p>
             <div className="flex items-center mt-4 text-gray-600 font-semibold">
               <BsChatSquare className="mr-2 text-xl" />
               <small>5.5k comments</small>
