@@ -2,9 +2,21 @@ import { FC } from "react";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { BsChatSquare } from "react-icons/bs";
 import { useRouter } from "next/router";
+import moment from "moment";
 
-const Post: FC = () => {
+interface Props {
+  title: string;
+  body?: string | null;
+  createdAt: any;
+  creator: {
+    id?: string;
+    username: string;
+  };
+}
+
+const Post: FC<Props> = ({ title, body, createdAt, creator: { username } }) => {
   const router = useRouter();
+
   return (
     <div
       onClick={() => router.push("/posts/2")}
@@ -21,18 +33,10 @@ const Post: FC = () => {
       </div>
       <div className="flex-grow p-3 dark:text-white dark:bg-gray-800">
         <small className="text-gray-600 ">
-          Posted by u/alphazero 16 hours ago
+          Posted by u/{username} {moment(createdAt).fromNow()}
         </small>
-        <h2 className="mb-2 text-2xl font-bold">My first post</h2>
-        <p className="mb-2">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam
-          repudiandae, iure beatae aliquid nam voluptatibus eaque inventore
-          nesciunt doloribus ipsam animi fugit consectetur neque odit,
-          dignissimos distinctio quibusdam commodi dolor ab sint ea! Dolore
-          quaerat maxime necessitatibus aspernatur expedita doloribus sunt
-          repellat id dolores exercitationem, fugiat natus, a laboriosam
-          dolorem!
-        </p>
+        <h2 className="mb-2 text-2xl font-bold">{title}</h2>
+        <p className="mb-2">{body}</p>
         <button className="flex justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-400">
           <BsChatSquare className="mr-2 text-xl" />
           <small>5.5k comments</small>
