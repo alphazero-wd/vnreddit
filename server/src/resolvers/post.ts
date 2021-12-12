@@ -3,6 +3,7 @@ import {
   Arg,
   Ctx,
   FieldResolver,
+  Int,
   Mutation,
   Query,
   Resolver,
@@ -10,7 +11,12 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { getRepository } from "typeorm";
-import { CreatePostInput, EditPostInput, PostResponse } from "../types/Post";
+import {
+  CreatePostInput,
+  EditPostInput,
+  PaginatedPosts,
+  PostResponse,
+} from "../types/Post";
 import { auth } from "../middleware/auth";
 import { MyContext } from "../types/MyContext";
 import { User } from "../entity/User";
@@ -22,14 +28,35 @@ export class PostResolver {
     return getRepository(User).findOne(post.creatorId);
   }
 
-  @Query(() => [Post!])
-  async posts(): Promise<Post[]> {
-    const posts = await getRepository(Post)
+  @Query(() => PaginatedPosts)
+  async posts(
+    @Arg("limit", () => Int!) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+  ): Promise<PaginatedPosts> {
+    // if the user fetches more than 15, only set limit to 15
+    const requestLimit = Math.min(15, limit);
+    const extraRequestLimit = requestLimit + 1;
+
+    // take an extra post to check if more posts can be fetched
+    const queryBuilder = getRepository(Post)
       .createQueryBuilder("post")
       .innerJoinAndSelect("post.creator", "user")
       .orderBy("post.createdAt", "DESC")
-      .getMany();
-    return posts;
+      .take(extraRequestLimit);
+
+    // fetch posts whose createdAt < createdAt of the oldest post in a single request
+    if (cursor) {
+      queryBuilder.where("post.createdAt < :cursor", {
+        cursor: new Date(cursor),
+      });
+    }
+
+    const posts = await queryBuilder.getMany();
+    return {
+      // return the posts based on the given limit (not plus 1)
+      posts: posts.slice(0, requestLimit),
+      hasMore: posts.length === extraRequestLimit,
+    };
   }
 
   @Query(() => Post, { nullable: true })

@@ -11,7 +11,7 @@ const PostPage: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  const { data } = usePostQuery({
+  const { data, loading } = usePostQuery({
     variables: {
       postId: id as string,
     },
@@ -20,7 +20,9 @@ const PostPage: NextPage = () => {
   return (
     <div className="container w-full md:w-2/3">
       <div className="bg-white dark:bg-gray-900 dark:text-white">
-        <div className="flex mb-3 rounded-md ">
+        <div
+          className={`flex mb-3 rounded-md ${loading ? "animate-pulse" : ""}`}
+        >
           <div className="flex flex-col bg-gray-100 dark:bg-gray-900 items-center p-3 z-50">
             <button className="border-none mb-3 text-gray-600 hover:text-red-700 hover:bg-gray-200 rounded-sm p-2 text-3xl">
               <FaChevronUp />

@@ -5,8 +5,8 @@ const Wrapper: FC = ({ children }) => {
   return (
     <>
       <Navbar />
-      <div className="bg-gray-200 h-screen dark:bg-black">
-        <section className="pt-4 md:p-4 lg:p-6">{children}</section>
+      <div className="bg-gray-200 min-h-screen dark:bg-black">
+        <section className="pt-4 md:p-4 lg:p-6 min-h-full">{children}</section>
       </div>
     </>
   );
