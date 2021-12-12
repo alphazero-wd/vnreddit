@@ -32,6 +32,15 @@ export class PostResolver {
     return posts;
   }
 
+  @Query(() => Post, { nullable: true })
+  async post(@Arg("id") id: string): Promise<Post | void> {
+    const post = await getRepository(Post).findOne(parseInt(id));
+    if (!post) {
+      throw new Error("Post does not exist.");
+    }
+    return post;
+  }
+
   @UseMiddleware(auth)
   @Mutation(() => PostResponse)
   async createPost(
