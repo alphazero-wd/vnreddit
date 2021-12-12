@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePostQuery } from "../../generated/graphql";
 import { useRouter } from "next/router";
 import moment from "moment";
+import MDEditor from "@uiw/react-md-editor";
 
 const PostPage: NextPage = () => {
   const router = useRouter();
@@ -43,7 +44,7 @@ const PostPage: NextPage = () => {
               {moment(data?.post?.createdAt).fromNow()}
             </small>
             <h2 className="mb-2 text-2xl font-bold">{data?.post?.title}</h2>
-            <p className="mb-2">{data?.post?.body}</p>
+            <MDEditor.Markdown source={data?.post?.body || ""} />
             <div className="flex items-center mt-4 text-gray-600 font-semibold">
               <BsChatSquare className="mr-2 text-xl" />
               <small>5.5k comments</small>
