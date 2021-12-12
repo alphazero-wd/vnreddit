@@ -2,23 +2,32 @@ import { Post } from "../entity/Post";
 import {
   Arg,
   Ctx,
+  FieldResolver,
   Mutation,
   Query,
   Resolver,
+  Root,
   UseMiddleware,
 } from "type-graphql";
 import { getRepository } from "typeorm";
 import { CreatePostInput, EditPostInput, PostResponse } from "../types/Post";
 import { auth } from "../middleware/auth";
 import { MyContext } from "../types/MyContext";
+import { User } from "../entity/User";
 
-@Resolver()
+@Resolver(Post)
 export class PostResolver {
-  @Query(() => [Post])
+  @FieldResolver(() => User, { nullable: true })
+  creator(@Root() post: Post): Promise<User | void> {
+    return getRepository(User).findOne(post.creatorId);
+  }
+
+  @Query(() => [Post!])
   async posts(): Promise<Post[]> {
     const posts = await getRepository(Post)
       .createQueryBuilder("post")
-      .orderBy("createdAt")
+      .innerJoinAndSelect("post.creator", "user")
+      .orderBy("post.createdAt", "DESC")
       .getMany();
     return posts;
   }
@@ -37,6 +46,7 @@ export class PostResolver {
         },
       };
     }
+    const creator = await getRepository(User).findOne(payload.userId);
     const post = await getRepository(Post)
       .createQueryBuilder("post")
       .insert()
@@ -44,7 +54,7 @@ export class PostResolver {
       .values({
         title,
         body,
-        creatorId: payload.userId,
+        creator,
       })
       .returning("*")
       .execute();
