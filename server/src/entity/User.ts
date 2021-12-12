@@ -37,6 +37,6 @@ export class User {
   createdAt!: Date;
 
   @Field(() => [Post!])
-  @OneToMany(() => Post, (post) => post.creatorId)
+  @OneToMany(() => Post, (post) => post.creator)
   posts: Post[];
 }

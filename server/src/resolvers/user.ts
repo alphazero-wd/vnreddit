@@ -1,7 +1,6 @@
 import {
   ForgotPasswordResponse,
   LoginInput,
-  MeResponse,
   ResetPasswordInput,
   SignupInput,
   UserResponse,
@@ -9,9 +8,11 @@ import {
 import {
   Arg,
   Ctx,
+  FieldResolver,
   Mutation,
   Query,
   Resolver,
+  Root,
   UseMiddleware,
 } from "type-graphql";
 import { validateEmail, validatePassword } from "../utils/validate";
@@ -25,25 +26,23 @@ import { createRefreshToken } from "../utils/token";
 import { verify } from "jsonwebtoken";
 import { Post } from "../entity/Post";
 
-@Resolver()
+@Resolver(User)
 export class UserResolver {
+  @FieldResolver(() => [Post!])
+  posts(@Root() user: User): Promise<Post[]> {
+    return getRepository(Post).find({ where: { creatorId: user.id } });
+  }
+
   @UseMiddleware(auth)
-  @Query(() => MeResponse, { nullable: true })
-  async me(@Ctx() { payload }: MyContext): Promise<MeResponse | null> {
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() { payload }: MyContext): Promise<User | null> {
     const user = await getRepository(User).findOne({
       where: { id: payload.userId },
     });
     if (!user) {
       return null;
     }
-    const posts = await getRepository(Post)
-      .createQueryBuilder("post")
-      .leftJoinAndSelect("post.creatorId", "user")
-      .getMany();
-    return {
-      user,
-      posts,
-    };
+    return user;
   }
 
   @Mutation(() => UserResponse)
@@ -117,6 +116,7 @@ export class UserResolver {
       })
       .returning("*")
       .execute();
+
     return {
       user: newUser.raw[0],
     };
@@ -131,6 +131,7 @@ export class UserResolver {
         ? { username: usernameOrEmail }
         : { email: usernameOrEmail },
     });
+
     if (!user) {
       return {
         error: {
@@ -148,7 +149,6 @@ export class UserResolver {
         },
       };
     }
-
     return { user };
   }
 
