@@ -56,10 +56,10 @@ const Navbar: FC = () => {
           {!data?.me && (
             <>
               <button className="px-4 mr-3 rounded-full bg-blue-500 py-1 text-white font-bold hover:bg-blue-400">
-                <Link href="/user/signup">Sign up</Link>
+                <Link href="/u/signup">Sign up</Link>
               </button>
               <button className="px-4 mr-3 border rounded-full border-blue-500 py-1 font-bold hover:bg-blue-500 transition-all text-blue-500 hover:text-white">
-                <Link href="/user/login">Login</Link>
+                <Link href="/u/login">Login</Link>
               </button>
             </>
           )}

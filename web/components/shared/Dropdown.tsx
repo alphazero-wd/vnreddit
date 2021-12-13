@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FC, useEffect, useState } from "react";
+import { FC, MouseEvent, useEffect, useState } from "react";
 import avatar from "../../images/avatar.png";
 import { CgProfile } from "react-icons/cg";
 import { FiMoon } from "react-icons/fi";
@@ -30,7 +30,7 @@ const Dropdown: FC<Props> = ({ me, logout }) => {
   }, [theme]);
 
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative inline-block text-left dropdown">
       <div>
         <button
           type="button"
@@ -68,7 +68,7 @@ const Dropdown: FC<Props> = ({ me, logout }) => {
           <div className="py-1">
             {me && (
               <>
-                <Link href="/user/profile">
+                <Link href="/u/profile">
                   <a className="text-gray-700 dark:text-white w-full hover:bg-gray-200 dark:hover:bg-gray-600 flex font-semibold items-center px-4 py-2 text-sm">
                     <CgProfile className="mr-3 text-xl" />
                     Profile
@@ -115,7 +115,7 @@ const Dropdown: FC<Props> = ({ me, logout }) => {
                 Logout
               </button>
             ) : (
-              <Link href="/user/login" passHref>
+              <Link href="/u/login" passHref>
                 <a className="text-gray-700 dark:text-white w-full hover:bg-gray-400 dark:hover:bg-gray-600 font-semibold flex items-center px-4 py-2 text-sm">
                   <BiLogIn className="mr-3 text-xl" />
                   Login / Signup
