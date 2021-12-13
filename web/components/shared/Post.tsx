@@ -3,7 +3,7 @@ import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { BsChatSquare } from "react-icons/bs";
 import { useRouter } from "next/router";
 import moment from "moment";
-import MDEditor from "@uiw/react-md-editor";
+import ReactMarkdown from "react-markdown";
 
 interface Props {
   id: string;
@@ -48,7 +48,7 @@ const Post: FC<Props> = ({
           Posted by u/{username} {moment(createdAt).fromNow()}
         </small>
         <h2 className="mb-2 text-2xl font-bold">{title}</h2>
-        <MDEditor.Markdown source={body || ""} />
+        <ReactMarkdown>{body || ""}</ReactMarkdown>
         <button className="flex mt-3 justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-400">
           <BsChatSquare className="mr-2 text-xl" />
           <small>5.5k comments</small>
