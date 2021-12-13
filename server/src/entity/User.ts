@@ -4,8 +4,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Post } from "./Post";
 
 @ObjectType()
 @Entity()
@@ -33,4 +35,8 @@ export class User {
   @Field()
   @CreateDateColumn()
   createdAt!: Date;
+
+  @Field(() => [Post!])
+  @OneToMany(() => Post, (post) => post.creator)
+  posts: Post[];
 }

@@ -6,13 +6,22 @@ import AuthInput from "../../components/auth/AuthInput";
 import {
   MeDocument,
   MeQuery,
+  useMeQuery,
   useSignupMutation,
 } from "../../generated/graphql";
 import { AiOutlineLoading } from "react-icons/ai";
+import { useEffect } from "react";
 
 const Signup: NextPage = () => {
   const [signup, { loading }] = useSignupMutation();
+  const { data } = useMeQuery();
   const router = useRouter();
+
+  useEffect(() => {
+    if (data?.me) {
+      router.replace("/");
+    }
+  }, [data]);
 
   return (
     <div className="container w-full md:w-3/6">
@@ -45,7 +54,6 @@ const Signup: NextPage = () => {
           const error = response.data?.signup.error;
 
           if (user) {
-            router.push("/");
             localStorage.setItem("token", JSON.stringify(user.token));
           } else if (error && error.field) {
             setErrors({ [error.field]: error.message });
@@ -56,25 +64,25 @@ const Signup: NextPage = () => {
           <form className="mt-6 mb-3" onSubmit={handleSubmit}>
             <AuthInput
               name="username"
-              placeholder="Username"
+              label="Username"
               onChange={handleChange}
               errors={errors}
             />
             <AuthInput
-              placeholder="Email address"
+              label="Email address"
               onChange={handleChange}
               name="email"
               errors={errors}
             />
             <AuthInput
-              placeholder="Password"
+              label="Password"
               type="password"
               onChange={handleChange}
               name="password"
               errors={errors}
             />
             <AuthInput
-              placeholder="Confirm password"
+              label="Confirm password"
               type="password"
               onChange={handleChange}
               name="confirmPassword"

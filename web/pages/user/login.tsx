@@ -3,12 +3,25 @@ import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import AuthInput from "../../components/auth/AuthInput";
-import { MeDocument, MeQuery, useLoginMutation } from "../../generated/graphql";
+import {
+  MeDocument,
+  MeQuery,
+  useLoginMutation,
+  useMeQuery,
+} from "../../generated/graphql";
 import { AiOutlineLoading } from "react-icons/ai";
+import { useEffect } from "react";
 
 const Signup: NextPage = () => {
   const router = useRouter();
   const [login, { loading }] = useLoginMutation();
+  const { data } = useMeQuery();
+
+  useEffect(() => {
+    if (data?.me) {
+      router.replace("/");
+    }
+  }, [data]);
 
   return (
     <div className="container w-full md:w-3/6">
@@ -38,7 +51,6 @@ const Signup: NextPage = () => {
           const error = response.data?.login.error;
           const user = response.data?.login.user;
           if (user) {
-            router.push("/");
             localStorage.setItem("token", JSON.stringify(user.token));
           } else if (error && error.field) {
             setErrors({ [error.field]: error.message });
@@ -51,15 +63,20 @@ const Signup: NextPage = () => {
               onChange={handleChange}
               name="usernameOrEmail"
               errors={errors}
-              placeholder="Username or email"
+              label="Username or email"
             />
             <AuthInput
               onChange={handleChange}
               name="password"
               errors={errors}
-              placeholder="Password"
+              label="Password"
               type="password"
             />
+            <Link href="/user/forgot-password">
+              <a className="text-blue-500 mb-3 block hover:text-blue-300">
+                Forgot password?
+              </a>
+            </Link>
             <button
               disabled={loading}
               type="submit"

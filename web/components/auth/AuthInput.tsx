@@ -1,29 +1,26 @@
 import { ErrorMessage, FormikErrors } from "formik";
 import { ChangeEvent, FC } from "react";
 import { MdOutlineError } from "react-icons/md";
+import {
+  CreatePostInput,
+  LoginInput,
+  SignupInput,
+} from "../../generated/graphql";
 
 interface Props {
-  placeholder: string;
+  label: string;
   type?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   name: string;
-  errors: FormikErrors<{
-    username: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-  }>;
+  errors: FormikErrors<LoginInput | SignupInput | CreatePostInput>;
 }
 
-const AuthInput: FC<Props> = ({
-  errors,
-  name,
-  placeholder,
-  type,
-  onChange,
-}) => {
+const AuthInput: FC<Props> = ({ errors, name, label, type, onChange }) => {
   return (
     <div className="mb-3">
+      <label className="mb-3 dark:text-white font-semibold block">
+        {label}:
+      </label>
       <input
         type={type || "text"}
         className={`border py-2 px-3 w-full focus:outline-none  ${
@@ -31,9 +28,9 @@ const AuthInput: FC<Props> = ({
             ? "border-red-600 focus:ring-red-600"
             : "border-gray-200 focus:right-blue-500"
         } shadow-sm mb-1 focus:ring-2 focus:border-transparent rounded-md `}
-        placeholder={placeholder}
         onChange={onChange}
         name={name}
+        placeholder={`Enter your ${label.toLowerCase()} here`}
       />
       {Object.keys(errors).indexOf(name) !== -1 && (
         <div className="flex items-center text-red-600">

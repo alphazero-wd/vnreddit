@@ -3,8 +3,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -24,4 +26,11 @@ export class Post {
   @Field()
   @CreateDateColumn()
   createdAt!: Date;
+
+  @Column()
+  creatorId!: number;
+
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
+  creator: User;
 }

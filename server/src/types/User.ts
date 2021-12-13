@@ -26,10 +26,31 @@ export class LoginInput {
   password!: string;
 }
 
+@InputType()
+export class ResetPasswordInput {
+  @Field()
+  token: string;
+
+  @Field()
+  password: string;
+
+  @Field()
+  confirmPassword: string;
+}
+
 @ObjectType()
 export class UserResponse {
   @Field({ nullable: true })
   user?: User;
+
+  @Field({ nullable: true })
+  error?: ErrorResponse;
+}
+
+@ObjectType()
+export class ForgotPasswordResponse {
+  @Field({ nullable: true })
+  successMessage?: string;
 
   @Field({ nullable: true })
   error?: ErrorResponse;

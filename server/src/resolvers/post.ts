@@ -1,21 +1,78 @@
 import { Post } from "../entity/Post";
-import { Arg, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  FieldResolver,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
+  Root,
+  UseMiddleware,
+} from "type-graphql";
 import { getRepository } from "typeorm";
-import { CreatePostInput, EditPostInput, PostResponse } from "../types/Post";
+import {
+  CreatePostInput,
+  EditPostInput,
+  PaginatedPosts,
+  PostResponse,
+} from "../types/Post";
 import { auth } from "../middleware/auth";
+import { MyContext } from "../types/MyContext";
+import { User } from "../entity/User";
 
-@Resolver()
+@Resolver(Post)
 export class PostResolver {
-  @Query(() => [Post])
-  async posts(): Promise<Post[]> {
-    const posts = await getRepository(Post).find({});
-    return posts;
+  @FieldResolver(() => User, { nullable: true })
+  creator(@Root() post: Post): Promise<User | void> {
+    return getRepository(User).findOne(post.creatorId);
+  }
+
+  @Query(() => PaginatedPosts)
+  async posts(
+    @Arg("limit", () => Int!) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+  ): Promise<PaginatedPosts> {
+    // if the user fetches more than 15, only set limit to 15
+    const requestLimit = Math.min(15, limit);
+    const extraRequestLimit = requestLimit + 1;
+
+    // take an extra post to check if more posts can be fetched
+    const queryBuilder = getRepository(Post)
+      .createQueryBuilder("post")
+      .innerJoinAndSelect("post.creator", "user")
+      .orderBy("post.createdAt", "DESC")
+      .take(extraRequestLimit);
+
+    // fetch posts whose createdAt < createdAt of the oldest post in a single request
+    if (cursor) {
+      queryBuilder.where("post.createdAt < :cursor", {
+        cursor: new Date(cursor),
+      });
+    }
+
+    const posts = await queryBuilder.getMany();
+    return {
+      // return the posts based on the given limit (not plus 1)
+      posts: posts.slice(0, requestLimit),
+      hasMore: posts.length === extraRequestLimit,
+    };
+  }
+
+  @Query(() => Post, { nullable: true })
+  async post(@Arg("id") id: string): Promise<Post | void> {
+    const post = await getRepository(Post).findOne(parseInt(id));
+    if (!post) {
+      throw new Error("Post does not exist.");
+    }
+    return post;
   }
 
   @UseMiddleware(auth)
   @Mutation(() => PostResponse)
   async createPost(
-    @Arg("post") { title, body }: CreatePostInput
+    @Arg("post") { title, body }: CreatePostInput,
+    @Ctx() { payload }: MyContext
   ): Promise<PostResponse> {
     if (!title) {
       return {
@@ -32,6 +89,7 @@ export class PostResolver {
       .values({
         title,
         body,
+        creatorId: payload.userId,
       })
       .returning("*")
       .execute();

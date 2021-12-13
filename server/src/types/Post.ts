@@ -24,6 +24,15 @@ export class EditPostInput {
 }
 
 @ObjectType()
+export class PaginatedPosts {
+  @Field(() => [Post!]!)
+  posts: Post[];
+
+  @Field(() => Boolean)
+  hasMore: boolean;
+}
+
+@ObjectType()
 export class PostResponse {
   @Field({ nullable: true })
   post?: Post;
