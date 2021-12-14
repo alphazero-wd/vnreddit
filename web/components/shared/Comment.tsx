@@ -15,7 +15,7 @@ const Comment: FC = () => {
         </div>
         <small>
           <a className="font-bold">
-            <Link href="/user/alphazero">alphazero</Link>
+            <Link href="/u/alphazero">alphazero</Link>
           </a>{" "}
           <span className="text-gray-600">8 hr. ago</span>
         </small>

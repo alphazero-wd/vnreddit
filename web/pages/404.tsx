@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const ErrorPage: NextPage = () => {
   return (
-    <div className="container pt-8 text-center">
+    <div className="container pt-8 text-center dark:text-white">
       <h2 className="font-bold text-4xl mb-3">Oops, Page does not exist :(</h2>
       <p className="mb-6 mt-3 text-lg">
         Sorry, we could not find what you are looking for.

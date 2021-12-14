@@ -104,7 +104,7 @@ const Signup: NextPage = () => {
       <div className="text-center dark:text-white ">
         Already have an account?{" "}
         <a className="text-blue-500 hover:text-blue-400 transition-colors">
-          <Link href="/user/login">Login</Link>
+          <Link href="/u/login">Login</Link>
         </a>
       </div>
     </div>

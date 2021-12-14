@@ -1,24 +1,11 @@
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
-import dynamic from "next/dynamic";
 import { NextPage } from "next";
 import { Formik } from "formik";
-// import AuthInput from "../../components/auth/AuthInput";
 import { useCreatePostMutation, useMeQuery } from "../../generated/graphql";
 import { useRouter } from "next/router";
 import AuthInput from "../../components/auth/AuthInput";
 import { AiOutlineLoading } from "react-icons/ai";
 import { useEffect } from "react";
-
-interface MDEditorProps {
-  onChange: (value: string) => void;
-  value: string;
-}
-
-const MDEditor = dynamic<MDEditorProps>(
-  () => import("@uiw/react-md-editor").then((mod) => mod.default) as any,
-  { ssr: false }
-);
+import { MDEditor } from "../../utils/MDEditor";
 
 const CreatePost: NextPage = () => {
   const [createPost, { loading }] = useCreatePostMutation();
@@ -27,7 +14,7 @@ const CreatePost: NextPage = () => {
 
   useEffect(() => {
     if (!data?.me) {
-      router.replace("/user/login");
+      router.replace("/u/login");
     }
   }, [data]);
 
@@ -39,13 +26,15 @@ const CreatePost: NextPage = () => {
       <Formik
         initialValues={{ title: "", body: "" }}
         onSubmit={async ({ title, body }, { setErrors }) => {
-          console.log(title, body);
           const { data } = await createPost({
             variables: {
               post: {
                 title,
                 body,
               },
+            },
+            update: (cache) => {
+              cache.evict({ fieldName: "posts" });
             },
           });
           const error = data?.createPost.error;
@@ -56,17 +45,17 @@ const CreatePost: NextPage = () => {
           if (error) {
             setErrors({ [error.field as string]: error.message });
           }
+          return data;
         }}
       >
-        {({ values, setValues, errors, handleSubmit }) => (
+        {({ setValues, errors, handleSubmit, values }) => (
           <form onSubmit={handleSubmit}>
             <AuthInput
               name="title"
-              label="Title"
               onChange={(e) => setValues({ ...values, title: e.target.value })}
+              label="Title"
               errors={errors}
             />
-
             <div>
               <label
                 htmlFor="body"
@@ -75,10 +64,10 @@ const CreatePost: NextPage = () => {
                 Body:{" "}
               </label>
               <MDEditor
+                value={values.body}
                 onChange={(value) =>
                   setValues({ ...values, body: value || "" })
                 }
-                value={values.body}
               />
             </div>
             <div className="flex justify-center items-center mt-3">

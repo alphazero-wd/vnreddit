@@ -3,10 +3,10 @@ import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { BsChatSquare } from "react-icons/bs";
 import Comment from "../../components/shared/Comment";
 import Link from "next/link";
-import { usePostQuery } from "../../generated/graphql";
+import { PostsDocument, usePostQuery } from "../../generated/graphql";
 import { useRouter } from "next/router";
 import moment from "moment";
-import MDEditor from "@uiw/react-md-editor";
+import ReactMarkdown from "react-markdown";
 
 const PostPage: NextPage = () => {
   const router = useRouter();
@@ -36,7 +36,7 @@ const PostPage: NextPage = () => {
           <div className="flex-grow p-3 bg-white dark:bg-gray-900">
             <small className="text-gray-600">
               Posted by{" "}
-              <Link href="/user/alphazero">
+              <Link href="/u/alphazero">
                 <a className="hover:underline">
                   u/{data?.post?.creator.username}
                 </a>
@@ -44,7 +44,7 @@ const PostPage: NextPage = () => {
               {moment(data?.post?.createdAt).fromNow()}
             </small>
             <h2 className="mb-2 text-2xl font-bold">{data?.post?.title}</h2>
-            <MDEditor.Markdown source={data?.post?.body || ""} />
+            <ReactMarkdown>{data?.post?.body || ""}</ReactMarkdown>
             <div className="flex items-center mt-4 text-gray-600 font-semibold">
               <BsChatSquare className="mr-2 text-xl" />
               <small>5.5k comments</small>
