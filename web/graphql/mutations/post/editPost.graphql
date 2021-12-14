@@ -1,0 +1,11 @@
+mutation EditPost($post: EditPostInput!) {
+  editPost(post: $post) {
+    post {
+      ...PostResponseFragment
+    }
+    error {
+      field
+      message
+    }
+  }
+}

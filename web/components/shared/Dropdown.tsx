@@ -31,7 +31,7 @@ const Dropdown: FC<Props> = ({ me, logout }) => {
   }, [theme]);
 
   return (
-    <div className="relative inline-block text-left dropdown">
+    <div className="relative inline-block text-left">
       <div>
         <button
           type="button"
@@ -60,7 +60,7 @@ const Dropdown: FC<Props> = ({ me, logout }) => {
       </div>
       {dropdown && (
         <div
-          className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none border-gray-600 dark:bg-gray-900 dark:text-white"
+          className="dropdown origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none border-gray-600 dark:bg-gray-900 dark:text-white"
           role="menu"
         >
           <div className="py-1">
