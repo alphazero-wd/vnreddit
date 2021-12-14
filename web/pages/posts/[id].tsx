@@ -1,5 +1,4 @@
 import { NextPage } from "next";
-import { FaChevronUp, FaChevronDown, FaEdit, FaTrash } from "react-icons/fa";
 import { BsChatSquare } from "react-icons/bs";
 import Comment from "../../components/shared/Comment";
 import Link from "next/link";
@@ -12,6 +11,7 @@ import { useRouter } from "next/router";
 import moment from "moment";
 import ReactMarkdown from "react-markdown";
 import EditDeleteBtn from "../../components/post/EditDeleteBtn";
+import VoteBtn from "../../components/post/VoteBtn";
 
 const PostPage: NextPage = () => {
   const router = useRouter();
@@ -25,21 +25,20 @@ const PostPage: NextPage = () => {
     },
   });
 
+  const vote = data?.post?.votes.find(vote => vote.postId === data.post?.id);
+
   return (
     <div className="container w-full md:w-2/3">
       <div className="bg-white dark:bg-gray-900 dark:text-white">
         <div
           className={`flex mb-3 rounded-md ${loading ? "animate-pulse" : ""}`}
         >
-          <div className="flex flex-col bg-gray-100 dark:bg-gray-900 items-center p-3 z-50">
-            <button className="border-none mb-3 text-gray-600 hover:text-red-700 hover:bg-gray-200 rounded-sm p-2 text-3xl">
-              <FaChevronUp />
-            </button>
-            <span className="font-semibold text-md">11.4k</span>
-            <button className="hover:text-blue-600 mt-3 text-gray-600 border-none hover:bg-gray-200 rounded-sm p-2 text-3xl vote">
-              <FaChevronDown />
-            </button>
-          </div>
+          <VoteBtn
+            totalVotes={data?.post?.totalVotes || 0}
+            me={user?.me}
+            point={vote?.point}
+            userId={parseInt(vote?.userId || "")}
+          />
           <div className="flex-grow p-3 bg-white dark:bg-gray-900">
             <small className="text-gray-600">
               Posted by{" "}

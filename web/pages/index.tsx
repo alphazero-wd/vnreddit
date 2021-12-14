@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { AiOutlineLoading } from "react-icons/ai";
-import Post from "../components/shared/Post";
+import Post from "../components/post/Post";
 import { usePostsQuery } from "../generated/graphql";
 
 const Home: NextPage = () => {
@@ -14,7 +14,7 @@ const Home: NextPage = () => {
 
   return (
     <div className="md:container w-full lg:w-4/5">
-      {data?.posts.posts.map((post) => (
+      {data?.posts.posts.map(post => (
         <Post loading={loading} key={post.id} {...post} />
       ))}
       {data?.posts.hasMore && (

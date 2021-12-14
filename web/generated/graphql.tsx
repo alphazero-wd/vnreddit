@@ -56,6 +56,7 @@ export type Mutation = {
   login: UserResponse;
   resetPassword: UserResponse;
   signup: UserResponse;
+  vote: Scalars['Boolean'];
 };
 
 
@@ -93,6 +94,12 @@ export type MutationSignupArgs = {
   user: SignupInput;
 };
 
+
+export type MutationVoteArgs = {
+  point: Scalars['Int'];
+  postId: Scalars['String'];
+};
+
 export type PaginatedPosts = {
   __typename?: 'PaginatedPosts';
   hasMore: Scalars['Boolean'];
@@ -106,6 +113,8 @@ export type Post = {
   creator: User;
   id: Scalars['ID'];
   title: Scalars['String'];
+  totalVotes: Scalars['Int'];
+  votes: Array<Vote>;
 };
 
 export type PostResponse = {
@@ -153,6 +162,7 @@ export type User = {
   posts: Array<Post>;
   token: Scalars['String'];
   username: Scalars['String'];
+  votes: Array<Vote>;
 };
 
 export type UserResponse = {
@@ -161,9 +171,17 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
+export type Vote = {
+  __typename?: 'Vote';
+  point: Scalars['Int'];
+  postId: Scalars['ID'];
+  userId: Scalars['ID'];
+  voteStatus: Scalars['String'];
+};
+
 export type PostFragmentFragment = { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any };
 
-export type PostResponseFragmentFragment = { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string } };
+export type PostResponseFragmentFragment = { __typename?: 'Post', totalVotes: number, id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', postId: string, userId: string, point: number, voteStatus: string }> };
 
 export type UserFragmentFragment = { __typename?: 'User', id: string, username: string, email: string, createdAt: any };
 
@@ -174,7 +192,7 @@ export type CreatePostMutationVariables = Exact<{
 }>;
 
 
-export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string } } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', totalVotes: number, id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', postId: string, userId: string, point: number, voteStatus: string }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type DeletePostMutationVariables = Exact<{
   postId: Scalars['String'];
@@ -188,7 +206,7 @@ export type EditPostMutationVariables = Exact<{
 }>;
 
 
-export type EditPostMutation = { __typename?: 'Mutation', editPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string } } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type EditPostMutation = { __typename?: 'Mutation', editPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', totalVotes: number, id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', postId: string, userId: string, point: number, voteStatus: string }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -223,7 +241,7 @@ export type PostQueryVariables = Exact<{
 }>;
 
 
-export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string } } | null | undefined };
+export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', totalVotes: number, id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', postId: string, userId: string, point: number, voteStatus: string }> } | null | undefined };
 
 export type PostsQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -231,7 +249,7 @@ export type PostsQueryVariables = Exact<{
 }>;
 
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string } }> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', totalVotes: number, id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', postId: string, userId: string, point: number, voteStatus: string }> }> } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -326,6 +344,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   User: ResolverTypeWrapper<User>;
   UserResponse: ResolverTypeWrapper<UserResponse>;
+  Vote: ResolverTypeWrapper<Vote>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -349,6 +368,7 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   User: User;
   UserResponse: UserResponse;
+  Vote: Vote;
 };
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
@@ -375,6 +395,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   login?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'user'>>;
   resetPassword?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'payload'>>;
   signup?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'user'>>;
+  vote?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVoteArgs, 'point' | 'postId'>>;
 };
 
 export type PaginatedPostsResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginatedPosts'] = ResolversParentTypes['PaginatedPosts']> = {
@@ -389,6 +410,8 @@ export type PostResolvers<ContextType = any, ParentType extends ResolversParentT
   creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  totalVotes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  votes?: Resolver<Array<ResolversTypes['Vote']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -411,12 +434,21 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   posts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType>;
   token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  votes?: Resolver<Array<ResolversTypes['Vote']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserResponse'] = ResolversParentTypes['UserResponse']> = {
   error?: Resolver<Maybe<ResolversTypes['ErrorResponse']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type VoteResolvers<ContextType = any, ParentType extends ResolversParentTypes['Vote'] = ResolversParentTypes['Vote']> = {
+  point?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  postId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  voteStatus?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -431,6 +463,7 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserResponse?: UserResponseResolvers<ContextType>;
+  Vote?: VoteResolvers<ContextType>;
 };
 
 
@@ -449,6 +482,13 @@ export const PostResponseFragmentFragmentDoc = gql`
     id
     username
   }
+  votes {
+    postId
+    userId
+    point
+    voteStatus
+  }
+  totalVotes
 }
     ${PostFragmentFragmentDoc}`;
 export const UserFragmentFragmentDoc = gql`
