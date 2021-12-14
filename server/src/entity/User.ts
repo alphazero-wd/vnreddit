@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Post } from "./Post";
+import { Vote } from "./Vote";
 
 @ObjectType()
 @Entity()
@@ -36,7 +37,11 @@ export class User {
   @CreateDateColumn()
   createdAt!: Date;
 
-  @Field(() => [Post!])
-  @OneToMany(() => Post, (post) => post.creator)
+  @Field(() => [Post!]!)
+  @OneToMany(() => Post, post => post.creator)
   posts: Post[];
+
+  @Field(() => [Vote!]!)
+  @OneToMany(() => Vote, vote => vote.user)
+  votes: Vote[];
 }

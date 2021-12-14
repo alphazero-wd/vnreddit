@@ -4,9 +4,11 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "./User";
+import { Vote } from "./Vote";
 
 @ObjectType()
 @Entity()
@@ -30,7 +32,11 @@ export class Post {
   @Column()
   creatorId!: number;
 
-  @Field(() => User)
-  @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
+  @Field(() => User!)
+  @ManyToOne(() => User, user => user.posts, { onDelete: "CASCADE" })
   creator: User;
+
+  @Field(() => [Vote!]!)
+  @OneToMany(() => Vote, vote => vote, { onDelete: "CASCADE" })
+  votes: Vote[];
 }

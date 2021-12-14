@@ -1,9 +1,10 @@
 import { FC } from "react";
-import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { BsChatSquare } from "react-icons/bs";
 import { useRouter } from "next/router";
 import moment from "moment";
 import ReactMarkdown from "react-markdown";
+import { useMeQuery, Vote } from "../../generated/graphql";
+import VoteBtn from "./VoteBtn";
 
 interface Props {
   id: string;
@@ -15,6 +16,8 @@ interface Props {
     username: string;
   };
   loading?: boolean;
+  votes: Vote[];
+  totalVotes: number;
 }
 
 const Post: FC<Props> = ({
@@ -24,8 +27,12 @@ const Post: FC<Props> = ({
   body,
   createdAt,
   creator: { username },
+  votes,
+  totalVotes,
 }) => {
   const router = useRouter();
+  const { data } = useMeQuery();
+  const vote = votes.find(vote => vote.postId === id);
 
   return (
     <div
@@ -33,15 +40,12 @@ const Post: FC<Props> = ({
         loading ? "animate-pulse" : ""
       } bg-white flex  mb-3 rounded-md `}
     >
-      <div className="flex flex-col bg-gray-100 dark:bg-gray-900 items-center p-3">
-        <button className="border-none vote-btn mb-3 text-gray-700 hover:text-red-600 hover:bg-gray-200 dark:text-gray-500 dark:hover:text-red-600 rounded-sm p-2 text-3xl">
-          <FaChevronUp />
-        </button>
-        <span className="font-semibold text-md dark:text-white">11.4k</span>
-        <button className=" hover:text-blue-600 mt-3 text-gray-700 dark:text-gray-500 dark:hover:text-blue-600 border-none hover:bg-gray-200  rounded-sm p-2 text-3xl">
-          <FaChevronDown />
-        </button>
-      </div>
+      <VoteBtn
+        me={data?.me}
+        point={vote?.point}
+        totalVotes={totalVotes}
+        userId={parseInt(vote?.userId || "")}
+      />
       <div
         className="cursor-pointer flex-grow p-3 dark:text-white dark:bg-gray-800"
         onClick={() => router.push(`/posts/${id}`)}
