@@ -38,7 +38,7 @@ const Navbar: FC = () => {
       <div className="flex justify-between items-center container">
         <Link href="/">
           <div className="flex cursor-pointer justify-center items-center">
-            <Image src={logo} alt="Vnreddit" />
+            <Image src={logo} alt="VnReddit" />
             <div className="ml-2 text-xl font-bold dark:text-white">
               VnReddit
             </div>

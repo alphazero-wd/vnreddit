@@ -1,16 +1,23 @@
 import { NextPage } from "next";
-import { FaChevronUp, FaChevronDown } from "react-icons/fa";
+import { FaChevronUp, FaChevronDown, FaEdit, FaTrash } from "react-icons/fa";
 import { BsChatSquare } from "react-icons/bs";
 import Comment from "../../components/shared/Comment";
 import Link from "next/link";
-import { PostsDocument, usePostQuery } from "../../generated/graphql";
+import {
+  useDeletePostMutation,
+  useMeQuery,
+  usePostQuery,
+} from "../../generated/graphql";
 import { useRouter } from "next/router";
 import moment from "moment";
 import ReactMarkdown from "react-markdown";
+import EditDeleteBtn from "../../components/post/EditDeleteBtn";
 
 const PostPage: NextPage = () => {
   const router = useRouter();
+  const [deletePost] = useDeletePostMutation();
   const { id } = router.query;
+  const { data: user } = useMeQuery();
 
   const { data, loading } = usePostQuery({
     variables: {
@@ -45,9 +52,14 @@ const PostPage: NextPage = () => {
             </small>
             <h2 className="mb-2 text-2xl font-bold">{data?.post?.title}</h2>
             <ReactMarkdown>{data?.post?.body || ""}</ReactMarkdown>
-            <div className="flex items-center mt-4 text-gray-600 font-semibold">
-              <BsChatSquare className="mr-2 text-xl" />
-              <small>5.5k comments</small>
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex items-center text-gray-600 font-semibold">
+                <BsChatSquare className="mr-2 text-xl" />
+                <small>5.5k comments</small>
+              </div>
+              {data?.post?.creator.id === user?.me?.id && (
+                <EditDeleteBtn id={id as string} deletePost={deletePost} />
+              )}
             </div>
           </div>
         </div>

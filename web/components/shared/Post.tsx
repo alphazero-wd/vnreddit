@@ -29,10 +29,9 @@ const Post: FC<Props> = ({
 
   return (
     <div
-      onClick={() => router.push(`/posts/${id}`)}
       className={`${
         loading ? "animate-pulse" : ""
-      } cursor-pointer bg-white flex  mb-3 rounded-md `}
+      } bg-white flex  mb-3 rounded-md `}
     >
       <div className="flex flex-col bg-gray-100 dark:bg-gray-900 items-center p-3">
         <button className="border-none vote-btn mb-3 text-gray-700 hover:text-red-600 hover:bg-gray-200 dark:text-gray-500 dark:hover:text-red-600 rounded-sm p-2 text-3xl">
@@ -43,7 +42,10 @@ const Post: FC<Props> = ({
           <FaChevronDown />
         </button>
       </div>
-      <div className="flex-grow p-3 dark:text-white dark:bg-gray-800">
+      <div
+        className="cursor-pointer flex-grow p-3 dark:text-white dark:bg-gray-800"
+        onClick={() => router.push(`/posts/${id}`)}
+      >
         <small className="text-gray-600">
           Posted by u/{username} {moment(createdAt).fromNow()}
         </small>

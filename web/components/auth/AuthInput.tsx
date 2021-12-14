@@ -13,9 +13,17 @@ interface Props {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   name: string;
   errors: FormikErrors<LoginInput | SignupInput | CreatePostInput>;
+  value?: string;
 }
 
-const AuthInput: FC<Props> = ({ errors, name, label, type, onChange }) => {
+const AuthInput: FC<Props> = ({
+  value,
+  errors,
+  name,
+  label,
+  type,
+  onChange,
+}) => {
   return (
     <div className="mb-3">
       <label className="mb-3 dark:text-white font-semibold block">
@@ -31,11 +39,12 @@ const AuthInput: FC<Props> = ({ errors, name, label, type, onChange }) => {
         onChange={onChange}
         name={name}
         placeholder={`Enter your ${label.toLowerCase()} here`}
+        value={value}
       />
       {Object.keys(errors).indexOf(name) !== -1 && (
         <div className="flex items-center text-red-600">
           <MdOutlineError className="mr-2" />
-          <ErrorMessage name={name}>{(msg) => <div>{msg}</div>}</ErrorMessage>
+          <ErrorMessage name={name}>{msg => <div>{msg}</div>}</ErrorMessage>
         </div>
       )}
     </div>
