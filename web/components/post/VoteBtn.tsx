@@ -3,7 +3,7 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 interface Props {
   point?: number;
-  userId?: number;
+  userId?: string;
   me?:
     | {
         __typename?: "User" | undefined;

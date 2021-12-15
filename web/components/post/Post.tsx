@@ -32,7 +32,7 @@ const Post: FC<Props> = ({
 }) => {
   const router = useRouter();
   const { data } = useMeQuery();
-  const vote = votes.find(vote => vote.postId === id);
+  const vote = votes.find((vote) => vote.postId === id);
 
   return (
     <div
@@ -44,7 +44,7 @@ const Post: FC<Props> = ({
         me={data?.me}
         point={vote?.point}
         totalVotes={totalVotes}
-        userId={parseInt(vote?.userId || "")}
+        userId={vote?.userId}
       />
       <div
         className="cursor-pointer flex-grow p-3 dark:text-white dark:bg-gray-800"

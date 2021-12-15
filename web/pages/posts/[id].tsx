@@ -25,7 +25,7 @@ const PostPage: NextPage = () => {
     },
   });
 
-  const vote = data?.post?.votes.find(vote => vote.postId === data.post?.id);
+  const vote = data?.post?.votes.find((vote) => vote.postId === data.post?.id);
 
   return (
     <div className="container w-full md:w-2/3">
@@ -37,7 +37,7 @@ const PostPage: NextPage = () => {
             totalVotes={data?.post?.totalVotes || 0}
             me={user?.me}
             point={vote?.point}
-            userId={parseInt(vote?.userId || "")}
+            userId={vote?.userId}
           />
           <div className="flex-grow p-3 bg-white dark:bg-gray-900">
             <small className="text-gray-600">
