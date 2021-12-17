@@ -15,7 +15,7 @@ const Home: NextPage = () => {
   return (
     <div className="md:container w-full lg:w-4/5">
       {data?.posts.posts.map(post => (
-        <Post loading={loading} key={post.id} {...post} />
+        <Post loading={loading} key={post.id} post={post} />
       ))}
       {data?.posts.hasMore && (
         <div className="text-center flex justify-center items-center mt-3">

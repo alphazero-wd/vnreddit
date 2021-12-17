@@ -15,16 +15,12 @@ export class Vote {
   postId: number;
 
   @Field(() => Int!)
-  @Column({ enum: [-1, 0, 1], default: 0, type: "int" })
-  point: -1 | 0 | 1;
+  @Column({ enum: [-1, 1], type: "int" })
+  point: -1 | 1;
 
-  @Field()
-  @Column({ enum: ["up", "down"] })
-  voteStatus: "up" | "down";
-
-  @ManyToOne(() => Post, post => post.votes)
+  @ManyToOne(() => Post, post => post.votes, { onDelete: "CASCADE" })
   post: Post;
 
-  @ManyToOne(() => User, user => user.votes)
+  @ManyToOne(() => User, user => user.votes, { onDelete: "CASCADE" })
   user: User;
 }

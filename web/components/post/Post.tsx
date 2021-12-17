@@ -3,58 +3,42 @@ import { BsChatSquare } from "react-icons/bs";
 import { useRouter } from "next/router";
 import moment from "moment";
 import ReactMarkdown from "react-markdown";
-import { useMeQuery, Vote } from "../../generated/graphql";
 import VoteBtn from "./VoteBtn";
 
 interface Props {
-  id: string;
-  title: string;
-  body?: string | null;
-  createdAt: any;
-  creator: {
-    id?: string;
-    username: string;
+  post: {
+    id: string;
+    title: string;
+    body?: string | null;
+    createdAt: any;
+    creator: {
+      id?: string;
+      username: string;
+    };
+    points: number;
   };
   loading?: boolean;
-  votes: Vote[];
-  totalVotes: number;
 }
 
-const Post: FC<Props> = ({
-  id,
-  loading,
-  title,
-  body,
-  createdAt,
-  creator: { username },
-  votes,
-  totalVotes,
-}) => {
+const Post: FC<Props> = ({ post, loading }) => {
   const router = useRouter();
-  const { data } = useMeQuery();
-  const vote = votes.find(vote => vote.postId === id);
 
   return (
     <div
       className={`${
         loading ? "animate-pulse" : ""
-      } bg-white flex  mb-3 rounded-md `}
+      } bg-white flex mb-3 rounded-md `}
     >
-      <VoteBtn
-        me={data?.me}
-        point={vote?.point}
-        totalVotes={totalVotes}
-        userId={parseInt(vote?.userId || "")}
-      />
+      <VoteBtn post={post} />
       <div
         className="cursor-pointer flex-grow p-3 dark:text-white dark:bg-gray-800"
-        onClick={() => router.push(`/posts/${id}`)}
+        onClick={() => router.push(`/posts/${post.id}`)}
       >
         <small className="text-gray-600">
-          Posted by u/{username} {moment(createdAt).fromNow()}
+          Posted by u/{post.creator.username} {moment(post.createdAt).fromNow()}
         </small>
-        <h2 className="mb-2 text-2xl font-bold">{title}</h2>
-        <ReactMarkdown>{body || ""}</ReactMarkdown>
+        <h2 className="mb-2 text-2xl font-bold">{post.title}</h2>
+        <ReactMarkdown>{post.body || ""}</ReactMarkdown>
         <button className="flex mt-3 justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-400">
           <BsChatSquare className="mr-2 text-xl" />
           <small>5.5k comments</small>

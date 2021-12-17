@@ -25,6 +25,7 @@ import { sendEmail } from "../utils/sendEmail";
 import { createRefreshToken } from "../utils/token";
 import { verify } from "jsonwebtoken";
 import { Post } from "../entity/Post";
+import { Vote } from "../entity/Vote";
 
 @Resolver(User)
 export class UserResolver {
@@ -43,6 +44,14 @@ export class UserResolver {
       return null;
     }
     return user;
+  }
+
+  @FieldResolver(() => [Vote!]!)
+  async votes(@Root() { id }: User): Promise<Vote[]> {
+    const userVotes = await getRepository(Vote).find({
+      where: { userId: id },
+    });
+    return userVotes;
   }
 
   @Mutation(() => UserResponse)

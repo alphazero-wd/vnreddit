@@ -1,6 +1,11 @@
-fragment PostFragment on Post {
+fragment Post on Post {
   id
   title
   body
   createdAt
+  creator {
+    id
+    username
+  }
+  points
 }
