@@ -34,16 +34,11 @@ const VoteBtn: FC<Props> = ({ post }) => {
   const router = useRouter();
 
   const updateVote = (cache: ApolloCache<VoteMutation>, point: -1 | 0 | 1) => {
-    let votes: PostVoteFragment["votes"] = [];
-    const result = cache.readFragment<PostVoteFragment>({
-      fragment: PostVoteFragmentDoc,
-      id: "Post:" + post.id,
-    });
-    console.log("result: ", result);
+    let votes: PostVoteFragment["votes"] = [...post.votes];
 
     if ((point === -1 || point === 1) && userVote) {
       votes =
-        result?.votes.map((vote) =>
+        post.votes.map((vote) =>
           vote.userId === data?.me?.id
             ? {
                 ...vote,
@@ -55,28 +50,31 @@ const VoteBtn: FC<Props> = ({ post }) => {
       votes = [
         ...votes,
         {
+          __typename: "Vote",
           point,
           userId: data?.me?.id || "",
         },
       ];
     } else if (point === 0) {
-      votes = votes.filter((vote) => vote.userId !== data?.me?.id);
+      votes = post.votes.filter((vote) => vote.userId !== data?.me?.id);
     }
+    const points = votes.reduce(
+      (point, { point: totalPoint }) => totalPoint + point * 2,
+      0
+    );
 
-    if (result) {
-      cache.writeFragment<PostVoteFragment>({
-        fragment: PostVoteFragmentDoc,
-        data: {
-          id: post.id,
-          __typename: "Post",
-          points: votes.reduce(
-            (point, { point: totalPoint }) => totalPoint + point * 2,
-            0
-          ),
-          votes,
-        },
-      });
-    }
+    console.log("votes: ", votes);
+    console.log("points: ", points);
+
+    cache.writeFragment<PostVoteFragment>({
+      fragment: PostVoteFragmentDoc,
+      data: {
+        id: post.id,
+        __typename: "Post",
+        points,
+        votes,
+      },
+    });
   };
 
   const [vote, { loading }] = useVoteMutation();
