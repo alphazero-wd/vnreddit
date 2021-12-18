@@ -8,4 +8,8 @@ fragment Post on Post {
     username
   }
   points
+  votes {
+    userId
+    point
+  }
 }

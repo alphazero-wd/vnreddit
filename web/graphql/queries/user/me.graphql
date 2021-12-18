@@ -4,9 +4,5 @@ query Me {
     posts {
       ...Post
     }
-    votes {
-      postId
-      point
-    }
   }
 }

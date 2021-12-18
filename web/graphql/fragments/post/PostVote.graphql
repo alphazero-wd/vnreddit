@@ -1,7 +1,7 @@
-fragment Vote on Post {
+fragment PostVote on Post {
+  id
   points
   votes {
-    postId
     userId
     point
   }

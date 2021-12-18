@@ -1,12 +1,13 @@
-import { ApolloCache } from "@apollo/client";
-import { FC, useEffect, useState } from "react";
+import { ApolloCache, gql } from "@apollo/client";
+import { useRouter } from "next/router";
+import { FC } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import {
+  PostVoteFragment,
+  PostVoteFragmentDoc,
   useMeQuery,
   useVoteMutation,
   VoteMutation,
-  VoteFragment,
-  VoteFragmentDoc,
 } from "../../generated/graphql";
 
 interface Props {
@@ -19,42 +20,66 @@ interface Props {
       id?: string;
       username: string;
     };
+    votes: {
+      userId: string;
+      point: number;
+    }[];
     points: number;
   };
 }
 
 const VoteBtn: FC<Props> = ({ post }) => {
   const { data } = useMeQuery();
+  const userVote = post.votes.find((vote) => vote.userId === data?.me?.id);
+  const router = useRouter();
+
   const updateVote = (cache: ApolloCache<VoteMutation>, point: -1 | 0 | 1) => {
-    const result = cache.readFragment<VoteFragment>({
-      fragment: VoteFragmentDoc,
+    let votes: PostVoteFragment["votes"] = [];
+    const result = cache.readFragment<PostVoteFragment>({
+      fragment: PostVoteFragmentDoc,
       id: "Post:" + post.id,
     });
+    console.log("result: ", result);
+
+    if ((point === -1 || point === 1) && userVote) {
+      votes =
+        result?.votes.map((vote) =>
+          vote.userId === data?.me?.id
+            ? {
+                ...vote,
+                point,
+              }
+            : vote
+        ) || [];
+    } else if ((point === -1 || point === 1) && !userVote) {
+      votes = [
+        ...votes,
+        {
+          point,
+          userId: data?.me?.id || "",
+        },
+      ];
+    } else if (point === 0) {
+      votes = votes.filter((vote) => vote.userId !== data?.me?.id);
+    }
 
     if (result) {
-      cache.writeFragment<VoteFragment>({
-        fragment: VoteFragmentDoc,
+      cache.writeFragment<PostVoteFragment>({
+        fragment: PostVoteFragmentDoc,
         data: {
+          id: post.id,
           __typename: "Post",
-          points: result.votes.reduce(
-            (point, { point: totalPoints }) => totalPoints + point * 2,
+          points: votes.reduce(
+            (point, { point: totalPoint }) => totalPoint + point * 2,
             0
           ),
-          votes: result.votes.map(vote =>
-            vote.postId === post.id && vote.userId === data?.me?.id
-              ? {
-                  ...vote,
-                  point,
-                }
-              : vote
-          ),
+          votes,
         },
       });
     }
   };
 
   const [vote, { loading }] = useVoteMutation();
-  const userVote = data?.me?.votes.find(vote => vote.postId === post.id);
 
   // check if postId of each vote from the me query matches the postId of each post
   return (
@@ -65,16 +90,20 @@ const VoteBtn: FC<Props> = ({ post }) => {
             ? "text-red-600 bg-gray-200 dark:text-red-600"
             : "hover:text-red-600 hover:bg-gray-200"
         }  mb-3  dark:text-gray-500 dark:hover:text-red-600 rounded-sm p-2 text-3xl`}
-        disabled={!data?.me || loading}
+        disabled={loading}
         onClick={async () => {
-          const realPoint = userVote?.point === 1 ? 0 : 1;
-          await vote({
-            variables: {
-              point: realPoint,
-              postId: post.id,
-            },
-            update: cache => updateVote(cache, realPoint),
-          });
+          if (!data?.me) {
+            router.push("/u/login");
+          } else {
+            const realPoint = userVote?.point === 1 ? 0 : 1;
+            await vote({
+              variables: {
+                point: realPoint,
+                postId: post.id,
+              },
+              update: (cache) => updateVote(cache, realPoint),
+            });
+          }
         }}
       >
         <FaChevronUp />
@@ -88,16 +117,20 @@ const VoteBtn: FC<Props> = ({ post }) => {
             ? "dark:text-blue-600 text-blue-600 bg-gray-200"
             : "dark:hover:text-blue-600 hover:bg-gray-200"
         } mt-3 text-gray-700 dark:text-gray-500 border-none rounded-sm p-2 text-3xl`}
-        disabled={!data?.me || loading}
+        disabled={loading}
         onClick={async () => {
-          const realPoint = userVote?.point === -1 ? 0 : -1;
-          await vote({
-            variables: {
-              point: realPoint,
-              postId: post.id,
-            },
-            update: cache => updateVote(cache, realPoint),
-          });
+          if (!data?.me) {
+            router.push("/u/login");
+          } else {
+            const realPoint = userVote?.point === -1 ? 0 : -1;
+            await vote({
+              variables: {
+                point: realPoint,
+                postId: post.id,
+              },
+              update: (cache) => updateVote(cache, realPoint),
+            });
+          }
         }}
       >
         <FaChevronDown />

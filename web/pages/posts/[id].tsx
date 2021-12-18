@@ -25,20 +25,13 @@ const PostPage: NextPage = () => {
     },
   });
 
-  const vote = data?.post?.votes.find(vote => vote.postId === data.post?.id);
-
   return (
     <div className="container w-full md:w-2/3">
       <div className="bg-white dark:bg-gray-900 dark:text-white">
         <div
           className={`flex mb-3 rounded-md ${loading ? "animate-pulse" : ""}`}
         >
-          <VoteBtn
-            totalVotes={data?.post?.totalVotes || 0}
-            me={user?.me}
-            point={vote?.point}
-            userId={parseInt(vote?.userId || "")}
-          />
+          {data?.post && <VoteBtn post={data.post} />}
           <div className="flex-grow p-3 bg-white dark:bg-gray-900">
             <small className="text-gray-600">
               Posted by{" "}

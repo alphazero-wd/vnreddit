@@ -20,12 +20,22 @@ import {
 import { auth } from "../middleware/auth";
 import { MyContext } from "../types/MyContext";
 import { User } from "../entity/User";
+import { Vote } from "../entity/Vote";
 
 @Resolver(Post)
 export class PostResolver {
   @FieldResolver(() => User, { nullable: true })
   creator(@Root() post: Post): Promise<User | void> {
     return getRepository(User).findOne(post.creatorId);
+  }
+
+  @FieldResolver(() => Vote)
+  votes(@Root() { id }: Post): Promise<Vote[]> {
+    return getRepository(Vote).find({
+      where: {
+        postId: id,
+      },
+    });
   }
 
   @Query(() => PaginatedPosts)

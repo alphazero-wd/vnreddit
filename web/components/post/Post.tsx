@@ -16,6 +16,10 @@ interface Props {
       username: string;
     };
     points: number;
+    votes: {
+      userId: string;
+      point: number;
+    }[];
   };
   loading?: boolean;
 }
