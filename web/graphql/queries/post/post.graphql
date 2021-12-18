@@ -1,5 +1,8 @@
 query Post($postId: String!) {
   post(id: $postId) {
     ...Post
+    comments {
+      ...Comment
+    }
   }
 }

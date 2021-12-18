@@ -1,0 +1,10 @@
+mutation EditComment($payload: EditCommentInput!) {
+  editComment(payload: $payload) {
+    comment {
+      ...Comment
+    }
+    error {
+      ...ErrorResponse
+    }
+  }
+}

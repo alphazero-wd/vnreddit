@@ -1,0 +1,9 @@
+fragment Comment on Comment {
+  id
+  body
+  createdAt
+  commentator {
+    id
+    username
+  }
+}

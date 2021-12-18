@@ -6,7 +6,6 @@ fragment UserResponse on UserResponse {
     }
   }
   error {
-    field
-    message
+    ...ErrorResponse
   }
 }
