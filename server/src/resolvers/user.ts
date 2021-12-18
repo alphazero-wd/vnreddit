@@ -25,7 +25,6 @@ import { sendEmail } from "../utils/sendEmail";
 import { createRefreshToken } from "../utils/token";
 import { verify } from "jsonwebtoken";
 import { Post } from "../entity/Post";
-import { Vote } from "../entity/Vote";
 
 @Resolver(User)
 export class UserResolver {
@@ -36,22 +35,14 @@ export class UserResolver {
 
   @UseMiddleware(auth)
   @Query(() => User, { nullable: true })
-  async me(@Ctx() { payload }: MyContext): Promise<User | null> {
+  async me(@Ctx() { req }: MyContext): Promise<User | null> {
     const user = await getRepository(User).findOne({
-      where: { id: payload.userId },
+      where: { id: req?.payload?.userId },
     });
     if (!user) {
       return null;
     }
     return user;
-  }
-
-  @FieldResolver(() => [Vote!]!)
-  async votes(@Root() { id }: User): Promise<Vote[]> {
-    const userVotes = await getRepository(Vote).find({
-      where: { userId: id },
-    });
-    return userVotes;
   }
 
   @Mutation(() => UserResponse)
@@ -195,7 +186,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async resetPassword(
     @Arg("payload") { token, password, confirmPassword }: ResetPasswordInput,
-    @Ctx() { payload }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     if (!validatePassword(password)) {
       return {
@@ -216,8 +207,8 @@ export class UserResolver {
     }
 
     const decodedData = verify(token, process.env.JWT_REFRESH_SECRET!);
-    payload = decodedData as any;
-    const user = await getRepository(User).findOne(payload.userId);
+    req.payload = decodedData as any;
+    const user = await getRepository(User).findOne(req?.payload?.userId);
     if (!user) {
       return {
         error: {
@@ -233,7 +224,7 @@ export class UserResolver {
       .set({
         password: hashedPassword,
       })
-      .where("id = :id", { id: payload.userId })
+      .where("id = :id", { id: req?.payload?.userId })
       .returning("*")
       .execute();
 

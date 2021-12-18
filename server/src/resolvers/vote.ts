@@ -12,13 +12,13 @@ export class VoteResolver {
   async vote(
     @Arg("postId") postId: string,
     @Arg("point", () => Int!) point: -1 | 0 | 1,
-    @Ctx() { payload }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<boolean> {
     const votePoint = Math.sign(point) as -1 | 0 | 1;
     const vote = await getRepository(Vote).findOne({
       where: {
         postId: parseInt(postId),
-        userId: payload.userId,
+        userId: req?.payload?.userId,
       },
     });
     const queryBuilder = getRepository(Vote).createQueryBuilder("vote");
@@ -32,7 +32,7 @@ export class VoteResolver {
           })
           .where("postId = :postId AND userId = :userId", {
             postId,
-            userId: payload.userId,
+            userId: req?.payload?.userId,
           })
           .execute();
       } else if (votePoint === 0) {
@@ -40,7 +40,7 @@ export class VoteResolver {
           .delete()
           .where("postId = :postId AND userId = :userId", {
             postId,
-            userId: payload.userId,
+            userId: req?.payload?.userId,
           })
           .execute();
       } else {
@@ -53,7 +53,7 @@ export class VoteResolver {
         .values({
           point: votePoint,
           postId: parseInt(postId),
-          userId: payload.userId,
+          userId: req?.payload?.userId,
         })
         .execute();
     }

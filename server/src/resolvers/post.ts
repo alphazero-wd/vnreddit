@@ -72,7 +72,7 @@ export class PostResolver {
   @Mutation(() => PostResponse)
   async createPost(
     @Arg("post") { title, body }: CreatePostInput,
-    @Ctx() { payload }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<PostResponse> {
     if (!title) {
       return {
@@ -89,7 +89,7 @@ export class PostResolver {
       .values({
         title,
         body,
-        creatorId: payload.userId,
+        creatorId: req?.payload?.userId,
       })
       .returning("*")
       .execute();
