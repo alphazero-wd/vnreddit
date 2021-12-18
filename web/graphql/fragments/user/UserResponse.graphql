@@ -1,10 +1,9 @@
-fragment UserResponseFragment on UserResponse {
+fragment UserResponse on UserResponse {
   user {
-    ...UserFragment
+    ...User
     posts {
-      ...PostFragment
+      ...Post
     }
-    token
   }
   error {
     field

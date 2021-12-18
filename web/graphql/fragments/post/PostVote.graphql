@@ -1,0 +1,8 @@
+fragment PostVote on Post {
+  id
+  points
+  votes {
+    userId
+    point
+  }
+}

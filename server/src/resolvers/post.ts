@@ -29,26 +29,13 @@ export class PostResolver {
     return getRepository(User).findOne(post.creatorId);
   }
 
-  @FieldResolver(() => [Vote!]!)
-  async votes(@Root() post: Post) {
-    const vote = await getRepository(Vote).find({
+  @FieldResolver(() => Vote)
+  votes(@Root() { id }: Post): Promise<Vote[]> {
+    return getRepository(Vote).find({
       where: {
-        postId: post.id,
-        userId: post.creatorId,
+        postId: id,
       },
     });
-    return vote;
-  }
-
-  @FieldResolver(() => Int)
-  async totalVotes(@Root() post: Post): Promise<number> {
-    const totalVotes = await getRepository(Vote).find({
-      where: { postId: post.id },
-    });
-    return totalVotes.reduce((point, { point: totalPoints }) => {
-      totalPoints += point;
-      return totalPoints;
-    }, 0);
   }
 
   @Query(() => PaginatedPosts)
@@ -95,7 +82,7 @@ export class PostResolver {
   @Mutation(() => PostResponse)
   async createPost(
     @Arg("post") { title, body }: CreatePostInput,
-    @Ctx() { payload }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<PostResponse> {
     if (!title) {
       return {
@@ -112,7 +99,7 @@ export class PostResolver {
       .values({
         title,
         body,
-        creatorId: payload.userId,
+        creatorId: req?.payload?.userId,
       })
       .returning("*")
       .execute();

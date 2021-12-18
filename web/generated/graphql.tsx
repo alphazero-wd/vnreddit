@@ -112,8 +112,8 @@ export type Post = {
   createdAt: Scalars['DateTime'];
   creator: User;
   id: Scalars['ID'];
+  points: Scalars['Int'];
   title: Scalars['String'];
-  totalVotes: Scalars['Int'];
   votes: Array<Vote>;
 };
 
@@ -176,23 +176,22 @@ export type Vote = {
   point: Scalars['Int'];
   postId: Scalars['ID'];
   userId: Scalars['ID'];
-  voteStatus: Scalars['String'];
 };
 
-export type PostFragmentFragment = { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any };
+export type PostFragment = { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> };
 
-export type PostResponseFragmentFragment = { __typename?: 'Post', totalVotes: number, id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', postId: string, userId: string, point: number, voteStatus: string }> };
+export type PostVoteFragment = { __typename?: 'Post', id: string, points: number, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> };
 
-export type UserFragmentFragment = { __typename?: 'User', id: string, username: string, email: string, createdAt: any };
+export type UserFragment = { __typename?: 'User', id: string, username: string, email: string, createdAt: any, token: string };
 
-export type UserResponseFragmentFragment = { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined };
+export type UserResponseFragment = { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, email: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined };
 
 export type CreatePostMutationVariables = Exact<{
   post: CreatePostInput;
 }>;
 
 
-export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', totalVotes: number, id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', postId: string, userId: string, point: number, voteStatus: string }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type DeletePostMutationVariables = Exact<{
   postId: Scalars['String'];
@@ -206,7 +205,7 @@ export type EditPostMutationVariables = Exact<{
 }>;
 
 
-export type EditPostMutation = { __typename?: 'Mutation', editPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', totalVotes: number, id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', postId: string, userId: string, point: number, voteStatus: string }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type EditPostMutation = { __typename?: 'Mutation', editPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -220,28 +219,36 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, email: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type ResetPasswordMutationVariables = Exact<{
   payload: ResetPasswordInput;
 }>;
 
 
-export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, email: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type SignupMutationVariables = Exact<{
   user: SignupInput;
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserResponse', user?: { __typename?: 'User', token: string, id: string, username: string, email: string, createdAt: any, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, email: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+
+export type VoteMutationVariables = Exact<{
+  postId: Scalars['String'];
+  point: Scalars['Int'];
+}>;
+
+
+export type VoteMutation = { __typename?: 'Mutation', vote: boolean };
 
 export type PostQueryVariables = Exact<{
   postId: Scalars['String'];
 }>;
 
 
-export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', totalVotes: number, id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', postId: string, userId: string, point: number, voteStatus: string }> } | null | undefined };
+export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> } | null | undefined };
 
 export type PostsQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -249,12 +256,12 @@ export type PostsQueryVariables = Exact<{
 }>;
 
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', totalVotes: number, id: string, title: string, body?: string | null | undefined, createdAt: any, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', postId: string, userId: string, point: number, voteStatus: string }> }> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username: string, email: string, createdAt: any, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any }> } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username: string, email: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined };
 
 
 
@@ -409,8 +416,8 @@ export type PostResolvers<ContextType = any, ParentType extends ResolversParentT
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  points?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  totalVotes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   votes?: Resolver<Array<ResolversTypes['Vote']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -448,7 +455,6 @@ export type VoteResolvers<ContextType = any, ParentType extends ResolversParentT
   point?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   postId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  voteStatus?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -467,59 +473,62 @@ export type Resolvers<ContextType = any> = {
 };
 
 
-export const PostFragmentFragmentDoc = gql`
-    fragment PostFragment on Post {
+export const PostVoteFragmentDoc = gql`
+    fragment PostVote on Post {
   id
-  title
-  body
-  createdAt
-}
-    `;
-export const PostResponseFragmentFragmentDoc = gql`
-    fragment PostResponseFragment on Post {
-  ...PostFragment
-  creator {
-    id
-    username
-  }
+  points
   votes {
-    postId
     userId
     point
-    voteStatus
   }
-  totalVotes
 }
-    ${PostFragmentFragmentDoc}`;
-export const UserFragmentFragmentDoc = gql`
-    fragment UserFragment on User {
+    `;
+export const UserFragmentDoc = gql`
+    fragment User on User {
   id
   username
   email
   createdAt
+  token
 }
     `;
-export const UserResponseFragmentFragmentDoc = gql`
-    fragment UserResponseFragment on UserResponse {
+export const PostFragmentDoc = gql`
+    fragment Post on Post {
+  id
+  title
+  body
+  createdAt
+  creator {
+    id
+    username
+  }
+  points
+  votes {
+    userId
+    point
+  }
+}
+    `;
+export const UserResponseFragmentDoc = gql`
+    fragment UserResponse on UserResponse {
   user {
-    ...UserFragment
+    ...User
     posts {
-      ...PostFragment
+      ...Post
     }
-    token
   }
   error {
     field
     message
   }
 }
-    ${UserFragmentFragmentDoc}
-${PostFragmentFragmentDoc}`;
+    ${UserFragmentDoc}
+${PostFragmentDoc}`;
 export const CreatePostDocument = gql`
     mutation CreatePost($post: CreatePostInput!) {
   createPost(post: $post) {
     post {
-      ...PostResponseFragment
+      ...Post
     }
     error {
       field
@@ -527,7 +536,7 @@ export const CreatePostDocument = gql`
     }
   }
 }
-    ${PostResponseFragmentFragmentDoc}`;
+    ${PostFragmentDoc}`;
 export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, CreatePostMutationVariables>;
 
 /**
@@ -589,7 +598,7 @@ export const EditPostDocument = gql`
     mutation EditPost($post: EditPostInput!) {
   editPost(post: $post) {
     post {
-      ...PostResponseFragment
+      ...Post
     }
     error {
       field
@@ -597,7 +606,7 @@ export const EditPostDocument = gql`
     }
   }
 }
-    ${PostResponseFragmentFragmentDoc}`;
+    ${PostFragmentDoc}`;
 export type EditPostMutationFn = Apollo.MutationFunction<EditPostMutation, EditPostMutationVariables>;
 
 /**
@@ -664,10 +673,10 @@ export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPas
 export const LoginDocument = gql`
     mutation Login($user: LoginInput!) {
   login(user: $user) {
-    ...UserResponseFragment
+    ...UserResponse
   }
 }
-    ${UserResponseFragmentFragmentDoc}`;
+    ${UserResponseFragmentDoc}`;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
@@ -697,10 +706,10 @@ export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, Log
 export const ResetPasswordDocument = gql`
     mutation ResetPassword($payload: ResetPasswordInput!) {
   resetPassword(payload: $payload) {
-    ...UserResponseFragment
+    ...UserResponse
   }
 }
-    ${UserResponseFragmentFragmentDoc}`;
+    ${UserResponseFragmentDoc}`;
 export type ResetPasswordMutationFn = Apollo.MutationFunction<ResetPasswordMutation, ResetPasswordMutationVariables>;
 
 /**
@@ -730,10 +739,10 @@ export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPassw
 export const SignupDocument = gql`
     mutation Signup($user: SignupInput!) {
   signup(user: $user) {
-    ...UserResponseFragment
+    ...UserResponse
   }
 }
-    ${UserResponseFragmentFragmentDoc}`;
+    ${UserResponseFragmentDoc}`;
 export type SignupMutationFn = Apollo.MutationFunction<SignupMutation, SignupMutationVariables>;
 
 /**
@@ -760,13 +769,45 @@ export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<Signu
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
+export const VoteDocument = gql`
+    mutation Vote($postId: String!, $point: Int!) {
+  vote(postId: $postId, point: $point)
+}
+    `;
+export type VoteMutationFn = Apollo.MutationFunction<VoteMutation, VoteMutationVariables>;
+
+/**
+ * __useVoteMutation__
+ *
+ * To run a mutation, you first call `useVoteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVoteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [voteMutation, { data, loading, error }] = useVoteMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *      point: // value for 'point'
+ *   },
+ * });
+ */
+export function useVoteMutation(baseOptions?: Apollo.MutationHookOptions<VoteMutation, VoteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VoteMutation, VoteMutationVariables>(VoteDocument, options);
+      }
+export type VoteMutationHookResult = ReturnType<typeof useVoteMutation>;
+export type VoteMutationResult = Apollo.MutationResult<VoteMutation>;
+export type VoteMutationOptions = Apollo.BaseMutationOptions<VoteMutation, VoteMutationVariables>;
 export const PostDocument = gql`
     query Post($postId: String!) {
   post(id: $postId) {
-    ...PostResponseFragment
+    ...Post
   }
 }
-    ${PostResponseFragmentFragmentDoc}`;
+    ${PostFragmentDoc}`;
 
 /**
  * __usePostQuery__
@@ -800,11 +841,11 @@ export const PostsDocument = gql`
   posts(limit: $limit, cursor: $cursor) {
     hasMore
     posts {
-      ...PostResponseFragment
+      ...Post
     }
   }
 }
-    ${PostResponseFragmentFragmentDoc}`;
+    ${PostFragmentDoc}`;
 
 /**
  * __usePostsQuery__
@@ -837,14 +878,14 @@ export type PostsQueryResult = Apollo.QueryResult<PostsQuery, PostsQueryVariable
 export const MeDocument = gql`
     query Me {
   me {
-    ...UserFragment
+    ...User
     posts {
-      ...PostFragment
+      ...Post
     }
   }
 }
-    ${UserFragmentFragmentDoc}
-${PostFragmentFragmentDoc}`;
+    ${UserFragmentDoc}
+${PostFragmentDoc}`;
 
 /**
  * __useMeQuery__

@@ -1,7 +1,7 @@
 mutation EditPost($post: EditPostInput!) {
   editPost(post: $post) {
     post {
-      ...PostResponseFragment
+      ...Post
     }
     error {
       field
