@@ -28,11 +28,11 @@ const CommentForm: FC<Props> = ({ id }) => {
           </small>
           <Formik
             initialValues={{ body: "" }}
-            onSubmit={async ({ body }, { setErrors }) => {
+            onSubmit={async (values, { setErrors, setValues }) => {
               const response = await createComment({
                 variables: {
                   payload: {
-                    body,
+                    body: values.body,
                     postId: id,
                   },
                 },
@@ -43,6 +43,7 @@ const CommentForm: FC<Props> = ({ id }) => {
 
               const error = response.data?.createComment.error;
               if (response.data?.createComment.comment) {
+                setValues({ ...values, body: "" });
                 return;
               } else if (error) {
                 setErrors({ [error?.field as string]: error?.message });
