@@ -6,9 +6,6 @@ import { createConnection } from "typeorm";
 import { __prod__ } from "./constants/constants";
 import express from "express";
 import { buildSchema } from "type-graphql";
-import { PostResolver } from "./resolvers/post";
-import { UserResolver } from "./resolvers/user";
-import { VoteResolver } from "./resolvers/vote";
 
 const main = async () => {
   try {
@@ -21,7 +18,7 @@ const main = async () => {
     });
 
     const schema = await buildSchema({
-      resolvers: [PostResolver, UserResolver, VoteResolver],
+      resolvers: [path.join(__dirname, "resolvers/*.*")],
       validate: false,
     });
 

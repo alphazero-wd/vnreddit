@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { User } from "./User";
 import { Vote } from "./Vote";
+import { Comment } from "./Comment";
 
 @ObjectType()
 @Entity()
@@ -33,14 +34,18 @@ export class Post {
   creatorId!: number;
 
   @Field(() => User!)
-  @ManyToOne(() => User, user => user.posts, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
   creator: User;
 
   @Field(() => [Vote!]!)
-  @OneToMany(() => Vote, vote => vote, { onDelete: "CASCADE" })
+  @OneToMany(() => Vote, (vote) => vote, { onDelete: "CASCADE" })
   votes: Vote[];
 
   @Field(() => Int)
   @Column("int", { default: 0 })
   points: number;
+
+  @Field(() => [Comment!]!)
+  @OneToMany(() => Comment, (comment) => comment, { onDelete: "CASCADE" })
+  comments: Comment[];
 }
