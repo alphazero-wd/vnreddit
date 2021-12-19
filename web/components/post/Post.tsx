@@ -4,23 +4,10 @@ import { useRouter } from "next/router";
 import moment from "moment";
 import ReactMarkdown from "react-markdown";
 import VoteBtn from "./VoteBtn";
+import { PostsQuery } from "../../generated/graphql";
 
 interface Props {
-  post: {
-    id: string;
-    title: string;
-    body?: string | null;
-    createdAt: any;
-    creator: {
-      id?: string;
-      username: string;
-    };
-    points: number;
-    votes: {
-      userId: string;
-      point: number;
-    }[];
-  };
+  post: PostsQuery["posts"]["posts"][0];
   loading?: boolean;
 }
 
@@ -45,7 +32,7 @@ const Post: FC<Props> = ({ post, loading }) => {
         <ReactMarkdown>{post.body || ""}</ReactMarkdown>
         <button className="flex mt-3 justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-400">
           <BsChatSquare className="mr-2 text-xl" />
-          <small>5.5k comments</small>
+          <small>{post.numberOfComments} comments</small>
         </button>
       </div>
     </div>

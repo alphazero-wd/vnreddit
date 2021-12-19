@@ -18,9 +18,9 @@ export class Vote {
   @Column({ enum: [-1, 1], type: "int" })
   point: -1 | 1;
 
-  @ManyToOne(() => Post, post => post.votes, { onDelete: "CASCADE" })
+  @ManyToOne(() => Post, (post) => post.votes, { onDelete: "CASCADE" })
   post: Post;
 
-  @ManyToOne(() => User, user => user.votes, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.votes, { onDelete: "CASCADE" })
   user: User;
 }

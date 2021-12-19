@@ -1,8 +1,9 @@
-import { ApolloCache, gql } from "@apollo/client";
+import { ApolloCache } from "@apollo/client";
 import { useRouter } from "next/router";
 import { FC } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import {
+  PostsQuery,
   PostVoteFragment,
   PostVoteFragmentDoc,
   useMeQuery,
@@ -11,21 +12,7 @@ import {
 } from "../../generated/graphql";
 
 interface Props {
-  post: {
-    id: string;
-    title: string;
-    body?: string | null;
-    createdAt: any;
-    creator: {
-      id?: string;
-      username: string;
-    };
-    votes: {
-      userId: string;
-      point: number;
-    }[];
-    points: number;
-  };
+  post: PostsQuery["posts"]["posts"][0];
 }
 
 const VoteBtn: FC<Props> = ({ post }) => {
@@ -62,10 +49,6 @@ const VoteBtn: FC<Props> = ({ post }) => {
       (point, { point: totalPoint }) => totalPoint + point * 2,
       0
     );
-
-    console.log("votes: ", votes);
-    console.log("points: ", points);
-
     cache.writeFragment<PostVoteFragment>({
       fragment: PostVoteFragmentDoc,
       data: {

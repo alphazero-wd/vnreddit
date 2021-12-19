@@ -21,12 +21,22 @@ import { auth } from "../middleware/auth";
 import { MyContext } from "../types/MyContext";
 import { User } from "../entity/User";
 import { Vote } from "../entity/Vote";
+import { Comment } from "../entity/Comment";
 
 @Resolver(Post)
 export class PostResolver {
   @FieldResolver(() => User, { nullable: true })
   creator(@Root() post: Post): Promise<User | void> {
     return getRepository(User).findOne(post.creatorId);
+  }
+
+  @FieldResolver(() => [Comment!]!)
+  comments(@Root() { id }: Post) {
+    return getRepository(Comment).find({
+      where: {
+        postId: id,
+      },
+    });
   }
 
   @FieldResolver(() => Vote)
@@ -36,6 +46,16 @@ export class PostResolver {
         postId: id,
       },
     });
+  }
+
+  @FieldResolver(() => Int)
+  async numberOfComments(@Root() { id }: Post): Promise<number> {
+    const comments = await getRepository(Comment).find({
+      where: {
+        postId: id,
+      },
+    });
+    return comments.length;
   }
 
   @Query(() => PaginatedPosts)

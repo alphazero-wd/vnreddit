@@ -2,30 +2,14 @@ import router from "next/router";
 import { FC } from "react";
 import Link from "next/link";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import {
-  MutationFunctionOptions,
-  DefaultContext,
-  ApolloCache,
-} from "@apollo/client";
-import { DeletePostMutation, Exact } from "../../generated/graphql";
+import { useDeletePostMutation } from "../../generated/graphql";
 
 interface Props {
   id: string;
-  deletePost: (
-    options?:
-      | MutationFunctionOptions<
-          DeletePostMutation,
-          Exact<{
-            postId: string;
-          }>,
-          DefaultContext,
-          ApolloCache<any>
-        >
-      | undefined
-  ) => Promise<any>;
 }
 
-const EditDeleteBtn: FC<Props> = ({ id, deletePost }) => {
+const EditDeleteBtn: FC<Props> = ({ id }) => {
+  const [deletePost] = useDeletePostMutation();
   return (
     <div className="flex justify-center items-center">
       <Link href={`/posts/edit/${id}`}>
@@ -40,7 +24,7 @@ const EditDeleteBtn: FC<Props> = ({ id, deletePost }) => {
             variables: {
               postId: id as string,
             },
-            update: cache => {
+            update: (cache) => {
               cache.evict({ id: "Post:" + id });
             },
           });

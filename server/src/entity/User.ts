@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { Post } from "./Post";
 import { Vote } from "./Vote";
+import { Comment } from "./Comment";
 
 @ObjectType()
 @Entity()
@@ -38,10 +39,14 @@ export class User {
   createdAt!: Date;
 
   @Field(() => [Post!]!)
-  @OneToMany(() => Post, post => post.creator)
+  @OneToMany(() => Post, (post) => post.creator, { onDelete: "CASCADE" })
   posts: Post[];
 
   @Field(() => [Vote!]!)
-  @OneToMany(() => Vote, vote => vote.user)
+  @OneToMany(() => Vote, (vote) => vote.user, { onDelete: "CASCADE" })
   votes: Vote[];
+
+  @Field(() => [Comment!]!)
+  @OneToMany(() => Comment, (comment) => comment, { onDelete: "CASCADE" })
+  comments: Comment[];
 }

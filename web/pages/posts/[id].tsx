@@ -1,21 +1,17 @@
 import { NextPage } from "next";
 import { BsChatSquare } from "react-icons/bs";
-import Comment from "../../components/shared/Comment";
+import Comment from "../../components/comment/Comment";
 import Link from "next/link";
-import {
-  useDeletePostMutation,
-  useMeQuery,
-  usePostQuery,
-} from "../../generated/graphql";
+import { useMeQuery, usePostQuery } from "../../generated/graphql";
 import { useRouter } from "next/router";
 import moment from "moment";
 import ReactMarkdown from "react-markdown";
 import EditDeleteBtn from "../../components/post/EditDeleteBtn";
 import VoteBtn from "../../components/post/VoteBtn";
+import CommentForm from "../../components/comment/CommentForm";
 
 const PostPage: NextPage = () => {
   const router = useRouter();
-  const [deletePost] = useDeletePostMutation();
   const { id } = router.query;
   const { data: user } = useMeQuery();
 
@@ -47,16 +43,19 @@ const PostPage: NextPage = () => {
             <div className="flex justify-between items-center mt-4">
               <div className="flex items-center text-gray-600 font-semibold">
                 <BsChatSquare className="mr-2 text-xl" />
-                <small>5.5k comments</small>
+                <small>{data?.post?.numberOfComments} comments</small>
               </div>
               {data?.post?.creator.id === user?.me?.id && (
-                <EditDeleteBtn id={id as string} deletePost={deletePost} />
+                <EditDeleteBtn id={id as string} />
               )}
             </div>
           </div>
         </div>
-        <div className="h-2 my-2 bg-gray-400 w-full"></div>
-        <Comment />
+        <div className="h-1 my-2 bg-gray-600 w-full"></div>
+        <CommentForm id={id as string} />
+        {data?.post?.comments.map((comment) => (
+          <Comment id={id as string} key={comment.id} comment={comment} />
+        ))}
       </div>
     </div>
   );

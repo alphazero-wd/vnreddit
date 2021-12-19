@@ -4,8 +4,7 @@ mutation EditPost($post: EditPostInput!) {
       ...Post
     }
     error {
-      field
-      message
+      ...ErrorResponse
     }
   }
 }
