@@ -12,7 +12,6 @@ interface Props {
 }
 
 const CommentForm: FC<Props> = ({ id }) => {
-  const router = useRouter();
   const { data } = useMeQuery();
   const [createComment] = useCreateCommentMutation();
   return (
@@ -38,13 +37,13 @@ const CommentForm: FC<Props> = ({ id }) => {
                   },
                 },
                 update: (cache) => {
-                  cache.evict({ fieldName: "comments" });
+                  cache.evict({ id: "Post:" + id });
                 },
               });
 
               const error = response.data?.createComment.error;
               if (response.data?.createComment.comment) {
-                router.reload();
+                return;
               } else if (error) {
                 setErrors({ [error?.field as string]: error?.message });
               }

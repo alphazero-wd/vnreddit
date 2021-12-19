@@ -54,7 +54,7 @@ const PostPage: NextPage = () => {
         <div className="h-1 my-2 bg-gray-600 w-full"></div>
         <CommentForm id={id as string} />
         {data?.post?.comments.map((comment) => (
-          <Comment key={comment.id} comment={comment} />
+          <Comment id={id as string} key={comment.id} comment={comment} />
         ))}
       </div>
     </div>

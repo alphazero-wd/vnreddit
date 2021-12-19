@@ -5,15 +5,16 @@ import {
   CommentFragment,
   useDeleteCommentMutation,
 } from "../../generated/graphql";
-import Modal from "../shared/Modal";
 import { EditInterface } from "./Comment";
 
 interface Props {
   setEdit: Dispatch<SetStateAction<EditInterface>>;
   comment: CommentFragment;
+  id: string;
 }
 
-const CommentDropdown: FC<Props> = ({ setEdit, comment }) => {
+const CommentDropdown: FC<Props> = ({ setEdit, comment, id }) => {
+  const [dropdown, setDropdown] = useState(false);
   const [deleteComment] = useDeleteCommentMutation();
   return (
     <>
@@ -22,16 +23,26 @@ const CommentDropdown: FC<Props> = ({ setEdit, comment }) => {
           <button
             type="button"
             className="inline-flex w-full rounded-md text-sm font-medium text-gray-700 focus:outline-none"
+            onClick={() => setDropdown(!dropdown)}
           >
             <FiMoreHorizontal className="text-gray-600 text-xl " />
           </button>
         </div>
 
-        <div className="origin-top-left absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <div
+          className={`
+          ${
+            !dropdown
+              ? "transform opacity-0 scale-95"
+              : "transform opacity-100 scale-100"
+          } 
+        origin-top-left absolute transition-all right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none`}
+        >
           <div className="py-1 dark:bg-gray-800">
             <button
               onClick={() => {
                 setEdit({ comment, isEdit: true });
+                setDropdown(false);
               }}
               className="text-gray-700 w-full hover:bg-gray-600 dark:text-white flex items-center px-4 py-2"
             >
@@ -40,21 +51,27 @@ const CommentDropdown: FC<Props> = ({ setEdit, comment }) => {
             <button
               className="text-gray-700 w-full hover:bg-gray-600 flex items-center dark:text-white px-4 py-2"
               data-modal-toggle="default-modal"
+              onClick={async () => {
+                setDropdown(false);
+                await deleteComment({
+                  variables: {
+                    commentId: comment.id,
+                  },
+                  update: (cache) => {
+                    cache.evict({ id: "Comment:" + comment.id });
+                    cache.evict({
+                      id: "Post:" + id,
+                      fieldName: "numberOfComments",
+                    });
+                  },
+                });
+              }}
             >
               <BsTrash className="mr-3" /> Delete comment
             </button>
           </div>
         </div>
       </div>
-      <Modal
-        onSubmit={async () => {
-          await deleteComment({
-            variables: {
-              commentId: comment.id,
-            },
-          });
-        }}
-      />
     </>
   );
 };

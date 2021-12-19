@@ -17,6 +17,7 @@ import { gql } from "@apollo/client";
 
 interface Props {
   comment: CommentFragment;
+  id: string;
 }
 
 export interface EditInterface {
@@ -24,7 +25,7 @@ export interface EditInterface {
   isEdit: boolean;
 }
 
-const Comment: FC<Props> = ({ comment }) => {
+const Comment: FC<Props> = ({ comment, id }) => {
   const [edit, setEdit] = useState<EditInterface>({
     comment: null,
     isEdit: false,
@@ -51,7 +52,7 @@ const Comment: FC<Props> = ({ comment }) => {
           </span>
         </small>
         {comment.commentator?.id === data?.me?.id && (
-          <CommentDropdown comment={comment} setEdit={setEdit} />
+          <CommentDropdown id={id} comment={comment} setEdit={setEdit} />
         )}
       </div>
       {edit.isEdit ? (

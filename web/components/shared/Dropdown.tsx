@@ -14,6 +14,7 @@ interface Props {
 
 const Dropdown: FC<Props> = ({ logout }) => {
   const [theme, setTheme] = useState("dark");
+  const [dropdown, setDropdown] = useState(false);
   const { data } = useMeQuery();
 
   useEffect(() => {
@@ -27,8 +28,7 @@ const Dropdown: FC<Props> = ({ logout }) => {
         <button
           type="button"
           className="flex items-center justify-center w-full rounded-md border border-gray-300 dark:border-gray-800 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          data-dropdown-toggle="dropdown"
-          id="dropdownButton"
+          onClick={() => setDropdown(!dropdown)}
         >
           {data?.me ? (
             <>
@@ -51,8 +51,14 @@ const Dropdown: FC<Props> = ({ logout }) => {
         </button>
       </div>
       <div
-        className="hidden origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none border-gray-600 dark:bg-gray-900 dark:text-white"
-        id="dropdown"
+        className={`
+          ${
+            !dropdown
+              ? "transform opacity-0 scale-95"
+              : "transform opacity-100 scale-100"
+          } 
+        origin-top-right transition-all absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none border-gray-600 dark:bg-gray-900 dark:text-white"
+        `}
       >
         <div className="py-1">
           {data?.me && (

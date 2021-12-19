@@ -2,16 +2,7 @@ import router from "next/router";
 import { FC } from "react";
 import Link from "next/link";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import {
-  MutationFunctionOptions,
-  DefaultContext,
-  ApolloCache,
-} from "@apollo/client";
-import {
-  DeletePostMutation,
-  Exact,
-  useDeletePostMutation,
-} from "../../generated/graphql";
+import { useDeletePostMutation } from "../../generated/graphql";
 
 interface Props {
   id: string;
