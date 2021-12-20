@@ -48,4 +48,7 @@ export class Post {
   @Field(() => [Comment!]!)
   @OneToMany(() => Comment, (comment) => comment, { onDelete: "CASCADE" })
   comments: Comment[];
+
+  @Column({nullable: true})
+  communityId?: number;
 }

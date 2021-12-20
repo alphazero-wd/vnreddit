@@ -22,6 +22,7 @@ import { MyContext } from "../types/MyContext";
 import { User } from "../entity/User";
 import { Vote } from "../entity/Vote";
 import { Comment } from "../entity/Comment";
+import { Community } from "../entity/Community";
 
 @Resolver(Post)
 export class PostResolver {
@@ -46,6 +47,11 @@ export class PostResolver {
         postId: id,
       },
     });
+  }
+
+  @FieldResolver(() => Community, { nullable: true })
+  community(@Root() { communityId }: Post): Promise<Community | undefined> {
+    return getRepository(Community).findOne({ where: { id: communityId } });
   }
 
   @FieldResolver(() => Int)
@@ -101,7 +107,7 @@ export class PostResolver {
   @UseMiddleware(auth)
   @Mutation(() => PostResponse)
   async createPost(
-    @Arg("post") { title, body }: CreatePostInput,
+    @Arg("post") { title, body, communityId }: CreatePostInput,
     @Ctx() { req }: MyContext
   ): Promise<PostResponse> {
     if (!title) {
@@ -120,6 +126,7 @@ export class PostResolver {
         title,
         body,
         creatorId: req?.payload?.userId,
+        communityId: communityId ? parseInt(communityId) : undefined,
       })
       .returning("*")
       .execute();
