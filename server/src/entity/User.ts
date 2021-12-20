@@ -4,12 +4,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Post } from "./Post";
 import { Vote } from "./Vote";
 import { Comment } from "./Comment";
+import { Community } from "./Community";
 
 @ObjectType()
 @Entity()
@@ -22,7 +25,6 @@ export class User {
   @Column({ unique: true })
   username!: string;
 
-  @Field()
   @Column({ unique: true })
   email!: string;
 
@@ -49,4 +51,10 @@ export class User {
   @Field(() => [Comment!]!)
   @OneToMany(() => Comment, (comment) => comment, { onDelete: "CASCADE" })
   comments: Comment[];
+
+  @Field(() => [Community])
+  @ManyToMany(() => Community, (community) => community.members)
+  @JoinTable()
+  communities: Community[]
+
 }

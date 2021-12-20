@@ -9,6 +9,9 @@ export class CreatePostInput {
 
   @Field({ nullable: true })
   body?: string;
+
+  @Field({ nullable: true })
+  communityId?: string;
 }
 
 @InputType()
