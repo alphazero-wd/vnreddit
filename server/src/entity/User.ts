@@ -55,6 +55,5 @@ export class User {
   @Field(() => [Community])
   @ManyToMany(() => Community, (community) => community.members)
   @JoinTable()
-  communities: Community[]
-
+  communities: Community[];
 }

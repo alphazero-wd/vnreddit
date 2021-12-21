@@ -57,11 +57,21 @@ export class CommunityResolver {
     @Arg("commId") commId: string,
     @Ctx() { req }: MyContext
   ): Promise<boolean> {
-    await getConnection()
-      .createQueryBuilder()
-      .relation(Community, "members")
-      .of(commId) // add to a community id
-      .add(req.payload?.userId); // a member based on the id of the user;
+    const community = await getConnection().manager.findOne(
+      Community,
+      parseInt(commId)
+    );
+    if (community) {
+      console.log(community.members);
+
+      await getConnection()
+        .createQueryBuilder()
+        .relation(Community, "members")
+        .of(commId) // add to a community id
+        .add(req.payload?.userId); // a member based on the id of the user;
+    } else {
+      return false;
+    }
     return true;
   }
 
@@ -71,12 +81,19 @@ export class CommunityResolver {
     @Arg("commId") commId: string,
     @Ctx() { req }: MyContext
   ): Promise<boolean> {
-    await getConnection()
-      .createQueryBuilder()
-      .relation(Community, "members")
-      .of(commId) // add to a community id
-      .remove(req.payload?.userId); // a member based on the id of the user;
-    return true;
+    const community = await getConnection().manager.findOne(
+      Community,
+      parseInt(commId)
+    );
+    if (community) {
+      await getConnection()
+        .createQueryBuilder()
+        .relation(Community, "members")
+        .of(commId) // add to a community id
+        .remove(req.payload?.userId); // a member based on the id of the user;
+      return true;
+    }
+    return false;
   }
 
   @UseMiddleware(auth)

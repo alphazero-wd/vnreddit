@@ -16,7 +16,7 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { validateEmail, validatePassword } from "../utils/validate";
-import { getRepository } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 import { User } from "../entity/User";
 import { compare, hash } from "bcryptjs";
 import { auth } from "../middleware/auth";
@@ -25,12 +25,27 @@ import { sendEmail } from "../utils/sendEmail";
 import { createRefreshToken } from "../utils/token";
 import { verify } from "jsonwebtoken";
 import { Post } from "../entity/Post";
+import { Community } from "../entity/Community";
 
 @Resolver(User)
 export class UserResolver {
   @FieldResolver(() => [Post!])
   posts(@Root() user: User): Promise<Post[]> {
     return getRepository(Post).find({ where: { creatorId: user.id } });
+  }
+
+  @FieldResolver(() => [Community])
+  async communities(@Root() { id }: User) {
+    const user = await getConnection().manager.findOne(User, id);
+    if (user) {
+      user.communities = await getConnection()
+        .createQueryBuilder()
+        .relation(User, "communities")
+        .of(id)
+        .loadMany();
+      return user.communities;
+    }
+    return [];
   }
 
   @UseMiddleware(auth)

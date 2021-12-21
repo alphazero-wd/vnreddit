@@ -49,6 +49,6 @@ export class Post {
   @OneToMany(() => Comment, (comment) => comment, { onDelete: "CASCADE" })
   comments: Comment[];
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   communityId?: number;
 }
