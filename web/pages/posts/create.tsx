@@ -4,7 +4,7 @@ import { useCreatePostMutation } from "../../generated/graphql";
 import { useRouter } from "next/router";
 import AuthInput from "../../components/auth/AuthInput";
 import { AiOutlineLoading } from "react-icons/ai";
-import { MDEditor } from "../../utils/MDEditor";
+import Markdown from "../../components/shared/Markdown";
 
 const CreatePost: NextPage = () => {
   const [createPost, { loading }] = useCreatePostMutation();
@@ -13,7 +13,7 @@ const CreatePost: NextPage = () => {
   return (
     <div className="container w-full md:w-3/6">
       <h1 className="text-center dark:text-white font-bold mb-3 text-2xl">
-        Create post
+        Create postdown
       </h1>
       <Formik
         initialValues={{ title: "", body: "" }}
@@ -25,7 +25,7 @@ const CreatePost: NextPage = () => {
                 body,
               },
             },
-            update: cache => {
+            update: (cache) => {
               cache.evict({ fieldName: "posts" });
             },
           });
@@ -44,7 +44,7 @@ const CreatePost: NextPage = () => {
           <form onSubmit={handleSubmit}>
             <AuthInput
               name="title"
-              onChange={e => setValues({ ...values, title: e.target.value })}
+              onChange={(e) => setValues({ ...values, title: e.target.value })}
               label="Title"
               errors={errors}
             />
@@ -55,9 +55,11 @@ const CreatePost: NextPage = () => {
               >
                 Body:{" "}
               </label>
-              <MDEditor
+              <Markdown
                 value={values.body}
-                onChange={value => setValues({ ...values, body: value || "" })}
+                onChange={(value) =>
+                  setValues({ ...values, body: value || "" })
+                }
               />
             </div>
             <div className="flex justify-center items-center mt-3">

@@ -35,6 +35,22 @@ export type CommentResponse = {
   error?: Maybe<ErrorResponse>;
 };
 
+export type Community = {
+  __typename?: 'Community';
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  members: Array<User>;
+  name: Scalars['String'];
+  posts: Array<Post>;
+};
+
+export type CommunityResponse = {
+  __typename?: 'CommunityResponse';
+  community?: Maybe<Community>;
+  error?: Maybe<ErrorResponse>;
+};
+
 export type CreateCommentInput = {
   body: Scalars['String'];
   postId: Scalars['String'];
@@ -42,6 +58,7 @@ export type CreateCommentInput = {
 
 export type CreatePostInput = {
   body?: InputMaybe<Scalars['String']>;
+  communityId?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
 };
 
@@ -75,13 +92,17 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addDescription: CommunityResponse;
   createComment: CommentResponse;
+  createCommunity: CommunityResponse;
   createPost: PostResponse;
   deleteComment: Scalars['Boolean'];
   deletePost: Scalars['Boolean'];
   editComment: CommentResponse;
   editPost: PostResponse;
   forgotPassword: ForgotPasswordResponse;
+  joinCommunity: Scalars['Boolean'];
+  leaveCommunity: Scalars['Boolean'];
   login: UserResponse;
   resetPassword: UserResponse;
   signup: UserResponse;
@@ -89,8 +110,19 @@ export type Mutation = {
 };
 
 
+export type MutationAddDescriptionArgs = {
+  description: Scalars['String'];
+  id: Scalars['String'];
+};
+
+
 export type MutationCreateCommentArgs = {
   payload: CreateCommentInput;
+};
+
+
+export type MutationCreateCommunityArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -124,6 +156,16 @@ export type MutationForgotPasswordArgs = {
 };
 
 
+export type MutationJoinCommunityArgs = {
+  commId: Scalars['String'];
+};
+
+
+export type MutationLeaveCommunityArgs = {
+  commId: Scalars['String'];
+};
+
+
 export type MutationLoginArgs = {
   user: LoginInput;
 };
@@ -154,6 +196,7 @@ export type Post = {
   __typename?: 'Post';
   body?: Maybe<Scalars['String']>;
   comments: Array<Comment>;
+  community?: Maybe<Community>;
   createdAt: Scalars['DateTime'];
   creator: User;
   id: Scalars['ID'];
@@ -171,9 +214,21 @@ export type PostResponse = {
 
 export type Query = {
   __typename?: 'Query';
+  communities: Array<Community>;
+  community?: Maybe<Community>;
   me?: Maybe<User>;
   post?: Maybe<Post>;
   posts: PaginatedPosts;
+};
+
+
+export type QueryCommunitiesArgs = {
+  search: Scalars['String'];
+};
+
+
+export type QueryCommunityArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -203,8 +258,8 @@ export type SignupInput = {
 export type User = {
   __typename?: 'User';
   comments: Array<Comment>;
+  communities: Array<Community>;
   createdAt: Scalars['DateTime'];
-  email: Scalars['String'];
   id: Scalars['ID'];
   posts: Array<Post>;
   token: Scalars['String'];
@@ -227,15 +282,17 @@ export type Vote = {
 
 export type CommentFragment = { __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined };
 
+export type CommunityFragment = { __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> };
+
 export type ErrorResponseFragment = { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string };
 
 export type PostFragment = { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> };
 
 export type PostVoteFragment = { __typename?: 'Post', id: string, points: number, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> };
 
-export type UserFragment = { __typename?: 'User', id: string, username: string, email: string, createdAt: any, token: string };
+export type UserFragment = { __typename?: 'User', id: string, username: string, createdAt: any, token: string };
 
-export type UserResponseFragment = { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, email: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined };
+export type UserResponseFragment = { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined };
 
 export type CreateCommentMutationVariables = Exact<{
   payload: CreateCommentInput;
@@ -257,6 +314,13 @@ export type EditCommentMutationVariables = Exact<{
 
 
 export type EditCommentMutation = { __typename?: 'Mutation', editComment: { __typename?: 'CommentResponse', comment?: { __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+
+export type CreateCommunityMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateCommunityMutation = { __typename?: 'Mutation', createCommunity: { __typename?: 'CommunityResponse', community?: { __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type CreatePostMutationVariables = Exact<{
   post: CreatePostInput;
@@ -291,21 +355,21 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, email: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type ResetPasswordMutationVariables = Exact<{
   payload: ResetPasswordInput;
 }>;
 
 
-export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, email: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type SignupMutationVariables = Exact<{
   user: SignupInput;
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, email: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type VoteMutationVariables = Exact<{
   postId: Scalars['String'];
@@ -333,7 +397,7 @@ export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'Paginate
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username: string, email: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> }> } | null | undefined };
 
 
 
@@ -407,6 +471,8 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Comment: ResolverTypeWrapper<Comment>;
   CommentResponse: ResolverTypeWrapper<CommentResponse>;
+  Community: ResolverTypeWrapper<Community>;
+  CommunityResponse: ResolverTypeWrapper<CommunityResponse>;
   CreateCommentInput: CreateCommentInput;
   CreatePostInput: CreatePostInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
@@ -435,6 +501,8 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   Comment: Comment;
   CommentResponse: CommentResponse;
+  Community: Community;
+  CommunityResponse: CommunityResponse;
   CreateCommentInput: CreateCommentInput;
   CreatePostInput: CreatePostInput;
   DateTime: Scalars['DateTime'];
@@ -474,6 +542,22 @@ export type CommentResponseResolvers<ContextType = any, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type CommunityResolvers<ContextType = any, ParentType extends ResolversParentTypes['Community'] = ResolversParentTypes['Community']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  members?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  posts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CommunityResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['CommunityResponse'] = ResolversParentTypes['CommunityResponse']> = {
+  community?: Resolver<Maybe<ResolversTypes['Community']>, ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['ErrorResponse']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
 }
@@ -491,13 +575,17 @@ export type ForgotPasswordResponseResolvers<ContextType = any, ParentType extend
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  addDescription?: Resolver<ResolversTypes['CommunityResponse'], ParentType, ContextType, RequireFields<MutationAddDescriptionArgs, 'description' | 'id'>>;
   createComment?: Resolver<ResolversTypes['CommentResponse'], ParentType, ContextType, RequireFields<MutationCreateCommentArgs, 'payload'>>;
+  createCommunity?: Resolver<ResolversTypes['CommunityResponse'], ParentType, ContextType, RequireFields<MutationCreateCommunityArgs, 'name'>>;
   createPost?: Resolver<ResolversTypes['PostResponse'], ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'post'>>;
   deleteComment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteCommentArgs, 'commentId'>>;
   deletePost?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePostArgs, 'id'>>;
   editComment?: Resolver<ResolversTypes['CommentResponse'], ParentType, ContextType, RequireFields<MutationEditCommentArgs, 'payload'>>;
   editPost?: Resolver<ResolversTypes['PostResponse'], ParentType, ContextType, RequireFields<MutationEditPostArgs, 'post'>>;
   forgotPassword?: Resolver<ResolversTypes['ForgotPasswordResponse'], ParentType, ContextType, RequireFields<MutationForgotPasswordArgs, 'email'>>;
+  joinCommunity?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationJoinCommunityArgs, 'commId'>>;
+  leaveCommunity?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationLeaveCommunityArgs, 'commId'>>;
   login?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'user'>>;
   resetPassword?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'payload'>>;
   signup?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'user'>>;
@@ -513,6 +601,7 @@ export type PaginatedPostsResolvers<ContextType = any, ParentType extends Resolv
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
   body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   comments?: Resolver<Array<ResolversTypes['Comment']>, ParentType, ContextType>;
+  community?: Resolver<Maybe<ResolversTypes['Community']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -530,6 +619,8 @@ export type PostResponseResolvers<ContextType = any, ParentType extends Resolver
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  communities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType, RequireFields<QueryCommunitiesArgs, 'search'>>;
+  community?: Resolver<Maybe<ResolversTypes['Community']>, ParentType, ContextType, RequireFields<QueryCommunityArgs, 'name'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryPostArgs, 'id'>>;
   posts?: Resolver<ResolversTypes['PaginatedPosts'], ParentType, ContextType, RequireFields<QueryPostsArgs, 'limit'>>;
@@ -537,8 +628,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   comments?: Resolver<Array<ResolversTypes['Comment']>, ParentType, ContextType>;
+  communities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   posts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType>;
   token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -563,6 +654,8 @@ export type VoteResolvers<ContextType = any, ParentType extends ResolversParentT
 export type Resolvers<ContextType = any> = {
   Comment?: CommentResolvers<ContextType>;
   CommentResponse?: CommentResponseResolvers<ContextType>;
+  Community?: CommunityResolvers<ContextType>;
+  CommunityResponse?: CommunityResponseResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   ErrorResponse?: ErrorResponseResolvers<ContextType>;
   ForgotPasswordResponse?: ForgotPasswordResponseResolvers<ContextType>;
@@ -577,36 +670,6 @@ export type Resolvers<ContextType = any> = {
 };
 
 
-export const CommentFragmentDoc = gql`
-    fragment Comment on Comment {
-  id
-  body
-  createdAt
-  commentator {
-    id
-    username
-  }
-}
-    `;
-export const PostVoteFragmentDoc = gql`
-    fragment PostVote on Post {
-  id
-  points
-  votes {
-    userId
-    point
-  }
-}
-    `;
-export const UserFragmentDoc = gql`
-    fragment User on User {
-  id
-  username
-  email
-  createdAt
-  token
-}
-    `;
 export const PostFragmentDoc = gql`
     fragment Post on Post {
   id
@@ -623,6 +686,55 @@ export const PostFragmentDoc = gql`
     point
   }
   numberOfComments
+}
+    `;
+export const CommentFragmentDoc = gql`
+    fragment Comment on Comment {
+  id
+  body
+  createdAt
+  commentator {
+    id
+    username
+  }
+}
+    `;
+export const CommunityFragmentDoc = gql`
+    fragment Community on Community {
+  id
+  name
+  createdAt
+  description
+  members {
+    id
+    username
+    createdAt
+  }
+  posts {
+    ...Post
+    comments {
+      ...Comment
+    }
+  }
+}
+    ${PostFragmentDoc}
+${CommentFragmentDoc}`;
+export const PostVoteFragmentDoc = gql`
+    fragment PostVote on Post {
+  id
+  points
+  votes {
+    userId
+    point
+  }
+}
+    `;
+export const UserFragmentDoc = gql`
+    fragment User on User {
+  id
+  username
+  createdAt
+  token
 }
     `;
 export const ErrorResponseFragmentDoc = gql`
@@ -755,6 +867,45 @@ export function useEditCommentMutation(baseOptions?: Apollo.MutationHookOptions<
 export type EditCommentMutationHookResult = ReturnType<typeof useEditCommentMutation>;
 export type EditCommentMutationResult = Apollo.MutationResult<EditCommentMutation>;
 export type EditCommentMutationOptions = Apollo.BaseMutationOptions<EditCommentMutation, EditCommentMutationVariables>;
+export const CreateCommunityDocument = gql`
+    mutation CreateCommunity($name: String!) {
+  createCommunity(name: $name) {
+    community {
+      ...Community
+    }
+    error {
+      ...ErrorResponse
+    }
+  }
+}
+    ${CommunityFragmentDoc}
+${ErrorResponseFragmentDoc}`;
+export type CreateCommunityMutationFn = Apollo.MutationFunction<CreateCommunityMutation, CreateCommunityMutationVariables>;
+
+/**
+ * __useCreateCommunityMutation__
+ *
+ * To run a mutation, you first call `useCreateCommunityMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCommunityMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCommunityMutation, { data, loading, error }] = useCreateCommunityMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateCommunityMutation(baseOptions?: Apollo.MutationHookOptions<CreateCommunityMutation, CreateCommunityMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCommunityMutation, CreateCommunityMutationVariables>(CreateCommunityDocument, options);
+      }
+export type CreateCommunityMutationHookResult = ReturnType<typeof useCreateCommunityMutation>;
+export type CreateCommunityMutationResult = Apollo.MutationResult<CreateCommunityMutation>;
+export type CreateCommunityMutationOptions = Apollo.BaseMutationOptions<CreateCommunityMutation, CreateCommunityMutationVariables>;
 export const CreatePostDocument = gql`
     mutation CreatePost($post: CreatePostInput!) {
   createPost(post: $post) {

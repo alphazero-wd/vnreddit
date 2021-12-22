@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { FC } from "react";
 import { MdOutlineError } from "react-icons/md";
 import { useCreateCommentMutation, useMeQuery } from "../../generated/graphql";
-import { MDEditor } from "../../utils/MDEditor";
+import Markdown from "../shared/Markdown";
 import AuthBtn from "../auth/AuthBtn";
 
 interface Props {
@@ -60,7 +60,7 @@ const CommentForm: FC<Props> = ({ id }) => {
                     </ErrorMessage>
                   </div>
                 )}
-                <MDEditor
+                <Markdown
                   onChange={(value) =>
                     setValues({ ...values, body: value as string })
                   }

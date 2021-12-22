@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import { useRouter } from "next/router";
 import { useEditPostMutation, usePostQuery } from "../../../generated/graphql";
 import AuthInput from "../../../components/auth/AuthInput";
-import { MDEditor } from "../../../utils/MDEditor";
+import Markdown from "../../../components/shared/Markdown";
 import { AiOutlineLoading } from "react-icons/ai";
 
 const EditPostPage: NextPage = () => {
@@ -34,7 +34,7 @@ const EditPostPage: NextPage = () => {
                 body,
               },
             },
-            update: cache => {
+            update: (cache) => {
               cache.evict({ fieldName: "Post:" + id });
             },
           });
@@ -53,7 +53,7 @@ const EditPostPage: NextPage = () => {
           <form onSubmit={handleSubmit}>
             <AuthInput
               name="title"
-              onChange={e => setValues({ ...values, title: e.target.value })}
+              onChange={(e) => setValues({ ...values, title: e.target.value })}
               label="Title"
               errors={errors}
               value={values.title}
@@ -65,9 +65,11 @@ const EditPostPage: NextPage = () => {
               >
                 Body:{" "}
               </label>
-              <MDEditor
+              <Markdown
                 value={values.body}
-                onChange={value => setValues({ ...values, body: value || "" })}
+                onChange={(value) =>
+                  setValues({ ...values, body: value || "" })
+                }
               />
             </div>
             <div className="flex justify-center items-center mt-3">

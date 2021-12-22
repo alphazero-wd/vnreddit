@@ -11,7 +11,7 @@ import {
 } from "../../generated/graphql";
 import CommentDropdown from "./Dropdown";
 import { ErrorMessage, Formik } from "formik";
-import { MDEditor } from "../../utils/MDEditor";
+import Markdown from "../shared/Markdown";
 import { MdOutlineError } from "react-icons/md";
 import { gql } from "@apollo/client";
 
@@ -101,7 +101,7 @@ const Comment: FC<Props> = ({ comment, id }) => {
                   </ErrorMessage>
                 </div>
               )}
-              <MDEditor
+              <Markdown
                 onChange={(value) =>
                   setValues({ ...values, body: value as string })
                 }

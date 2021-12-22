@@ -1,0 +1,17 @@
+fragment Community on Community {
+  id
+  name
+  createdAt
+  description
+  members {
+    id
+    username
+    createdAt
+  }
+  posts {
+    ...Post
+    comments {
+      ...Comment
+    }
+  }
+}

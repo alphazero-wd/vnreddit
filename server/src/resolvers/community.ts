@@ -15,6 +15,7 @@ import { getConnection, getRepository } from "typeorm";
 import { Post } from "../entity/Post";
 import { User } from "../entity/User";
 import { MyContext } from "../types/MyContext";
+import { validateCommunityName } from "../utils/validate";
 
 @Resolver(Community)
 export class CommunityResolver {
@@ -99,11 +100,12 @@ export class CommunityResolver {
   @UseMiddleware(auth)
   @Mutation(() => CommunityResponse)
   async createCommunity(@Arg("name") name: string): Promise<CommunityResponse> {
-    if (name.length > 20 || name.includes(" ")) {
+    if (!validateCommunityName(name)) {
       return {
         error: {
           field: "name",
-          message: "Invalid community name.",
+          message:
+            "Community name must be between 3–20 characters, and can only contain letters, numbers, or underscores.",
         },
       };
     }
