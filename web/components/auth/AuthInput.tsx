@@ -32,15 +32,13 @@ const AuthInput: FC<Props> = ({
 }) => {
   return (
     <div className="mb-3">
-      <label className="mb-3 dark:text-white font-semibold block">
-        {label}:
-      </label>
+      <label className="mb-3font-semibold block">{label}:</label>
       <input
         type={type || "text"}
-        className={`border text-gray-800 bg-transparent dark:text-white py-2 px-3 w-full focus:outline-none  ${
+        className={`border text-gray-800 bg-transparentpy-2 px-3 w-full focus:outline-none  ${
           Object.keys(errors).indexOf(name) !== -1
             ? "border-red-600 focus:ring-red-600"
-            : "border-gray-800 focus:right-blue-500 dark:border-white"
+            : "border-gray-800 focus:right-blue-500"
         } shadow-sm mb-1 focus:ring-2 rounded-md `}
         onChange={onChange}
         name={name}

@@ -18,7 +18,7 @@ const CommentForm: FC<Props> = ({ id }) => {
     <div className="py-4 px-8">
       {data?.me ? (
         <>
-          <small className="dark:text-white font-semibold block mb-3">
+          <small className="font-semibold block mb-3">
             Comment as{" "}
             <span className="cursor-pointer hover:underline text-blue-500">
               <Link href="/u/profile">

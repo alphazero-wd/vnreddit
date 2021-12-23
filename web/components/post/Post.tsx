@@ -23,7 +23,7 @@ const Post: FC<Props> = ({ post, loading }) => {
       <VoteBtn post={post} />
       <div
         className="cursor-pointer flex-grow p-3 dark:text-white dark:bg-gray-800"
-        onClick={() => router.push(`/posts/${post.id}`)}
+        onClick={() => router.push(`/post/${post.id}`)}
       >
         <small className="text-gray-600">
           Posted by u/{post.creator.username} {moment(post.createdAt).fromNow()}

@@ -25,7 +25,7 @@ const Signup: NextPage = () => {
 
   return (
     <div className="container w-full md:w-3/6">
-      <h1 className="text-center dark:text-white font-bold mb-3 text-2xl">
+      <h1 className="text-center font-bold mb-3 text-2xl">
         Become a member of VnReddit
       </h1>
       <Formik
@@ -101,7 +101,7 @@ const Signup: NextPage = () => {
           </form>
         )}
       </Formik>
-      <div className="text-center dark:text-white ">
+      <div className="text-center ">
         Already have an account?{" "}
         <a className="text-blue-500 hover:text-blue-400 transition-colors">
           <Link href="/u/login">Login</Link>

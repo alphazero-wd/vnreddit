@@ -33,12 +33,8 @@ const ResetPassword: NextPage = () => {
 
   return (
     <div className="container pt-8 w-full md:w-3/6">
-      <h1 className="text-center dark:text-white font-bold mb-3 text-2xl">
-        Reset Password
-      </h1>
-      <p className="mb-3 text-center dark:text-white">
-        Enter your new password
-      </p>
+      <h1 className="text-center font-bold mb-3 text-2xl">Reset Password</h1>
+      <p className="mb-3 text-center ">Enter your new password</p>
       <Formik
         initialValues={{
           password: "",

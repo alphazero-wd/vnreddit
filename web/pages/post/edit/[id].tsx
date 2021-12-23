@@ -1,36 +1,43 @@
 import { NextPage } from "next";
 import { Formik } from "formik";
-import { useCreatePostMutation } from "../../generated/graphql";
 import { useRouter } from "next/router";
-import AuthInput from "../../components/auth/AuthInput";
+import { useEditPostMutation, usePostQuery } from "../../../generated/graphql";
+import AuthInput from "../../../components/auth/AuthInput";
+import Markdown from "../../../components/shared/Markdown";
 import { AiOutlineLoading } from "react-icons/ai";
-import Markdown from "../../components/shared/Markdown";
 
-const CreatePost: NextPage = () => {
-  const [createPost, { loading }] = useCreatePostMutation();
+const EditPostPage: NextPage = () => {
+  const [editPost, { loading }] = useEditPostMutation();
   const router = useRouter();
+  const { id } = router.query;
+
+  const { data } = usePostQuery({
+    variables: { postId: id as string },
+  });
 
   return (
     <div className="container w-full md:w-3/6">
-      <h1 className="text-center dark:text-white font-bold mb-3 text-2xl">
-        Create postdown
-      </h1>
+      <h1 className="text-center font-bold mb-3 text-2xl">Edit post</h1>
       <Formik
-        initialValues={{ title: "", body: "" }}
+        initialValues={{
+          title: data?.post?.title || "",
+          body: data?.post?.body || "",
+        }}
         onSubmit={async ({ title, body }, { setErrors }) => {
-          const { data } = await createPost({
+          const { data } = await editPost({
             variables: {
               post: {
+                id: id as string,
                 title,
                 body,
               },
             },
             update: (cache) => {
-              cache.evict({ fieldName: "posts" });
+              cache.evict({ fieldName: "Post:" + id });
             },
           });
-          const error = data?.createPost.error;
-          if (data?.createPost.post) {
+          const error = data?.editPost.error;
+          if (data?.editPost.post) {
             router.push("/");
           }
 
@@ -47,12 +54,10 @@ const CreatePost: NextPage = () => {
               onChange={(e) => setValues({ ...values, title: e.target.value })}
               label="Title"
               errors={errors}
+              value={values.title}
             />
             <div>
-              <label
-                htmlFor="body"
-                className="dark:text-white mb-2 font-semibold block"
-              >
+              <label htmlFor="body" className="mb-2 font-semibold block">
                 Body:{" "}
               </label>
               <Markdown
@@ -69,7 +74,7 @@ const CreatePost: NextPage = () => {
                 className="flex justify-center items-center mt-3 bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold"
               >
                 {loading && <AiOutlineLoading className="animate-spin mr-3" />}
-                Create post
+                Update post
               </button>
             </div>
           </form>
@@ -79,4 +84,4 @@ const CreatePost: NextPage = () => {
   );
 };
 
-export default CreatePost;
+export default EditPostPage;

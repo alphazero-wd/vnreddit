@@ -10,10 +10,8 @@ const ForgotPassword: NextPage = () => {
   if (data?.forgotPassword.successMessage) {
     return (
       <div className="text-center container w-full md:w-3/6">
-        <h1 className="dark:text-white font-bold mb-3 text-2xl">
-          Email Has Been Sent
-        </h1>
-        <p className="dark:text-white mb-3">
+        <h1 className="font-bold mb-3 text-2xl">Email Has Been Sent</h1>
+        <p className="mb-3">
           A verification message has been sent to your email account. Please
           check in both inbox and spams
         </p>
@@ -29,10 +27,8 @@ const ForgotPassword: NextPage = () => {
 
   return (
     <div className="container w-full md:w-3/6">
-      <h1 className="text-center dark:text-white font-bold mb-3 text-2xl">
-        Forgot Password
-      </h1>
-      <p className="mb-3 text-center dark:text-white">
+      <h1 className="text-center font-bold mb-3 text-2xl">Forgot Password</h1>
+      <p className="mb-3 text-center ">
         Enter your email and we will send a verification message to your
         account.
       </p>

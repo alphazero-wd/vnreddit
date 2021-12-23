@@ -38,18 +38,18 @@ const CommentDropdown: FC<Props> = ({ setEdit, comment, id }) => {
           } 
         origin-top-left absolute transition-all right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none`}
         >
-          <div className="py-1 dark:bg-gray-800">
+          <div className="py-1">
             <button
               onClick={() => {
                 setEdit({ comment, isEdit: true });
                 setDropdown(false);
               }}
-              className="text-gray-700 w-full hover:bg-gray-600 dark:text-white flex items-center px-4 py-2"
+              className="text-gray-700 w-full hover:bg-gray-600flex items-center px-4 py-2"
             >
               <BsPencil className="mr-3" /> Edit comment
             </button>
             <button
-              className="text-gray-700 w-full hover:bg-gray-600 flex items-center dark:text-white px-4 py-2"
+              className="text-gray-700 w-full hover:bg-gray-600 flex items-centerpx-4 py-2"
               data-modal-toggle="default-modal"
               onClick={async () => {
                 setDropdown(false);

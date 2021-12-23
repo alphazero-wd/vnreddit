@@ -8,13 +8,7 @@ const MDEditor = dynamic(() => import("react-simplemde-editor"), {
 });
 
 const Markdown: FC<SimpleMDEReactProps> = ({ value, onChange }) => {
-  return (
-    <MDEditor
-      value={value}
-      onChange={onChange}
-      className="bg-white text-black"
-    />
-  );
+  return <MDEditor value={value} onChange={onChange} />;
 };
 
 export default Markdown;

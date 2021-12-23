@@ -11,7 +11,7 @@ const CreateCommunityPage: NextPage = () => {
 
   return (
     <div className="container w-full md:w-3/6">
-      <h1 className="text-center dark:text-white font-bold mb-3 text-2xl">
+      <h1 className="text-center font-bold mb-3 text-2xl">
         Create a community
       </h1>
       <Formik
