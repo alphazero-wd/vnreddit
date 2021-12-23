@@ -13,4 +13,8 @@ fragment Post on Post {
     point
   }
   numberOfComments
+  community {
+    id
+    name
+  }
 }

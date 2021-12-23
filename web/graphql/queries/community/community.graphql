@@ -1,0 +1,5 @@
+query Community($name: String!) {
+  community(name: $name) {
+    ...Community
+  }
+}
