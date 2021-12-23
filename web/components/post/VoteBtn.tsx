@@ -64,13 +64,13 @@ const VoteBtn: FC<Props> = ({ post }) => {
 
   // check if postId of each vote from the me query matches the postId of each post
   return (
-    <div className="text-gray-700 flex flex-col bg-gray-100 dark:bg-gray-900 items-center p-3">
+    <div className="text-gray-700 flex flex-col bg-gray-100 items-center p-3">
       <button
         className={`border-none ${
           userVote && userVote.point === 1
-            ? "text-red-600 bg-gray-200 dark:text-red-600"
+            ? "text-red-600 bg-gray-200"
             : "hover:text-red-600 hover:bg-gray-200"
-        }  mb-3  dark:text-gray-500 dark:hover:text-red-600 rounded-sm p-2 text-3xl`}
+        }  mb-3  rounded-sm p-2 text-3xl`}
         disabled={loading}
         onClick={async () => {
           if (!data?.me) {
@@ -89,15 +89,13 @@ const VoteBtn: FC<Props> = ({ post }) => {
       >
         <FaChevronUp />
       </button>
-      <span className="font-semibold text-md dark:text-white">
-        {post?.points}
-      </span>
+      <span className="font-semibold text-md">{post?.points}</span>
       <button
         className={`${
           userVote && userVote.point === -1
-            ? "dark:text-blue-600 text-blue-600 bg-gray-200"
-            : "dark:hover:text-blue-600 hover:bg-gray-200"
-        } mt-3 text-gray-700 dark:text-gray-500 border-none rounded-sm p-2 text-3xl`}
+            ? "text-blue-600 bg-gray-200"
+            : "hover:bg-gray-200"
+        } mt-3 text-gray-700 border-none rounded-sm p-2 text-3xl`}
         disabled={loading}
         onClick={async () => {
           if (!data?.me) {

@@ -13,7 +13,7 @@ const EditDeleteBtn: FC<Props> = ({ id }) => {
   return (
     <div className="flex justify-center items-center">
       <Link href={`/post/edit/${id}`}>
-        <button className="flex justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-400">
+        <button className="flex justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200">
           <FaEdit className="mr-2" />
           <small>Edit</small>
         </button>
@@ -30,7 +30,7 @@ const EditDeleteBtn: FC<Props> = ({ id }) => {
           });
           router.push("/");
         }}
-        className="ml-3 flex justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-400"
+        className="ml-3 flex justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200"
       >
         <FaTrash className="mr-2" />
         <small>Delete</small>

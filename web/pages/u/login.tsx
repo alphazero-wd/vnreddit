@@ -11,11 +11,13 @@ import {
 } from "../../generated/graphql";
 import { AiOutlineLoading } from "react-icons/ai";
 import { useEffect } from "react";
+import { useRedirect } from "../../utils/useRedirect";
 
 const Signup: NextPage = () => {
   const router = useRouter();
   const [login, { loading }] = useLoginMutation();
   const { data } = useMeQuery();
+  useRedirect(!!data?.me, "/");
 
   useEffect(() => {
     if (data?.me) {

@@ -22,7 +22,7 @@ const Post: FC<Props> = ({ post, loading }) => {
     >
       <VoteBtn post={post} />
       <div
-        className="cursor-pointer flex-grow p-3 dark:text-white dark:bg-gray-800"
+        className="cursor-pointer flex-grow p-3"
         onClick={() => router.push(`/post/${post.id}`)}
       >
         <small className="text-gray-600">
@@ -30,7 +30,7 @@ const Post: FC<Props> = ({ post, loading }) => {
         </small>
         <h2 className="mb-2 text-2xl font-bold">{post.title}</h2>
         <ReactMarkdown>{post.body || ""}</ReactMarkdown>
-        <button className="flex mt-3 justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-400">
+        <button className="flex mt-3 justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200">
           <BsChatSquare className="mr-2 text-xl" />
           <small>{post.numberOfComments} comments</small>
         </button>

@@ -7,13 +7,17 @@ import AuthInput from "../../../components/auth/AuthInput";
 import {
   MeDocument,
   MeQuery,
+  useMeQuery,
   useResetPasswordMutation,
 } from "../../../generated/graphql";
+import { useRedirect } from "../../../utils/useRedirect";
 
 const ResetPassword: NextPage = () => {
   const [resetPassword, { loading, data }] = useResetPasswordMutation();
   const router = useRouter();
   const { token } = router.query;
+  const { data: user } = useMeQuery();
+  useRedirect(!!user?.me, "/");
 
   if (data?.resetPassword.error?.field === "token") {
     return (

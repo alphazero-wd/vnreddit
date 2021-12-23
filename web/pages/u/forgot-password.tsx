@@ -1,11 +1,14 @@
 import { NextPage } from "next";
 import { Formik } from "formik";
 import AuthInput from "../../components/auth/AuthInput";
-import { useForgotPasswordMutation } from "../../generated/graphql";
+import { useForgotPasswordMutation, useMeQuery } from "../../generated/graphql";
 import { AiOutlineLoading } from "react-icons/ai";
+import { useRedirect } from "../../utils/useRedirect";
 
 const ForgotPassword: NextPage = () => {
   const [forgotPassword, { data, loading }] = useForgotPasswordMutation();
+  const { data: user } = useMeQuery();
+  useRedirect(!!user?.me, "/");
 
   if (data?.forgotPassword.successMessage) {
     return (

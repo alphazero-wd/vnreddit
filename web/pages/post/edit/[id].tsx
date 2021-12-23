@@ -1,19 +1,28 @@
 import { NextPage } from "next";
 import { Formik } from "formik";
 import { useRouter } from "next/router";
-import { useEditPostMutation, usePostQuery } from "../../../generated/graphql";
+import {
+  useEditPostMutation,
+  useMeQuery,
+  usePostQuery,
+} from "../../../generated/graphql";
 import AuthInput from "../../../components/auth/AuthInput";
 import Markdown from "../../../components/shared/Markdown";
 import { AiOutlineLoading } from "react-icons/ai";
+import { useRedirect } from "../../../utils/useRedirect";
 
 const EditPostPage: NextPage = () => {
   const [editPost, { loading }] = useEditPostMutation();
   const router = useRouter();
+  const { data: user } = useMeQuery();
   const { id } = router.query;
 
   const { data } = usePostQuery({
     variables: { postId: id as string },
   });
+
+  useRedirect(!user?.me, "/u/login");
+  useRedirect(data?.post?.creator.id !== user?.me?.id, "/");
 
   return (
     <div className="container w-full md:w-3/6">

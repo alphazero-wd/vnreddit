@@ -3,11 +3,18 @@ import { useRouter } from "next/router";
 import { NextPage } from "next";
 import { AiOutlineLoading } from "react-icons/ai";
 import AuthInput from "../../components/auth/AuthInput";
-import { useCreateCommunityMutation } from "../../generated/graphql";
+import {
+  useCreateCommunityMutation,
+  useMeQuery,
+} from "../../generated/graphql";
+import { useRedirect } from "../../utils/useRedirect";
 
 const CreateCommunityPage: NextPage = () => {
   const [createCommunity, { loading }] = useCreateCommunityMutation();
+  const { data } = useMeQuery();
   const router = useRouter();
+
+  useRedirect(!data?.me, "/u/login");
 
   return (
     <div className="container w-full md:w-3/6">
