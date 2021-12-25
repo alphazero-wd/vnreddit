@@ -3,4 +3,12 @@ fragment User on User {
   username
   createdAt
   token
+  posts {
+    ...Post
+  }
+  communities {
+    id
+    name
+    numberOfMembers
+  }
 }

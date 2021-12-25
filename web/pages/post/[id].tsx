@@ -39,7 +39,9 @@ const PostPage: NextPage = () => {
               {moment(data?.post?.createdAt).fromNow()}
             </small>
             <h2 className="mb-2 text-2xl font-bold">{data?.post?.title}</h2>
-            <ReactMarkdown>{data?.post?.body || ""}</ReactMarkdown>
+            <ReactMarkdown className="markdown">
+              {data?.post?.body || ""}
+            </ReactMarkdown>
             <div className="flex justify-between items-center mt-4">
               <div className="flex items-center text-gray-600 font-semibold">
                 <BsChatSquare className="mr-2 text-xl" />

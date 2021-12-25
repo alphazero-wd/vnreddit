@@ -126,7 +126,7 @@ export class PostResolver {
         title,
         body,
         creatorId: req?.payload?.userId,
-        communityId: communityId ? parseInt(communityId) : undefined,
+        communityId: communityId ? parseInt(communityId) : null,
       })
       .returning("*")
       .execute();

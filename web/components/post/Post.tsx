@@ -45,7 +45,7 @@ const Post: FC<Props> = ({ post, loading }) => {
           className="cursor-pointer"
         >
           <h2 className="mb-2 text-2xl font-bold">{post.title}</h2>
-          <ReactMarkdown>{post.body || ""}</ReactMarkdown>
+          <ReactMarkdown className="markdown">{post.body || ""}</ReactMarkdown>
           <button className="flex mt-3 justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200">
             <BsChatSquare className="mr-2 text-xl" />
             <small>{post.numberOfComments} comments</small>

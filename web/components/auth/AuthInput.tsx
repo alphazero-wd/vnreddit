@@ -32,7 +32,7 @@ const AuthInput: FC<Props> = ({
 }) => {
   return (
     <div className="mb-3">
-      <label className="mb-3font-semibold block">{label}:</label>
+      <label className="mb-3 font-semibold block">{label}:</label>
       <input
         type={type || "text"}
         className={`border text-gray-800 bg-transparent py-2 px-3 w-full focus:outline-none  ${

@@ -20,9 +20,9 @@ export class Community {
   @Column({ unique: true, length: 20 })
   name!: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  description?: string;
+  @Field(() => String, { nullable: true })
+  @Column("text", { nullable: true })
+  description: string | null;
 
   @Field()
   @CreateDateColumn()

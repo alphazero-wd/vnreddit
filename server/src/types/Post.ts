@@ -7,11 +7,11 @@ export class CreatePostInput {
   @Field()
   title!: string;
 
-  @Field({ nullable: true })
-  body?: string;
+  @Field(() => String, { nullable: true })
+  body?: string | null;
 
-  @Field({ nullable: true })
-  communityId?: string;
+  @Field(() => String, { nullable: true })
+  communityId?: string | null;
 }
 
 @InputType()
@@ -19,11 +19,11 @@ export class EditPostInput {
   @Field()
   id!: string;
 
-  @Field({ nullable: true })
-  title?: string;
+  @Field(() => String, { nullable: true })
+  title?: string | null;
 
-  @Field({ nullable: true })
-  body?: string;
+  @Field(() => String, { nullable: true })
+  body?: string | null;
 }
 
 @ObjectType()

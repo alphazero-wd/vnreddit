@@ -1,0 +1,3 @@
+mutation LeaveCommunity($commId: String!) {
+  leaveCommunity(commId: $commId)
+}

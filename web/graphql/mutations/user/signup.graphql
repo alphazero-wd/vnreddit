@@ -1,5 +1,10 @@
 mutation Signup($user: SignupInput!) {
   signup(user: $user) {
-    ...UserResponse
+    user {
+      ...User
+    }
+    error {
+      ...ErrorResponse
+    }
   }
 }

@@ -3,6 +3,7 @@ import {
   Arg,
   Ctx,
   FieldResolver,
+  Int,
   Mutation,
   Query,
   Resolver,
@@ -21,7 +22,25 @@ import { validateCommunityName } from "../utils/validate";
 export class CommunityResolver {
   @FieldResolver(() => [Post!]!)
   posts(@Root() { id }: Community) {
-    return getRepository(Post).find({ where: { communityId: id } });
+    return getRepository(Post)
+      .createQueryBuilder("p")
+      .orderBy("p.createdAt", "DESC")
+      .where("p.communityId = :id", { id })
+      .getMany();
+  }
+
+  @FieldResolver(() => Int)
+  async numberOfMembers(@Root() { id }: Community) {
+    const community = await getConnection().manager.findOne(Community, id);
+    if (community) {
+      community.members = await getConnection()
+        .createQueryBuilder()
+        .relation(Community, "members")
+        .of(id)
+        .loadMany();
+      return community.members.length;
+    }
+    return 0;
   }
 
   @FieldResolver(() => [User!]!)
@@ -63,7 +82,16 @@ export class CommunityResolver {
       parseInt(commId)
     );
     if (community) {
-      console.log(community.members);
+      community.members = await getConnection()
+        .createQueryBuilder()
+        .relation(Community, "members")
+        .of(req.payload?.userId)
+        .loadMany();
+
+      const existingMember = community.members.find(
+        (member) => member.id === req.payload?.userId
+      );
+      if (existingMember) return false;
 
       await getConnection()
         .createQueryBuilder()
@@ -87,6 +115,17 @@ export class CommunityResolver {
       parseInt(commId)
     );
     if (community) {
+      community.members = await getConnection()
+        .createQueryBuilder()
+        .relation(Community, "members")
+        .of(req.payload?.userId)
+        .loadMany();
+
+      const existingMember = community.members.find(
+        (member) => member.id === req.payload?.userId
+      );
+      if (!existingMember) return false;
+
       await getConnection()
         .createQueryBuilder()
         .relation(Community, "members")
@@ -99,7 +138,10 @@ export class CommunityResolver {
 
   @UseMiddleware(auth)
   @Mutation(() => CommunityResponse)
-  async createCommunity(@Arg("name") name: string): Promise<CommunityResponse> {
+  async createCommunity(
+    @Arg("name") name: string,
+    @Ctx() { req, res }: MyContext
+  ): Promise<CommunityResponse> {
     if (!validateCommunityName(name)) {
       return {
         error: {
@@ -131,7 +173,7 @@ export class CommunityResolver {
       .values({ name })
       .returning("*")
       .execute();
-
+    await this.joinCommunity(newCommunity.raw[0].id, { req, res });
     return {
       community: newCommunity.raw[0],
     };

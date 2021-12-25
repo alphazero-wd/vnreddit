@@ -14,4 +14,5 @@ fragment Community on Community {
       ...Comment
     }
   }
+  numberOfMembers
 }

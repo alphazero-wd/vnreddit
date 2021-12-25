@@ -22,9 +22,9 @@ export class Post {
   @Column()
   title!: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  body?: string;
+  @Field(() => String, { nullable: true })
+  @Column("text", { nullable: true })
+  body: string | null;
 
   @Field()
   @CreateDateColumn()
@@ -49,6 +49,6 @@ export class Post {
   @OneToMany(() => Comment, (comment) => comment, { onDelete: "CASCADE" })
   comments: Comment[];
 
-  @Column({ nullable: true })
-  communityId?: number;
+  @Column("int", { nullable: true })
+  communityId: number | null;
 }

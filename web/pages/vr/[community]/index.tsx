@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { AiOutlinePlus } from "react-icons/ai";
 import { BiCake } from "react-icons/bi";
-import Post from "../../components/post/Post";
-import { useCommunityQuery } from "../../generated/graphql";
+import JoinCommunityBtn from "../../../components/community/JoinCommunityBtn";
+import Post from "../../../components/post/Post";
+import { useCommunityQuery } from "../../../generated/graphql";
 
 const CommunityPage: NextPage = () => {
   const { query } = useRouter();
@@ -19,12 +20,10 @@ const CommunityPage: NextPage = () => {
           <div>
             <h1 className="text-3xl font-bold mb-3">{data?.community?.name}</h1>
             <h6 className="text-gray-600 font-semibold">
-              {data?.community?.members.length} members
+              {data?.community?.numberOfMembers} members
             </h6>
           </div>
-          <button className="px-4 mr-3 border rounded-full border-blue-500 py-1 font-bold hover:bg-blue-500 transition-all text-blue-500 hover:text-white">
-            Join
-          </button>
+          <JoinCommunityBtn community={data?.community} />
         </div>
         <p className="my-3 text-gray-800">{data?.community?.description}</p>
         <hr />
@@ -33,7 +32,7 @@ const CommunityPage: NextPage = () => {
           Created {moment(data?.community?.createdAt).format("MMMM D, YYYY")}
         </b>
       </div>
-      <Link href="/vr/create">
+      <Link href={`/vr/${data?.community?.name}/post/create`}>
         <button className="border border-gray-300 px-3 py-2 hover:bg-gray-300 transition-colors flex w-full items-center rounded-md">
           <button className="bg-blue-200 rounded-full p-2 mr-3">
             <AiOutlinePlus className="text-blue-500 text-2xl" />
