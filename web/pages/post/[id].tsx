@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { BsChatSquare } from "react-icons/bs";
+import { BsChatSquare, BsDot } from "react-icons/bs";
 import Comment from "../../components/comment/Comment";
 import Link from "next/link";
 import { useMeQuery, usePostQuery } from "../../generated/graphql";
@@ -30,6 +30,14 @@ const PostPage: NextPage = () => {
           {data?.post && <VoteBtn post={data.post} />}
           <div className="flex-grow p-3 bg-white ">
             <small className="text-gray-600">
+              {data?.post?.community && router.pathname !== "/vr/[community]" && (
+                <Link href={`/vr/${data?.post.community?.name}`}>
+                  <span className="hover:underline cursor-pointer">
+                    {`vr/${data?.post.community.name}`}
+                    <BsDot className="inline" />
+                  </span>
+                </Link>
+              )}
               Posted by{" "}
               <Link href="/u/alphazero">
                 <a className="hover:underline">

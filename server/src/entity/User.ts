@@ -53,7 +53,9 @@ export class User {
   comments: Comment[];
 
   @Field(() => [Community])
-  @ManyToMany(() => Community, (community) => community.members)
+  @ManyToMany(() => Community, (community) => community.members, {
+    onDelete: "CASCADE",
+  })
   @JoinTable()
   communities: Community[];
 }

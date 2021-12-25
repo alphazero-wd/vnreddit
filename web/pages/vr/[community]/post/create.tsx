@@ -18,12 +18,12 @@ const CreatePost: NextPage = () => {
   const { data } = useMeQuery();
   const router = useRouter();
 
-  useRedirect(!data?.me, "/u/login");
   const { data: community } = useCommunityQuery({
     variables: {
       name: router.query.community as string,
     },
   });
+  // useRedirect(!data?.me, "/u/login");
 
   return (
     <div className="container w-full lg:w-3/6">

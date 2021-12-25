@@ -5,12 +5,14 @@ import { AiOutlineLoading } from "react-icons/ai";
 import AuthInput from "../../components/auth/AuthInput";
 import {
   useCreateCommunityMutation,
+  useJoinCommunityMutation,
   useMeQuery,
 } from "../../generated/graphql";
 import { useRedirect } from "../../utils/useRedirect";
 
 const CreateCommunityPage: NextPage = () => {
   const [createCommunity, { loading }] = useCreateCommunityMutation();
+  const [joinCommunity] = useJoinCommunityMutation();
   const { data } = useMeQuery();
   const router = useRouter();
 
@@ -30,12 +32,23 @@ const CreateCommunityPage: NextPage = () => {
             variables: {
               name: values.name,
             },
+            update: (cache, { data }) => {
+              cache.evict({
+                id: "Community:" + data?.createCommunity.community?.id,
+                fieldName: "communities",
+              });
+            },
           });
 
           const error = data?.createCommunity.error;
           if (error) {
             setErrors({ [error.field as string]: error.message });
           } else if (data?.createCommunity.community) {
+            await joinCommunity({
+              variables: {
+                commId: data.createCommunity.community.id,
+              },
+            });
             router.push(`/vr/${data.createCommunity.community.name}`);
           }
           return data;

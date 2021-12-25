@@ -88,20 +88,14 @@ export class CommunityResolver {
         .of(req.payload?.userId)
         .loadMany();
 
-      const existingMember = community.members.find(
-        (member) => member.id === req.payload?.userId
-      );
-      if (existingMember) return false;
-
       await getConnection()
         .createQueryBuilder()
         .relation(Community, "members")
-        .of(commId) // add to a community id
+        .of(parseInt(commId)) // add to a community id
         .add(req.payload?.userId); // a member based on the id of the user;
-    } else {
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 
   @UseMiddleware(auth)
@@ -121,15 +115,10 @@ export class CommunityResolver {
         .of(req.payload?.userId)
         .loadMany();
 
-      const existingMember = community.members.find(
-        (member) => member.id === req.payload?.userId
-      );
-      if (!existingMember) return false;
-
       await getConnection()
         .createQueryBuilder()
         .relation(Community, "members")
-        .of(commId) // add to a community id
+        .of(parseInt(commId)) // add to a community id
         .remove(req.payload?.userId); // a member based on the id of the user;
       return true;
     }
@@ -138,10 +127,7 @@ export class CommunityResolver {
 
   @UseMiddleware(auth)
   @Mutation(() => CommunityResponse)
-  async createCommunity(
-    @Arg("name") name: string,
-    @Ctx() { req, res }: MyContext
-  ): Promise<CommunityResponse> {
+  async createCommunity(@Arg("name") name: string): Promise<CommunityResponse> {
     if (!validateCommunityName(name)) {
       return {
         error: {
@@ -173,7 +159,6 @@ export class CommunityResolver {
       .values({ name })
       .returning("*")
       .execute();
-    await this.joinCommunity(newCommunity.raw[0].id, { req, res });
     return {
       community: newCommunity.raw[0],
     };

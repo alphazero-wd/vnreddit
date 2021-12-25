@@ -3,6 +3,7 @@ import {
   LoginInput,
   ResetPasswordInput,
   SignupInput,
+  UpdateProfileInput,
   UserResponse,
 } from "../types/User";
 import {
@@ -244,5 +245,110 @@ export class UserResolver {
       .execute();
 
     return { user: updatedUser.raw[0] };
+  }
+
+  @UseMiddleware(auth)
+  @Mutation(() => UserResponse, { nullable: true })
+  async updateProfile(
+    @Arg("profile") { username, email }: UpdateProfileInput,
+    @Ctx() { req }: MyContext
+  ): Promise<UserResponse | null> {
+    const queryBuilder = getRepository(User).createQueryBuilder("u");
+    const user = await getRepository(User).findOne({
+      where: { id: req.payload?.userId },
+    });
+    let updatedUser;
+    if (username && user?.username !== username) {
+      if (username.includes("@"))
+        return {
+          error: {
+            field: "username",
+            message: "Username cannot include @.",
+          },
+        };
+      if (user) {
+        updatedUser = await queryBuilder
+          .update()
+          .set({ username: username ? username : user.username })
+          .where("id = :id", { id: req.payload?.userId })
+          .returning("*")
+          .execute();
+      }
+      return {
+        user: updatedUser?.raw[0],
+      };
+    }
+
+    if (email && user?.email !== email) {
+      if (!validateEmail(email))
+        return {
+          error: {
+            field: "email",
+            message: "Invalid email.",
+          },
+        };
+      if (user) {
+        updatedUser = await queryBuilder
+          .update()
+          .set({ email: email ? email : user.email })
+          .where("id = :id", { id: req.payload?.userId })
+          .returning("*")
+          .execute();
+      }
+      return {
+        user: updatedUser?.raw[0],
+      };
+    }
+    return {
+      error: {
+        message: "No field changes are found.",
+      },
+    };
+  }
+
+  @UseMiddleware(auth)
+  @Mutation(() => UserResponse)
+  async updatePassword(
+    @Arg("password") password: string,
+    @Arg("confirmPassword") confirmPassword: string,
+    @Ctx() { req }: MyContext
+  ): Promise<UserResponse> {
+    const queryBuilder = getRepository(User).createQueryBuilder("u");
+    const user = await getRepository(User).findOne({
+      where: { id: req.payload?.userId },
+    });
+
+    if (password !== confirmPassword)
+      return {
+        error: {
+          field: "confirmPassword",
+          message: "Passwords do not match.",
+        },
+      };
+
+    if (user) {
+      await queryBuilder
+        .update()
+        .set({ password: await hash(password, 12) })
+        .where("id = :id", { id: req.payload?.userId })
+        .returning("*")
+        .execute();
+    }
+    return { user };
+  }
+
+  @UseMiddleware(auth)
+  @Mutation(() => Boolean)
+  async deleteUser(@Ctx() { req }: MyContext): Promise<boolean> {
+    const user = await getRepository(User).findOne(req.payload?.userId);
+    if (user) {
+      await getRepository(User)
+        .createQueryBuilder()
+        .delete()
+        .where("id = :id", { id: req.payload?.userId })
+        .execute();
+      return true;
+    }
+    return false;
   }
 }

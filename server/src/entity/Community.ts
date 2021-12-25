@@ -3,7 +3,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -29,7 +28,6 @@ export class Community {
   createdAt: Date;
 
   @Field(() => [User])
-  @ManyToMany(() => User, (user) => user.communities)
-  @JoinTable()
+  @ManyToMany(() => User, (user) => user.communities, { onDelete: "CASCADE" })
   members: User[];
 }

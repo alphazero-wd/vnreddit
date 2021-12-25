@@ -27,7 +27,7 @@ const Post: FC<Props> = ({ post, loading }) => {
           {post.community && router.pathname !== "/vr/[community]" && (
             <Link href={`/vr/${post.community?.name}`}>
               <span className="hover:underline cursor-pointer">
-                {`r/${post.community.name}`}
+                {`vr/${post.community.name}`}
                 <BsDot className="inline" />
               </span>
             </Link>

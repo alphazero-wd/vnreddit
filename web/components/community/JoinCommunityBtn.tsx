@@ -26,7 +26,7 @@ const JoinCommunityBtn: FC<Props> = ({ community }) => {
               commId: community!.id,
             },
             update: (cache) => {
-              cache.evict({ id: "Community:" + community?.id });
+              cache.evict({ id: `Community:${community?.id}` });
             },
           });
         } else {
@@ -35,7 +35,7 @@ const JoinCommunityBtn: FC<Props> = ({ community }) => {
               commId: community!.id,
             },
             update: (cache) => {
-              cache.evict({ id: "Community:" + community?.id });
+              cache.evict({ id: `Community:${community?.id}` });
             },
           });
         }
