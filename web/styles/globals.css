@@ -6,6 +6,14 @@
 /* purgecss start ignore */
 /* Markdown Styles */
 /* Global */
+.primary-btn {
+  @apply px-4 mr-3 border rounded-full border-blue-500 py-1 font-bold hover:bg-blue-500 transition-all text-blue-500 hover:text-white;
+}
+
+.secondary-btn {
+  @apply px-4 mr-3 rounded-full bg-blue-500 py-1 text-white font-bold hover:bg-blue-400;
+}
+
 .markdown {
   @apply leading-relaxed text-sm;
 }
@@ -13,12 +21,6 @@
 @screen sm {
   .markdown {
     @apply text-base;
-  }
-}
-
-@screen lg {
-  .markdown {
-    @apply text-lg;
   }
 }
 

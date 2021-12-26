@@ -99,6 +99,7 @@ export type Mutation = {
   createPost: PostResponse;
   deleteComment: Scalars['Boolean'];
   deletePost: Scalars['Boolean'];
+  deleteUser: Scalars['Boolean'];
   editComment: CommentResponse;
   editPost: PostResponse;
   forgotPassword: ForgotPasswordResponse;
@@ -107,6 +108,8 @@ export type Mutation = {
   login: UserResponse;
   resetPassword: UserResponse;
   signup: UserResponse;
+  updatePassword: UserResponse;
+  updateProfile?: Maybe<UserResponse>;
   vote: Scalars['Boolean'];
 };
 
@@ -179,6 +182,17 @@ export type MutationResetPasswordArgs = {
 
 export type MutationSignupArgs = {
   user: SignupInput;
+};
+
+
+export type MutationUpdatePasswordArgs = {
+  confirmPassword: Scalars['String'];
+  password: Scalars['String'];
+};
+
+
+export type MutationUpdateProfileArgs = {
+  profile: UpdateProfileInput;
 };
 
 
@@ -256,6 +270,11 @@ export type SignupInput = {
   username: Scalars['String'];
 };
 
+export type UpdateProfileInput = {
+  email?: InputMaybe<Scalars['String']>;
+  username?: InputMaybe<Scalars['String']>;
+};
+
 export type User = {
   __typename?: 'User';
   comments: Array<Comment>;
@@ -313,6 +332,14 @@ export type EditCommentMutationVariables = Exact<{
 
 
 export type EditCommentMutation = { __typename?: 'Mutation', editComment: { __typename?: 'CommentResponse', comment?: { __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+
+export type AddDescriptionMutationVariables = Exact<{
+  id: Scalars['String'];
+  description: Scalars['String'];
+}>;
+
+
+export type AddDescriptionMutation = { __typename?: 'Mutation', addDescription: { __typename?: 'CommunityResponse', community?: { __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type CreateCommunityMutationVariables = Exact<{
   name: Scalars['String'];
@@ -391,6 +418,13 @@ export type VoteMutationVariables = Exact<{
 
 
 export type VoteMutation = { __typename?: 'Mutation', vote: boolean };
+
+export type CommunitiesQueryVariables = Exact<{
+  search: Scalars['String'];
+}>;
+
+
+export type CommunitiesQuery = { __typename?: 'Query', communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }> }> };
 
 export type CommunityQueryVariables = Exact<{
   name: Scalars['String'];
@@ -511,6 +545,7 @@ export type ResolversTypes = {
   ResetPasswordInput: ResetPasswordInput;
   SignupInput: SignupInput;
   String: ResolverTypeWrapper<Scalars['String']>;
+  UpdateProfileInput: UpdateProfileInput;
   User: ResolverTypeWrapper<User>;
   UserResponse: ResolverTypeWrapper<UserResponse>;
   Vote: ResolverTypeWrapper<Vote>;
@@ -541,6 +576,7 @@ export type ResolversParentTypes = {
   ResetPasswordInput: ResetPasswordInput;
   SignupInput: SignupInput;
   String: Scalars['String'];
+  UpdateProfileInput: UpdateProfileInput;
   User: User;
   UserResponse: UserResponse;
   Vote: Vote;
@@ -602,6 +638,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createPost?: Resolver<ResolversTypes['PostResponse'], ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'post'>>;
   deleteComment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteCommentArgs, 'commentId'>>;
   deletePost?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeletePostArgs, 'id'>>;
+  deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   editComment?: Resolver<ResolversTypes['CommentResponse'], ParentType, ContextType, RequireFields<MutationEditCommentArgs, 'payload'>>;
   editPost?: Resolver<ResolversTypes['PostResponse'], ParentType, ContextType, RequireFields<MutationEditPostArgs, 'post'>>;
   forgotPassword?: Resolver<ResolversTypes['ForgotPasswordResponse'], ParentType, ContextType, RequireFields<MutationForgotPasswordArgs, 'email'>>;
@@ -610,6 +647,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   login?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'user'>>;
   resetPassword?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'payload'>>;
   signup?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'user'>>;
+  updatePassword?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'confirmPassword' | 'password'>>;
+  updateProfile?: Resolver<Maybe<ResolversTypes['UserResponse']>, ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'profile'>>;
   vote?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVoteArgs, 'point' | 'postId'>>;
 };
 
@@ -886,6 +925,46 @@ export function useEditCommentMutation(baseOptions?: Apollo.MutationHookOptions<
 export type EditCommentMutationHookResult = ReturnType<typeof useEditCommentMutation>;
 export type EditCommentMutationResult = Apollo.MutationResult<EditCommentMutation>;
 export type EditCommentMutationOptions = Apollo.BaseMutationOptions<EditCommentMutation, EditCommentMutationVariables>;
+export const AddDescriptionDocument = gql`
+    mutation AddDescription($id: String!, $description: String!) {
+  addDescription(id: $id, description: $description) {
+    community {
+      ...Community
+    }
+    error {
+      ...ErrorResponse
+    }
+  }
+}
+    ${CommunityFragmentDoc}
+${ErrorResponseFragmentDoc}`;
+export type AddDescriptionMutationFn = Apollo.MutationFunction<AddDescriptionMutation, AddDescriptionMutationVariables>;
+
+/**
+ * __useAddDescriptionMutation__
+ *
+ * To run a mutation, you first call `useAddDescriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddDescriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addDescriptionMutation, { data, loading, error }] = useAddDescriptionMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      description: // value for 'description'
+ *   },
+ * });
+ */
+export function useAddDescriptionMutation(baseOptions?: Apollo.MutationHookOptions<AddDescriptionMutation, AddDescriptionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddDescriptionMutation, AddDescriptionMutationVariables>(AddDescriptionDocument, options);
+      }
+export type AddDescriptionMutationHookResult = ReturnType<typeof useAddDescriptionMutation>;
+export type AddDescriptionMutationResult = Apollo.MutationResult<AddDescriptionMutation>;
+export type AddDescriptionMutationOptions = Apollo.BaseMutationOptions<AddDescriptionMutation, AddDescriptionMutationVariables>;
 export const CreateCommunityDocument = gql`
     mutation CreateCommunity($name: String!) {
   createCommunity(name: $name) {
@@ -1281,6 +1360,41 @@ export function useVoteMutation(baseOptions?: Apollo.MutationHookOptions<VoteMut
 export type VoteMutationHookResult = ReturnType<typeof useVoteMutation>;
 export type VoteMutationResult = Apollo.MutationResult<VoteMutation>;
 export type VoteMutationOptions = Apollo.BaseMutationOptions<VoteMutation, VoteMutationVariables>;
+export const CommunitiesDocument = gql`
+    query Communities($search: String!) {
+  communities(search: $search) {
+    ...Community
+  }
+}
+    ${CommunityFragmentDoc}`;
+
+/**
+ * __useCommunitiesQuery__
+ *
+ * To run a query within a React component, call `useCommunitiesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCommunitiesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCommunitiesQuery({
+ *   variables: {
+ *      search: // value for 'search'
+ *   },
+ * });
+ */
+export function useCommunitiesQuery(baseOptions: Apollo.QueryHookOptions<CommunitiesQuery, CommunitiesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CommunitiesQuery, CommunitiesQueryVariables>(CommunitiesDocument, options);
+      }
+export function useCommunitiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CommunitiesQuery, CommunitiesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CommunitiesQuery, CommunitiesQueryVariables>(CommunitiesDocument, options);
+        }
+export type CommunitiesQueryHookResult = ReturnType<typeof useCommunitiesQuery>;
+export type CommunitiesLazyQueryHookResult = ReturnType<typeof useCommunitiesLazyQuery>;
+export type CommunitiesQueryResult = Apollo.QueryResult<CommunitiesQuery, CommunitiesQueryVariables>;
 export const CommunityDocument = gql`
     query Community($name: String!) {
   community(name: $name) {

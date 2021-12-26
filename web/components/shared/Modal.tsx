@@ -1,36 +1,63 @@
-import { FC } from "react";
+import { FC, ReactElement } from "react";
 
 interface Props {
+  title: string;
+  body: ReactElement;
+  onClose: () => void;
+  isOpen: boolean;
   onSubmit: () => void;
 }
 
-const Modal: FC<Props> = ({ onSubmit }) => {
+const Modal: FC<Props> = ({ body, title, isOpen, onClose, onSubmit }) => {
   return (
-    <div
-      className="hidden overflow-y-auto overflow-x-hidden fixed right-0 left-0 top-4 z-50 justify-center items-center md:inset-0 h-modal sm:h-full"
-      id="default-modal"
-    >
-      <div className="relative px-4 w-full max-w-md h-full md:h-auto">
-        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-          <div className="flex justify-end p-2">
-            <button className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"></button>
+    // <!-- This example requires Tailwind CSS v2.0+ -->
+    <div className={`fixed z-10 inset-0 overflow-y-auto`}>
+      <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div
+          className={`${
+            isOpen
+              ? "ease-out duration-300 opacity-100"
+              : "ease-in duration-200 opacity-0"
+          } fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity`}
+        ></div>
+
+        <span className="hidden sm:inline-block sm:align-middle sm:h-screen">
+          &#8203;
+        </span>
+        <div
+          className={`${
+            isOpen
+              ? "ease-in duration-200 opacity-100 translate-y-0 sm:scale-100"
+              : "ease-out duration-300 opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          } inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full`}
+        >
+          <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div className="sm:flex sm:items-start">
+              <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                <h3 className="text-lg leading-6 font-medium text-gray-900">
+                  {title}
+                </h3>
+                <div className="mt-2">{body}</div>
+              </div>
+            </div>
           </div>
-          <div className="p-6 pt-0 text-center">
-            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-              Are you sure you want to delete this product?
-            </h3>
+          <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex justify-end">
             <button
               type="button"
-              className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2"
-              onClick={onSubmit}
-              data-modal-toggle="default-modal"
-            ></button>
-            <button
-              type="button"
-              className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600"
-              data-modal-toggle="default-modal"
+              className="mr-3 bg-gray-200 rounded-full px-4 py-1 font-bold transition-all hover:bg-gray-400"
+              onClick={onClose}
             >
-              No, cancel
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="primary-btn"
+              onClick={() => {
+                onClose();
+                onSubmit();
+              }}
+            >
+              Confirm
             </button>
           </div>
         </div>

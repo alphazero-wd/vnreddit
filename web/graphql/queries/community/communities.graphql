@@ -1,0 +1,5 @@
+query Communities($search: String!) {
+  communities(search: $search) {
+    ...Community
+  }
+}
