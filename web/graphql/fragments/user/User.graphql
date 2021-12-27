@@ -7,8 +7,6 @@ fragment User on User {
     ...Post
   }
   communities {
-    id
-    name
-    numberOfMembers
+    ...Community
   }
 }

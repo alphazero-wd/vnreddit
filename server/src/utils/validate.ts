@@ -12,3 +12,8 @@ export const validateCommunityName = (name: string) => {
   const validCommunityNameRegex = /^[a-zA-Z0-9_]{3,20}$/;
   return validCommunityNameRegex.test(name);
 };
+
+export const validateUsername = (username: string) => {
+  const validUsernameRegex = /^[a-zA-Z0-9_]{3,30}$/;
+  return validUsernameRegex.test(username);
+};

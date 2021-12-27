@@ -46,7 +46,7 @@ const VoteBtn: FC<Props> = ({ post }) => {
       votes = post.votes.filter((vote) => vote.userId !== data?.me?.id);
     }
     const points = votes.reduce(
-      (point, { point: totalPoint }) => totalPoint + point * 2,
+      (point, { point: totalPoint }) => totalPoint + point,
       0
     );
     cache.writeFragment<PostVoteFragment>({

@@ -39,7 +39,7 @@ const AuthInput: FC<Props> = ({
           Object.keys(errors).indexOf(name) !== -1
             ? "border-red-600 focus:ring-red-600"
             : "border-gray-800 focus:right-blue-500"
-        } shadow-sm mb-1 focus:ring-2 rounded-md `}
+        } shadow-sm mb-1 focus:border-blue-500 rounded-md `}
         onChange={onChange}
         name={name}
         placeholder={`Enter your ${label.toLowerCase()} here`}

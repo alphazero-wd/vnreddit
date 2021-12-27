@@ -109,7 +109,7 @@ export type Mutation = {
   resetPassword: UserResponse;
   signup: UserResponse;
   updatePassword: UserResponse;
-  updateProfile?: Maybe<UserResponse>;
+  updateUsername: UserResponse;
   vote: Scalars['Boolean'];
 };
 
@@ -191,8 +191,8 @@ export type MutationUpdatePasswordArgs = {
 };
 
 
-export type MutationUpdateProfileArgs = {
-  profile: UpdateProfileInput;
+export type MutationUpdateUsernameArgs = {
+  username: Scalars['String'];
 };
 
 
@@ -234,6 +234,7 @@ export type Query = {
   me?: Maybe<User>;
   post?: Maybe<Post>;
   posts: PaginatedPosts;
+  user?: Maybe<User>;
 };
 
 
@@ -257,6 +258,11 @@ export type QueryPostsArgs = {
   limit: Scalars['Int'];
 };
 
+
+export type QueryUserArgs = {
+  username: Scalars['String'];
+};
+
 export type ResetPasswordInput = {
   confirmPassword: Scalars['String'];
   password: Scalars['String'];
@@ -268,11 +274,6 @@ export type SignupInput = {
   email: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
-};
-
-export type UpdateProfileInput = {
-  email?: InputMaybe<Scalars['String']>;
-  username?: InputMaybe<Scalars['String']>;
 };
 
 export type User = {
@@ -310,7 +311,7 @@ export type PostFragment = { __typename?: 'Post', id: string, title: string, bod
 
 export type PostVoteFragment = { __typename?: 'Post', id: string, points: number, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> };
 
-export type UserFragment = { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, numberOfMembers: number }> };
+export type UserFragment = { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }> }> };
 
 export type CreateCommentMutationVariables = Exact<{
   payload: CreateCommentInput;
@@ -395,21 +396,28 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, numberOfMembers: number }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type ResetPasswordMutationVariables = Exact<{
   payload: ResetPasswordInput;
 }>;
 
 
-export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, numberOfMembers: number }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type SignupMutationVariables = Exact<{
   user: SignupInput;
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, numberOfMembers: number }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+
+export type UpdateUsernameMutationVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type UpdateUsernameMutation = { __typename?: 'Mutation', updateUsername: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type VoteMutationVariables = Exact<{
   postId: Scalars['String'];
@@ -451,7 +459,14 @@ export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'Paginate
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, numberOfMembers: number }> } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }> }> } | null | undefined };
+
+export type UserQueryVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }> }> } | null | undefined };
 
 
 
@@ -545,7 +560,6 @@ export type ResolversTypes = {
   ResetPasswordInput: ResetPasswordInput;
   SignupInput: SignupInput;
   String: ResolverTypeWrapper<Scalars['String']>;
-  UpdateProfileInput: UpdateProfileInput;
   User: ResolverTypeWrapper<User>;
   UserResponse: ResolverTypeWrapper<UserResponse>;
   Vote: ResolverTypeWrapper<Vote>;
@@ -576,7 +590,6 @@ export type ResolversParentTypes = {
   ResetPasswordInput: ResetPasswordInput;
   SignupInput: SignupInput;
   String: Scalars['String'];
-  UpdateProfileInput: UpdateProfileInput;
   User: User;
   UserResponse: UserResponse;
   Vote: Vote;
@@ -648,7 +661,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   resetPassword?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'payload'>>;
   signup?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'user'>>;
   updatePassword?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'confirmPassword' | 'password'>>;
-  updateProfile?: Resolver<Maybe<ResolversTypes['UserResponse']>, ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'profile'>>;
+  updateUsername?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationUpdateUsernameArgs, 'username'>>;
   vote?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVoteArgs, 'point' | 'postId'>>;
 };
 
@@ -684,6 +697,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryPostArgs, 'id'>>;
   posts?: Resolver<ResolversTypes['PaginatedPosts'], ParentType, ContextType, RequireFields<QueryPostsArgs, 'limit'>>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'username'>>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
@@ -730,6 +744,22 @@ export type Resolvers<ContextType = any> = {
 };
 
 
+export const ErrorResponseFragmentDoc = gql`
+    fragment ErrorResponse on ErrorResponse {
+  field
+  message
+}
+    `;
+export const PostVoteFragmentDoc = gql`
+    fragment PostVote on Post {
+  id
+  points
+  votes {
+    userId
+    point
+  }
+}
+    `;
 export const PostFragmentDoc = gql`
     fragment Post on Post {
   id
@@ -784,22 +814,6 @@ export const CommunityFragmentDoc = gql`
 }
     ${PostFragmentDoc}
 ${CommentFragmentDoc}`;
-export const ErrorResponseFragmentDoc = gql`
-    fragment ErrorResponse on ErrorResponse {
-  field
-  message
-}
-    `;
-export const PostVoteFragmentDoc = gql`
-    fragment PostVote on Post {
-  id
-  points
-  votes {
-    userId
-    point
-  }
-}
-    `;
 export const UserFragmentDoc = gql`
     fragment User on User {
   id
@@ -810,12 +824,11 @@ export const UserFragmentDoc = gql`
     ...Post
   }
   communities {
-    id
-    name
-    numberOfMembers
+    ...Community
   }
 }
-    ${PostFragmentDoc}`;
+    ${PostFragmentDoc}
+${CommunityFragmentDoc}`;
 export const CreateCommentDocument = gql`
     mutation CreateComment($payload: CreateCommentInput!) {
   createComment(payload: $payload) {
@@ -1328,6 +1341,45 @@ export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<Signu
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
+export const UpdateUsernameDocument = gql`
+    mutation UpdateUsername($username: String!) {
+  updateUsername(username: $username) {
+    user {
+      ...User
+    }
+    error {
+      ...ErrorResponse
+    }
+  }
+}
+    ${UserFragmentDoc}
+${ErrorResponseFragmentDoc}`;
+export type UpdateUsernameMutationFn = Apollo.MutationFunction<UpdateUsernameMutation, UpdateUsernameMutationVariables>;
+
+/**
+ * __useUpdateUsernameMutation__
+ *
+ * To run a mutation, you first call `useUpdateUsernameMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUsernameMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUsernameMutation, { data, loading, error }] = useUpdateUsernameMutation({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useUpdateUsernameMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUsernameMutation, UpdateUsernameMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUsernameMutation, UpdateUsernameMutationVariables>(UpdateUsernameDocument, options);
+      }
+export type UpdateUsernameMutationHookResult = ReturnType<typeof useUpdateUsernameMutation>;
+export type UpdateUsernameMutationResult = Apollo.MutationResult<UpdateUsernameMutation>;
+export type UpdateUsernameMutationOptions = Apollo.BaseMutationOptions<UpdateUsernameMutation, UpdateUsernameMutationVariables>;
 export const VoteDocument = gql`
     mutation Vote($postId: String!, $point: Int!) {
   vote(postId: $postId, point: $point)
@@ -1542,3 +1594,38 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const UserDocument = gql`
+    query User($username: String!) {
+  user(username: $username) {
+    ...User
+  }
+}
+    ${UserFragmentDoc}`;
+
+/**
+ * __useUserQuery__
+ *
+ * To run a query within a React component, call `useUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useUserQuery(baseOptions: Apollo.QueryHookOptions<UserQuery, UserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+      }
+export function useUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserQuery, UserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+        }
+export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
+export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
+export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;

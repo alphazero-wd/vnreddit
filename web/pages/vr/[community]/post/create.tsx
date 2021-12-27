@@ -42,6 +42,7 @@ const CreatePost: NextPage = () => {
             update: (cache) => {
               cache.evict({ fieldName: "posts" });
               cache.evict({ id: "Community:" + community?.community?.id });
+              cache.evict({ id: "User:" + data?.createPost.post?.creator.id });
             },
           });
           const error = data?.createPost.error;

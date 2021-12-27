@@ -38,15 +38,6 @@ export class ResetPasswordInput {
   confirmPassword: string;
 }
 
-@InputType()
-export class UpdateProfileInput {
-  @Field(() => String, { nullable: true })
-  username?: string | null;
-
-  @Field(() => String, { nullable: true })
-  email?: string | null;
-}
-
 @ObjectType()
 export class UserResponse {
   @Field({ nullable: true })

@@ -13,7 +13,7 @@ const CommunityMembers: FC<Props> = ({ community }) => {
       </div>
       <div className="px-3 py-4">
         {community?.members.slice(0, 10).map((member) => (
-          <Link href={`/u/${member.username}`}>
+          <Link href={`/u/profile/${member.username}`}>
             <small className="text-blue-500 mb-3 cursor-pointer font-bold block hover:underline">
               u/{member.username}
             </small>

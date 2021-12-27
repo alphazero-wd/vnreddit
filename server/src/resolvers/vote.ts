@@ -65,7 +65,7 @@ export class VoteResolver {
       .update()
       .set({
         points: votes.reduce(
-          (point, { point: totalPoints }) => totalPoints + point * 2,
+          (point, { point: totalPoints }) => totalPoints + point,
           0
         ),
       })

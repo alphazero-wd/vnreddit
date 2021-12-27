@@ -22,7 +22,7 @@ export class User {
   id!: number;
 
   @Field()
-  @Column({ unique: true })
+  @Column({ unique: true, length: 30 })
   username!: string;
 
   @Column({ unique: true })

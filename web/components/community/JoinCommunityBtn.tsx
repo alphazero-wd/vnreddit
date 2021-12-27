@@ -1,6 +1,8 @@
+import { useRouter } from "next/router";
 import { FC } from "react";
 import {
   CommunityFragment,
+  CommunityFragmentDoc,
   useJoinCommunityMutation,
   useLeaveCommunityMutation,
   useMeQuery,
@@ -14,12 +16,16 @@ const JoinCommunityBtn: FC<Props> = ({ community }) => {
   const [joinCommunity] = useJoinCommunityMutation();
   const [leaveCommunity] = useLeaveCommunityMutation();
   const { data } = useMeQuery();
+  const router = useRouter();
   return (
     <button
       onClick={async () => {
         const existingMember = community?.members.find(
           (member) => member.id === data?.me?.id
         );
+        if (!data?.me) {
+          router.push("/u/login");
+        }
         if (existingMember) {
           await leaveCommunity({
             variables: {
@@ -27,6 +33,7 @@ const JoinCommunityBtn: FC<Props> = ({ community }) => {
             },
             update: (cache) => {
               cache.evict({ id: `Community:${community?.id}` });
+              cache.evict({ id: `User:${data?.me?.id}` });
             },
           });
         } else {
@@ -36,6 +43,7 @@ const JoinCommunityBtn: FC<Props> = ({ community }) => {
             },
             update: (cache) => {
               cache.evict({ id: `Community:${community?.id}` });
+              cache.evict({ id: `User:${data?.me?.id}` });
             },
           });
         }

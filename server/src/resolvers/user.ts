@@ -3,7 +3,6 @@ import {
   LoginInput,
   ResetPasswordInput,
   SignupInput,
-  UpdateProfileInput,
   UserResponse,
 } from "../types/User";
 import {
@@ -16,7 +15,11 @@ import {
   Root,
   UseMiddleware,
 } from "type-graphql";
-import { validateEmail, validatePassword } from "../utils/validate";
+import {
+  validateEmail,
+  validatePassword,
+  validateUsername,
+} from "../utils/validate";
 import { getConnection, getRepository } from "typeorm";
 import { User } from "../entity/User";
 import { compare, hash } from "bcryptjs";
@@ -30,6 +33,11 @@ import { Community } from "../entity/Community";
 
 @Resolver(User)
 export class UserResolver {
+  @Query(() => User, { nullable: true })
+  user(@Arg("username") username: string): Promise<User | undefined> {
+    return getRepository(User).findOne({ where: { username } });
+  }
+
   @FieldResolver(() => [Post!])
   posts(@Root() user: User): Promise<Post[]> {
     return getRepository(Post).find({ where: { creatorId: user.id } });
@@ -65,11 +73,12 @@ export class UserResolver {
   async signup(
     @Arg("user") { username, email, password, confirmPassword }: SignupInput
   ): Promise<UserResponse> {
-    if (!username || username.includes("@")) {
+    if (!validateUsername(username)) {
       return {
         error: {
           field: "username",
-          message: "Username must not be empty or include @.",
+          message:
+            "Username must be between 3–30 characters, and can only contain letters, numbers, or underscores.",
         },
       };
     }
@@ -248,61 +257,48 @@ export class UserResolver {
   }
 
   @UseMiddleware(auth)
-  @Mutation(() => UserResponse, { nullable: true })
-  async updateProfile(
-    @Arg("profile") { username, email }: UpdateProfileInput,
+  @Mutation(() => UserResponse)
+  async updateUsername(
+    @Arg("username") username: string,
     @Ctx() { req }: MyContext
-  ): Promise<UserResponse | null> {
+  ): Promise<UserResponse> {
+    // find the current user
+    const currentUser = await getRepository(User).findOne(req.payload?.userId);
     const queryBuilder = getRepository(User).createQueryBuilder("u");
-    const user = await getRepository(User).findOne({
-      where: { id: req.payload?.userId },
-    });
-    let updatedUser;
-    if (username && user?.username !== username) {
-      if (username.includes("@"))
+
+    if (currentUser) {
+      if (!validateUsername(username))
         return {
           error: {
             field: "username",
-            message: "Username cannot include @.",
+            message:
+              "Username must be between 3–30 characters, and can only contain letters, numbers, or underscores.",
           },
         };
-      if (user) {
-        updatedUser = await queryBuilder
-          .update()
-          .set({ username: username ? username : user.username })
-          .where("id = :id", { id: req.payload?.userId })
-          .returning("*")
-          .execute();
-      }
-      return {
-        user: updatedUser?.raw[0],
-      };
-    }
-
-    if (email && user?.email !== email) {
-      if (!validateEmail(email))
+      const existingUser = await getRepository(User).findOne({
+        where: {
+          username,
+        },
+      });
+      if (existingUser)
         return {
           error: {
-            field: "email",
-            message: "Invalid email.",
+            field: "username",
+            message: "Username has already been taken.",
           },
         };
-      if (user) {
-        updatedUser = await queryBuilder
-          .update()
-          .set({ email: email ? email : user.email })
-          .where("id = :id", { id: req.payload?.userId })
-          .returning("*")
-          .execute();
-      }
+      const updatedUser = await queryBuilder
+        .update()
+        .set({ username })
+        .where("id = :id", { id: req.payload?.userId })
+        .returning("*")
+        .execute();
       return {
-        user: updatedUser?.raw[0],
+        user: updatedUser.raw[0],
       };
     }
     return {
-      error: {
-        message: "No field changes are found.",
-      },
+      error: { message: "User not found." },
     };
   }
 
@@ -310,6 +306,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async updatePassword(
     @Arg("password") password: string,
+    @Arg("newPassword") newPassword: string,
     @Arg("confirmPassword") confirmPassword: string,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
@@ -317,24 +314,30 @@ export class UserResolver {
     const user = await getRepository(User).findOne({
       where: { id: req.payload?.userId },
     });
-
-    if (password !== confirmPassword)
-      return {
-        error: {
-          field: "confirmPassword",
-          message: "Passwords do not match.",
-        },
-      };
-
     if (user) {
+      const isValidPassword = await compare(password, user.password);
+      if (!isValidPassword)
+        return { error: { field: "password", message: "Wrong password." } };
+
+      if (newPassword !== confirmPassword)
+        return {
+          error: {
+            field: "confirmPassword",
+            message: "Passwords do not match.",
+          },
+        };
+
       await queryBuilder
         .update()
-        .set({ password: await hash(password, 12) })
+        .set({ password: await hash(newPassword, 12) })
         .where("id = :id", { id: req.payload?.userId })
         .returning("*")
         .execute();
+      return { user };
     }
-    return { user };
+    return {
+      error: { message: "User not found." },
+    };
   }
 
   @UseMiddleware(auth)
