@@ -37,7 +37,8 @@ const Modal: FC<Props> = ({ body, title, isOpen, onClose, onSubmit }) => {
                 <h3 className="text-lg leading-6 font-medium text-gray-900">
                   {title}
                 </h3>
-                <div className="mt-2">{body}</div>
+                <hr className="text-gray-800 my-2 w-full" />
+                <div>{body}</div>
               </div>
             </div>
           </div>

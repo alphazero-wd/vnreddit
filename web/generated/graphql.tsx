@@ -187,6 +187,7 @@ export type MutationSignupArgs = {
 
 export type MutationUpdatePasswordArgs = {
   confirmPassword: Scalars['String'];
+  newPassword: Scalars['String'];
   password: Scalars['String'];
 };
 
@@ -384,6 +385,11 @@ export type EditPostMutationVariables = Exact<{
 
 export type EditPostMutation = { __typename?: 'Mutation', editPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
+export type DeleteUserMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser: boolean };
+
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
 }>;
@@ -411,6 +417,15 @@ export type SignupMutationVariables = Exact<{
 
 
 export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+
+export type UpdatePasswordMutationVariables = Exact<{
+  confirmPassword: Scalars['String'];
+  newPassword: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type UpdatePasswordMutation = { __typename?: 'Mutation', updatePassword: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type UpdateUsernameMutationVariables = Exact<{
   username: Scalars['String'];
@@ -660,7 +675,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   login?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'user'>>;
   resetPassword?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'payload'>>;
   signup?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'user'>>;
-  updatePassword?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'confirmPassword' | 'password'>>;
+  updatePassword?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'confirmPassword' | 'newPassword' | 'password'>>;
   updateUsername?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationUpdateUsernameArgs, 'username'>>;
   vote?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVoteArgs, 'point' | 'postId'>>;
 };
@@ -1188,6 +1203,36 @@ export function useEditPostMutation(baseOptions?: Apollo.MutationHookOptions<Edi
 export type EditPostMutationHookResult = ReturnType<typeof useEditPostMutation>;
 export type EditPostMutationResult = Apollo.MutationResult<EditPostMutation>;
 export type EditPostMutationOptions = Apollo.BaseMutationOptions<EditPostMutation, EditPostMutationVariables>;
+export const DeleteUserDocument = gql`
+    mutation DeleteUser {
+  deleteUser
+}
+    `;
+export type DeleteUserMutationFn = Apollo.MutationFunction<DeleteUserMutation, DeleteUserMutationVariables>;
+
+/**
+ * __useDeleteUserMutation__
+ *
+ * To run a mutation, you first call `useDeleteUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUserMutation, { data, loading, error }] = useDeleteUserMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDeleteUserMutation(baseOptions?: Apollo.MutationHookOptions<DeleteUserMutation, DeleteUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteUserMutation, DeleteUserMutationVariables>(DeleteUserDocument, options);
+      }
+export type DeleteUserMutationHookResult = ReturnType<typeof useDeleteUserMutation>;
+export type DeleteUserMutationResult = Apollo.MutationResult<DeleteUserMutation>;
+export type DeleteUserMutationOptions = Apollo.BaseMutationOptions<DeleteUserMutation, DeleteUserMutationVariables>;
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
   forgotPassword(email: $email) {
@@ -1341,6 +1386,51 @@ export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<Signu
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
+export const UpdatePasswordDocument = gql`
+    mutation UpdatePassword($confirmPassword: String!, $newPassword: String!, $password: String!) {
+  updatePassword(
+    confirmPassword: $confirmPassword
+    newPassword: $newPassword
+    password: $password
+  ) {
+    user {
+      ...User
+    }
+    error {
+      ...ErrorResponse
+    }
+  }
+}
+    ${UserFragmentDoc}
+${ErrorResponseFragmentDoc}`;
+export type UpdatePasswordMutationFn = Apollo.MutationFunction<UpdatePasswordMutation, UpdatePasswordMutationVariables>;
+
+/**
+ * __useUpdatePasswordMutation__
+ *
+ * To run a mutation, you first call `useUpdatePasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePasswordMutation, { data, loading, error }] = useUpdatePasswordMutation({
+ *   variables: {
+ *      confirmPassword: // value for 'confirmPassword'
+ *      newPassword: // value for 'newPassword'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useUpdatePasswordMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePasswordMutation, UpdatePasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdatePasswordMutation, UpdatePasswordMutationVariables>(UpdatePasswordDocument, options);
+      }
+export type UpdatePasswordMutationHookResult = ReturnType<typeof useUpdatePasswordMutation>;
+export type UpdatePasswordMutationResult = Apollo.MutationResult<UpdatePasswordMutation>;
+export type UpdatePasswordMutationOptions = Apollo.BaseMutationOptions<UpdatePasswordMutation, UpdatePasswordMutationVariables>;
 export const UpdateUsernameDocument = gql`
     mutation UpdateUsername($username: String!) {
   updateUsername(username: $username) {

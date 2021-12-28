@@ -58,14 +58,18 @@ const CommunityPage: NextPage = () => {
         </div>
         <div className="lg:grid grid-cols-3 gap-4">
           <div className="col-span-2">
-            <Link href={`/vr/${data?.community?.name}/post/create`}>
-              <button className="border border-gray-300 px-3 py-2 hover:bg-gray-300 transition-colors flex w-full items-center rounded-md">
-                <button className="bg-blue-200 rounded-full p-2 mr-3">
-                  <AiOutlinePlus className="text-blue-500 text-2xl" />
+            {data?.community?.members.some(
+              (member) => member.id === user?.me?.id
+            ) && (
+              <Link href={`/vr/${data?.community?.name}/post/create`}>
+                <button className="border border-gray-300 px-3 py-2 hover:bg-gray-300 transition-colors flex w-full items-center rounded-md">
+                  <button className="bg-blue-200 rounded-full p-2 mr-3">
+                    <AiOutlinePlus className="text-blue-500 text-2xl" />
+                  </button>
+                  Create post
                 </button>
-                Create post
-              </button>
-            </Link>
+              </Link>
+            )}
             <div className="mt-4">
               {data?.community?.posts.map((post) => (
                 <Post key={post.id} post={post} />

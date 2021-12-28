@@ -319,6 +319,11 @@ export class UserResolver {
       if (!isValidPassword)
         return { error: { field: "password", message: "Wrong password." } };
 
+      if (!validatePassword(newPassword))
+        return {
+          error: { field: "password", message: "Password should be stronger." },
+        };
+
       if (newPassword !== confirmPassword)
         return {
           error: {

@@ -1,5 +1,4 @@
 import { Formik } from "formik";
-import { useRouter } from "next/router";
 import { FC } from "react";
 import { useUpdateUsernameMutation, useMeQuery } from "../../generated/graphql";
 import AuthInput from "../auth/AuthInput";
@@ -19,7 +18,7 @@ const UpdateUsername: FC = () => {
       <div className="mb-8">
         <Formik
           initialValues={{ username: "" }}
-          onSubmit={async ({ username }, { setErrors }) => {
+          onSubmit={async ({ username }, { setErrors, setValues }) => {
             const response = await updateUsername({
               variables: { username },
               update: (cache) => {
@@ -32,6 +31,7 @@ const UpdateUsername: FC = () => {
             } else {
               alert("User updated successfully.");
             }
+            setValues({ username: "" });
           }}
         >
           {({ errors, handleChange, handleSubmit, values }) => (

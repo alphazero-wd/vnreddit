@@ -37,7 +37,7 @@ const Signup: NextPage = () => {
           password: "",
           confirmPassword: "",
         }}
-        onSubmit={async (values, { setErrors }) => {
+        onSubmit={async (values, { setErrors, setValues }) => {
           const response = await signup({
             variables: {
               user: values,
@@ -57,9 +57,17 @@ const Signup: NextPage = () => {
 
           if (user) {
             localStorage.setItem("token", JSON.stringify(user.token));
+            // setValues({
+            //   username: "",
+            //   email: "",
+            //   password: "",
+            //   confirmPassword: "",
+            // });
           } else if (error && error.field) {
             setErrors({ [error.field]: error.message });
+            // setValues({ ...values, [error.field]: "" });
           }
+          return response;
         }}
       >
         {({ handleChange, handleSubmit, errors }) => (
