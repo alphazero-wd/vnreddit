@@ -37,6 +37,10 @@ export class User {
   password!: string;
 
   @Field()
+  @Column({ default: false })
+  isConfirmed: boolean;
+
+  @Field()
   @CreateDateColumn()
   createdAt!: Date;
 

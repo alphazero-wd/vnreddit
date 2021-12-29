@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from "type-graphql";
+import { Field, ID, ObjectType } from "type-graphql";
 import {
   Column,
   CreateDateColumn,
@@ -40,10 +40,6 @@ export class Post {
   @Field(() => [Vote!]!)
   @OneToMany(() => Vote, (vote) => vote, { onDelete: "CASCADE" })
   votes: Vote[];
-
-  @Field(() => Int)
-  @Column("int", { default: 0 })
-  points: number;
 
   @Field(() => [Comment!]!)
   @OneToMany(() => Comment, (comment) => comment, { onDelete: "CASCADE" })

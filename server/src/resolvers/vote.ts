@@ -3,7 +3,6 @@ import { MyContext } from "../types/MyContext";
 import { Arg, Ctx, Int, Mutation, Resolver, UseMiddleware } from "type-graphql";
 import { getRepository } from "typeorm";
 import { auth } from "../middleware/auth";
-import { Post } from "../entity/Post";
 
 @Resolver()
 export class VoteResolver {
@@ -57,21 +56,6 @@ export class VoteResolver {
         })
         .execute();
     }
-    const votes = await getRepository(Vote).find({
-      where: { postId: parseInt(postId) },
-    });
-    await getRepository(Post)
-      .createQueryBuilder("post")
-      .update()
-      .set({
-        points: votes.reduce(
-          (point, { point: totalPoints }) => totalPoints + point,
-          0
-        ),
-      })
-      .where("id = :id", { id: postId })
-      .execute();
-
     return true;
   }
 }

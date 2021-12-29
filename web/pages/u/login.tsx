@@ -50,19 +50,13 @@ const Signup: NextPage = () => {
               });
             },
           });
-          console.log("response: ", response);
 
           const error = response.data?.login.error;
           const user = response.data?.login.user;
           if (user) {
             localStorage.setItem("token", JSON.stringify(user.token));
-            // setValues({
-            //   usernameOrEmail: "",
-            //   password: "",
-            // });
           } else if (error && error.field) {
             setErrors({ [error.field]: error.message });
-            // setValues({ ...values, [error.field]: "" });
           }
           return response;
         }}

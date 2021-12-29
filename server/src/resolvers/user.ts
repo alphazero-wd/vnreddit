@@ -69,6 +69,40 @@ export class UserResolver {
     return user;
   }
 
+  @Mutation(() => Boolean)
+  async confirmUser(@Arg("token") token: string): Promise<boolean> {
+    const { userId } = verify(token, process.env.JWT_REFRESH_SECRET!) as any;
+    const user = await getRepository(User).findOne(userId);
+    const queryBuilder = getRepository(User).createQueryBuilder();
+    if (user) {
+      await queryBuilder
+        .update()
+        .set({ isConfirmed: true })
+        .where("id = :id", { id: userId })
+        .execute();
+      return true;
+    }
+    return false;
+  }
+
+  @UseMiddleware(auth)
+  @Mutation(() => Boolean)
+  async sendConfirmationEmail(@Ctx() { req }: MyContext) {
+    const user = await getRepository(User).findOne(req.payload?.userId);
+    if (user) {
+      const html = `
+      <h1>Account confirmation</h1> 
+      <p>Click the link below to confirm your account.</p>
+      <a href="http://localhost:3000/u/confirm/${createRefreshToken(
+        user
+      )}">Confirm account</a>
+    `;
+      sendEmail({ to: user.email, subject: "Account confirmation", html });
+      return true;
+    }
+    return false;
+  }
+
   @Mutation(() => UserResponse)
   async signup(
     @Arg("user") { username, email, password, confirmPassword }: SignupInput
@@ -130,7 +164,7 @@ export class UserResolver {
       };
     }
     const hashedPassword = await hash(password, 12);
-    const newUser = await getRepository(User)
+    const insertResult = await getRepository(User)
       .createQueryBuilder("user")
       .insert()
       .into(User)
@@ -141,10 +175,8 @@ export class UserResolver {
       })
       .returning("*")
       .execute();
-
-    return {
-      user: newUser.raw[0],
-    };
+    const newUser = insertResult.raw[0];
+    return { user: newUser };
   }
 
   @Mutation(() => UserResponse)
@@ -174,6 +206,7 @@ export class UserResolver {
         },
       };
     }
+
     return { user };
   }
 

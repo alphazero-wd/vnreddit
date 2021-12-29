@@ -49,6 +49,15 @@ export class PostResolver {
     });
   }
 
+  @FieldResolver(() => Int)
+  async points(@Root() { id }: Post) {
+    const votes = await getRepository(Vote).find({ where: { postId: id } });
+    return votes.reduce(
+      (point, { point: totalPoints }) => totalPoints + point,
+      0
+    );
+  }
+
   @FieldResolver(() => Community, { nullable: true })
   community(@Root() { communityId }: Post): Promise<Community | undefined> {
     return getRepository(Community).findOne({ where: { id: communityId } });
