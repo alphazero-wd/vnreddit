@@ -1,10 +1,14 @@
 import { Formik } from "formik";
 import { FC } from "react";
+import { BsCheckCircle } from "react-icons/bs";
 import { useUpdatePasswordMutation } from "../../generated/graphql";
+import { useAlert } from "../../utils/useAlert";
 import AuthInput from "../auth/AuthInput";
+import Alert from "../shared/Alert";
 
 const UpdatePassword: FC = () => {
-  const [updatePassword] = useUpdatePasswordMutation();
+  const [updatePassword, { data }] = useUpdatePasswordMutation();
+  const [alert, setAlert] = useAlert();
 
   return (
     <>
@@ -15,6 +19,13 @@ const UpdatePassword: FC = () => {
         <hr className="text-gray-800" />
       </div>
       <div className="mb-8">
+        {alert && (
+          <Alert
+            message={data?.updatePassword.successMessage || ""}
+            color="success"
+            Icon={BsCheckCircle}
+          />
+        )}
         <Formik
           initialValues={{ confirmPassword: "", newPassword: "", password: "" }}
           onSubmit={async (values, { setErrors, setValues }) => {
@@ -26,8 +37,8 @@ const UpdatePassword: FC = () => {
               setErrors({ [error.field as string]: error.message });
               setValues({ ...values, [error.field as string]: "" });
             } else {
-              alert("Password updated successfully.");
               setValues({ password: "", newPassword: "", confirmPassword: "" });
+              setAlert(true);
             }
           }}
         >

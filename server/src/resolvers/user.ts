@@ -1,5 +1,5 @@
 import {
-  ForgotPasswordResponse,
+  AuthResponse,
   LoginInput,
   ResetPasswordInput,
   SignupInput,
@@ -210,10 +210,8 @@ export class UserResolver {
     return { user };
   }
 
-  @Mutation(() => ForgotPasswordResponse)
-  async forgotPassword(
-    @Arg("email") email: string
-  ): Promise<ForgotPasswordResponse> {
+  @Mutation(() => AuthResponse)
+  async forgotPassword(@Arg("email") email: string): Promise<AuthResponse> {
     const user = await getRepository(User).findOne({ where: { email } });
 
     if (user) {
@@ -290,11 +288,11 @@ export class UserResolver {
   }
 
   @UseMiddleware(auth)
-  @Mutation(() => UserResponse)
+  @Mutation(() => AuthResponse)
   async updateUsername(
     @Arg("username") username: string,
     @Ctx() { req }: MyContext
-  ): Promise<UserResponse> {
+  ): Promise<AuthResponse> {
     // find the current user
     const currentUser = await getRepository(User).findOne(req.payload?.userId);
     const queryBuilder = getRepository(User).createQueryBuilder("u");
@@ -320,14 +318,13 @@ export class UserResolver {
             message: "Username has already been taken.",
           },
         };
-      const updatedUser = await queryBuilder
+      await queryBuilder
         .update()
         .set({ username })
         .where("id = :id", { id: req.payload?.userId })
-        .returning("*")
         .execute();
       return {
-        user: updatedUser.raw[0],
+        successMessage: "Username has been successfully updated.",
       };
     }
     return {
@@ -336,13 +333,13 @@ export class UserResolver {
   }
 
   @UseMiddleware(auth)
-  @Mutation(() => UserResponse)
+  @Mutation(() => AuthResponse)
   async updatePassword(
     @Arg("password") password: string,
     @Arg("newPassword") newPassword: string,
     @Arg("confirmPassword") confirmPassword: string,
     @Ctx() { req }: MyContext
-  ): Promise<UserResponse> {
+  ): Promise<AuthResponse> {
     const queryBuilder = getRepository(User).createQueryBuilder("u");
     const user = await getRepository(User).findOne({
       where: { id: req.payload?.userId },
@@ -371,7 +368,7 @@ export class UserResolver {
         .where("id = :id", { id: req.payload?.userId })
         .returning("*")
         .execute();
-      return { user };
+      return { successMessage: "Password has been successfully updated." };
     }
     return {
       error: { message: "User not found." },

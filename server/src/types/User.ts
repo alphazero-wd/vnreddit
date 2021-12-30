@@ -48,7 +48,7 @@ export class UserResponse {
 }
 
 @ObjectType()
-export class ForgotPasswordResponse {
+export class AuthResponse {
   @Field({ nullable: true })
   successMessage?: string;
 

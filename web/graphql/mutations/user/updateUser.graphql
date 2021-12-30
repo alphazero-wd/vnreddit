@@ -1,8 +1,6 @@
 mutation UpdateUsername($username: String!) {
   updateUsername(username: $username) {
-    user {
-      ...User
-    }
+    successMessage
     error {
       ...ErrorResponse
     }

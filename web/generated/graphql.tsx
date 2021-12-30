@@ -19,6 +19,12 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type AuthResponse = {
+  __typename?: 'AuthResponse';
+  error?: Maybe<ErrorResponse>;
+  successMessage?: Maybe<Scalars['String']>;
+};
+
 export type Comment = {
   __typename?: 'Comment';
   body: Scalars['String'];
@@ -80,12 +86,6 @@ export type ErrorResponse = {
   message: Scalars['String'];
 };
 
-export type ForgotPasswordResponse = {
-  __typename?: 'ForgotPasswordResponse';
-  error?: Maybe<ErrorResponse>;
-  successMessage?: Maybe<Scalars['String']>;
-};
-
 export type LoginInput = {
   password: Scalars['String'];
   usernameOrEmail: Scalars['String'];
@@ -103,15 +103,15 @@ export type Mutation = {
   deleteUser: Scalars['Boolean'];
   editComment: CommentResponse;
   editPost: PostResponse;
-  forgotPassword: ForgotPasswordResponse;
+  forgotPassword: AuthResponse;
   joinCommunity: Scalars['Boolean'];
   leaveCommunity: Scalars['Boolean'];
   login: UserResponse;
   resetPassword: UserResponse;
   sendConfirmationEmail: Scalars['Boolean'];
   signup: UserResponse;
-  updatePassword: UserResponse;
-  updateUsername: UserResponse;
+  updatePassword: AuthResponse;
+  updateUsername: AuthResponse;
   vote: Scalars['Boolean'];
 };
 
@@ -410,7 +410,7 @@ export type ForgotPasswordMutationVariables = Exact<{
 }>;
 
 
-export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: { __typename?: 'ForgotPasswordResponse', successMessage?: string | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: { __typename?: 'AuthResponse', successMessage?: string | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type LoginMutationVariables = Exact<{
   user: LoginInput;
@@ -445,14 +445,14 @@ export type UpdatePasswordMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePasswordMutation = { __typename?: 'Mutation', updatePassword: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type UpdatePasswordMutation = { __typename?: 'Mutation', updatePassword: { __typename?: 'AuthResponse', successMessage?: string | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type UpdateUsernameMutationVariables = Exact<{
   username: Scalars['String'];
 }>;
 
 
-export type UpdateUsernameMutation = { __typename?: 'Mutation', updateUsername: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, comments: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined }>, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type UpdateUsernameMutation = { __typename?: 'Mutation', updateUsername: { __typename?: 'AuthResponse', successMessage?: string | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type VoteMutationVariables = Exact<{
   postId: Scalars['String'];
@@ -572,6 +572,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AuthResponse: ResolverTypeWrapper<AuthResponse>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Comment: ResolverTypeWrapper<Comment>;
   CommentResponse: ResolverTypeWrapper<CommentResponse>;
@@ -583,7 +584,6 @@ export type ResolversTypes = {
   EditCommentInput: EditCommentInput;
   EditPostInput: EditPostInput;
   ErrorResponse: ResolverTypeWrapper<ErrorResponse>;
-  ForgotPasswordResponse: ResolverTypeWrapper<ForgotPasswordResponse>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   LoginInput: LoginInput;
@@ -602,6 +602,7 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AuthResponse: AuthResponse;
   Boolean: Scalars['Boolean'];
   Comment: Comment;
   CommentResponse: CommentResponse;
@@ -613,7 +614,6 @@ export type ResolversParentTypes = {
   EditCommentInput: EditCommentInput;
   EditPostInput: EditPostInput;
   ErrorResponse: ErrorResponse;
-  ForgotPasswordResponse: ForgotPasswordResponse;
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   LoginInput: LoginInput;
@@ -628,6 +628,12 @@ export type ResolversParentTypes = {
   User: User;
   UserResponse: UserResponse;
   Vote: Vote;
+};
+
+export type AuthResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthResponse'] = ResolversParentTypes['AuthResponse']> = {
+  error?: Resolver<Maybe<ResolversTypes['ErrorResponse']>, ParentType, ContextType>;
+  successMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type CommentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = {
@@ -673,12 +679,6 @@ export type ErrorResponseResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ForgotPasswordResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ForgotPasswordResponse'] = ResolversParentTypes['ForgotPasswordResponse']> = {
-  error?: Resolver<Maybe<ResolversTypes['ErrorResponse']>, ParentType, ContextType>;
-  successMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   addDescription?: Resolver<ResolversTypes['CommunityResponse'], ParentType, ContextType, RequireFields<MutationAddDescriptionArgs, 'description' | 'id'>>;
   confirmUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationConfirmUserArgs, 'token'>>;
@@ -690,15 +690,15 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   editComment?: Resolver<ResolversTypes['CommentResponse'], ParentType, ContextType, RequireFields<MutationEditCommentArgs, 'payload'>>;
   editPost?: Resolver<ResolversTypes['PostResponse'], ParentType, ContextType, RequireFields<MutationEditPostArgs, 'post'>>;
-  forgotPassword?: Resolver<ResolversTypes['ForgotPasswordResponse'], ParentType, ContextType, RequireFields<MutationForgotPasswordArgs, 'email'>>;
+  forgotPassword?: Resolver<ResolversTypes['AuthResponse'], ParentType, ContextType, RequireFields<MutationForgotPasswordArgs, 'email'>>;
   joinCommunity?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationJoinCommunityArgs, 'commId'>>;
   leaveCommunity?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationLeaveCommunityArgs, 'commId'>>;
   login?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'user'>>;
   resetPassword?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'payload'>>;
   sendConfirmationEmail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   signup?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'user'>>;
-  updatePassword?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'confirmPassword' | 'newPassword' | 'password'>>;
-  updateUsername?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationUpdateUsernameArgs, 'username'>>;
+  updatePassword?: Resolver<ResolversTypes['AuthResponse'], ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'confirmPassword' | 'newPassword' | 'password'>>;
+  updateUsername?: Resolver<ResolversTypes['AuthResponse'], ParentType, ContextType, RequireFields<MutationUpdateUsernameArgs, 'username'>>;
   vote?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVoteArgs, 'point' | 'postId'>>;
 };
 
@@ -764,13 +764,13 @@ export type VoteResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type Resolvers<ContextType = any> = {
+  AuthResponse?: AuthResponseResolvers<ContextType>;
   Comment?: CommentResolvers<ContextType>;
   CommentResponse?: CommentResponseResolvers<ContextType>;
   Community?: CommunityResolvers<ContextType>;
   CommunityResponse?: CommunityResponseResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   ErrorResponse?: ErrorResponseResolvers<ContextType>;
-  ForgotPasswordResponse?: ForgotPasswordResponseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   PaginatedPosts?: PaginatedPostsResolvers<ContextType>;
   Post?: PostResolvers<ContextType>;
@@ -1478,16 +1478,13 @@ export const UpdatePasswordDocument = gql`
     newPassword: $newPassword
     password: $password
   ) {
-    user {
-      ...User
-    }
+    successMessage
     error {
       ...ErrorResponse
     }
   }
 }
-    ${UserFragmentDoc}
-${ErrorResponseFragmentDoc}`;
+    ${ErrorResponseFragmentDoc}`;
 export type UpdatePasswordMutationFn = Apollo.MutationFunction<UpdatePasswordMutation, UpdatePasswordMutationVariables>;
 
 /**
@@ -1519,16 +1516,13 @@ export type UpdatePasswordMutationOptions = Apollo.BaseMutationOptions<UpdatePas
 export const UpdateUsernameDocument = gql`
     mutation UpdateUsername($username: String!) {
   updateUsername(username: $username) {
-    user {
-      ...User
-    }
+    successMessage
     error {
       ...ErrorResponse
     }
   }
 }
-    ${UserFragmentDoc}
-${ErrorResponseFragmentDoc}`;
+    ${ErrorResponseFragmentDoc}`;
 export type UpdateUsernameMutationFn = Apollo.MutationFunction<UpdateUsernameMutation, UpdateUsernameMutationVariables>;
 
 /**

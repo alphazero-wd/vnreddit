@@ -5,13 +5,15 @@ import {
   useMeQuery,
   useSendConfirmationEmailMutation,
 } from "../../generated/graphql";
+import { useAlert } from "../../utils/useAlert";
+import Alert from "./Alert";
 import Modal from "./Modal";
 import Navbar from "./Navbar";
 
 const Wrapper: FC = ({ children }) => {
   const { data } = useMeQuery();
   const [sendConfirmationEmail] = useSendConfirmationEmailMutation();
-  const [alert, setAlert] = useState(false);
+  const [alert, setAlert] = useAlert();
   const [modal, setModal] = useState(false);
   const router = useRouter();
   useEffect(() => {
@@ -38,12 +40,11 @@ const Wrapper: FC = ({ children }) => {
           body={
             <>
               {alert && (
-                <div className="p-4 border-l-8 flex items-center border-green-800 bg-green-300">
-                  <BsCheckCircle className="text-xl text-green-800 mr-2 inline" />
-                  <div>
-                    A confirmation email has been sent to your email account.
-                  </div>
-                </div>
+                <Alert
+                  Icon={BsCheckCircle}
+                  color="success"
+                  message="A confirmation email has been sent to your email account."
+                />
               )}
               <p className="mt-2">
                 You must confirm your account before accessing our website.

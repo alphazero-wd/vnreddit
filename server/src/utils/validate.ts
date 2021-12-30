@@ -1,19 +1,22 @@
+import {
+  EMAIL_REGEX,
+  PASSWORD_REGEX,
+  VALID_COMMUNITY_NAME_REGEX,
+  VALID_USERNAME_REGEX,
+} from "../constants/constants";
+
 export const validateEmail = (email: string) => {
-  const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-  return emailRegex.test(email);
+  return EMAIL_REGEX.test(email);
 };
 
 export const validatePassword = (password: string) => {
-  const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6,}$/;
-  return passwordRegex.test(password);
+  return PASSWORD_REGEX.test(password);
 };
 
 export const validateCommunityName = (name: string) => {
-  const validCommunityNameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-  return validCommunityNameRegex.test(name);
+  return VALID_COMMUNITY_NAME_REGEX.test(name);
 };
 
 export const validateUsername = (username: string) => {
-  const validUsernameRegex = /^[a-zA-Z0-9_]{3,30}$/;
-  return validUsernameRegex.test(username);
+  return VALID_USERNAME_REGEX.test(username);
 };
