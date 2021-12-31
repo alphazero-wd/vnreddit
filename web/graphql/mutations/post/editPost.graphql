@@ -1,0 +1,10 @@
+mutation EditPost($post: EditPostInput!) {
+  editPost(post: $post) {
+    post {
+      ...Post
+    }
+    error {
+      ...ErrorResponse
+    }
+  }
+}

@@ -1,0 +1,8 @@
+mutation UpdateUsername($username: String!) {
+  updateUsername(username: $username) {
+    successMessage
+    error {
+      ...ErrorResponse
+    }
+  }
+}

@@ -1,0 +1,20 @@
+fragment Post on Post {
+  id
+  title
+  body
+  createdAt
+  creator {
+    id
+    username
+  }
+  points
+  votes {
+    userId
+    point
+  }
+  numberOfComments
+  community {
+    id
+    name
+  }
+}

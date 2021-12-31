@@ -1,0 +1,13 @@
+fragment User on User {
+  id
+  username
+  createdAt
+  token
+  isConfirmed
+  posts {
+    ...Post
+  }
+  communities {
+    ...Community
+  }
+}

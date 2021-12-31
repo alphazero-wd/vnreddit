@@ -1,0 +1,3 @@
+mutation SendConfirmationEmail {
+  sendConfirmationEmail
+}

@@ -1,0 +1,10 @@
+mutation AddDescription($id: String!, $description: String!) {
+  addDescription(id: $id, description: $description) {
+    community {
+      ...Community
+    }
+    error {
+      ...ErrorResponse
+    }
+  }
+}

@@ -1,0 +1,10 @@
+mutation Signup($user: SignupInput!) {
+  signup(user: $user) {
+    user {
+      ...User
+    }
+    error {
+      ...ErrorResponse
+    }
+  }
+}
