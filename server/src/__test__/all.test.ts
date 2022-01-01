@@ -1,39 +1,44 @@
-import { internet, name } from "faker";
-import {
-  CONFIRM_USER_MUTATION,
-  DELETE_USER_MUTATION,
-  FORGOT_PASSWORD_MUTATION,
-  LOGIN_MUTATION,
-  RESET_PASSWORD_MUTATION,
-  SEND_CONFIRMATION_EMAIL_MUTATION,
-  SIGNUP_MUTATION,
-  UPDATE_PASSWORD_MUTATION,
-  UPDATE_USERNAME_MUTATION,
-} from "../test-utils/graphql/mutations/User";
-import { graphqlCall } from "../test-utils/graphqlCall";
-import { SignupInput } from "../types/User";
-import { Connection, getRepository } from "typeorm";
-import { testConnection } from "../test-utils/testConnection";
-import { User } from "../entity/User";
-import { createAccessToken, createRefreshToken } from "../utils/token";
-import { ME_QUERY } from "../test-utils/graphql/queries/User";
 import { compare } from "bcryptjs";
+import { internet, name } from "faker";
 import { Post } from "../entity/Post";
+import { User } from "../entity/User";
+import { Comment } from "../entity/Comment";
 import {
+  SIGNUP_MUTATION,
+  LOGIN_MUTATION,
+  FORGOT_PASSWORD_MUTATION,
+  RESET_PASSWORD_MUTATION,
+  UPDATE_USERNAME_MUTATION,
+  UPDATE_PASSWORD_MUTATION,
+  SEND_CONFIRMATION_EMAIL_MUTATION,
+  CONFIRM_USER_MUTATION,
   CREATE_POST_MUTATION,
   EDIT_POST_MUTATION,
-  DELETE_POST_MUTATION,
-} from "../test-utils/graphql/mutations/Post";
-import { POSTS_QUERY, POST_QUERY } from "../test-utils/graphql/queries/Post";
-import { CreatePostInput, EditPostInput } from "../types/Post";
-import { VOTE_MUTATION } from "../test-utils/graphql/mutations/Vote";
-import {
   CREATE_COMMENT_MUTATION,
-  DELETE_COMMENT_MUTATION,
   EDIT_COMMENT_MUTATION,
-} from "../test-utils/graphql/mutations/Comment";
+  DELETE_COMMENT_MUTATION,
+  CREATE_COMMUNITY_MUTATION,
+  DELETE_POST_MUTATION,
+  DELETE_USER_MUTATION,
+  VOTE_MUTATION,
+  JOIN_COMMUNITY_MUTATION,
+  LEAVE_COMMUNITY_MUTATION,
+  ADD_DESCRIPTION_MUTATION,
+} from "../test-utils/graphql/mutations";
+import {
+  COMMUNITY_QUERY,
+  ME_QUERY,
+  POSTS_QUERY,
+  POST_QUERY,
+} from "../test-utils/graphql/queries";
+import { graphqlCall } from "../test-utils/graphqlCall";
+import { testConnection } from "../test-utils/testConnection";
 import { CreateCommentInput, EditCommentInput } from "../types/Comment";
-import { Comment } from "../entity/Comment";
+import { CreatePostInput, EditPostInput } from "../types/Post";
+import { SignupInput } from "../types/User";
+import { createAccessToken, createRefreshToken } from "../utils/token";
+import { Connection, getRepository } from "typeorm";
+import { Community } from "../entity/Community";
 
 let connection: Connection;
 beforeAll(async () => {
@@ -44,6 +49,7 @@ afterAll(async () => {
   await connection.close();
 });
 
+// ------------------UserResolver----------------------
 describe("user resolvers", () => {
   test("should should sign up a user", async () => {
     const testPassword = "#$QRASDKJFasjfkluqri3qj4QRWaerjqwoiru";
@@ -256,6 +262,7 @@ describe("user resolvers", () => {
   });
 });
 
+// ------------------PostResolver----------------------
 describe("post resolvers", () => {
   test("should posts", async () => {
     const posts = await getRepository(Post).find();
@@ -352,6 +359,7 @@ describe("post resolvers", () => {
   });
 });
 
+// ------------------CommentResolver----------------------
 describe("comment resolvers", () => {
   test("should create a comment", async () => {
     const user = await getRepository(User).findOne(1);
@@ -475,6 +483,7 @@ describe("comment resolvers", () => {
   });
 });
 
+// -----------------------VoteResolver------------------
 describe("vote resolver", () => {
   test("should upvote a post", async () => {
     const user = await getRepository(User).findOne(1);
@@ -579,6 +588,151 @@ describe("vote resolver", () => {
     expect(post?.votes).toEqual([]);
 
     expect(post?.points).toBe(0);
+  });
+});
+
+// -----------------------CommunityResolver------------------
+describe("community resolvers", () => {
+  test("should create a community", async () => {
+    const user = await getRepository(User).findOne(1);
+    const response = await graphqlCall({
+      source: CREATE_COMMUNITY_MUTATION,
+      variableValues: {
+        name: "fullstack",
+      },
+      token: createAccessToken(user!),
+    });
+    const community = await getRepository(Community).findOne(1);
+
+    expect(response).toMatchObject({
+      data: {
+        createCommunity: {
+          community: {
+            id: community?.id.toString(),
+            name: community?.name,
+            description: null,
+            numberOfMembers: 0,
+            members: [],
+            posts: [],
+          },
+          error: null,
+        },
+      },
+    });
+  });
+
+  test("should return a community", async () => {
+    const response = await graphqlCall({
+      source: COMMUNITY_QUERY,
+      variableValues: {
+        name: "fullstack",
+      },
+    });
+
+    expect(response).toMatchObject({
+      data: {
+        community: {
+          id: "1",
+          name: "fullstack",
+          description: null,
+          numberOfMembers: 0,
+          members: [],
+          posts: [],
+        },
+      },
+    });
+  });
+
+  test("should join in a community", async () => {
+    const user = await getRepository(User).findOne(1);
+    const response = await graphqlCall({
+      source: JOIN_COMMUNITY_MUTATION,
+      variableValues: {
+        commId: "1",
+      },
+      token: createAccessToken(user!),
+    });
+    const { data } = await graphqlCall({
+      source: COMMUNITY_QUERY,
+      variableValues: {
+        name: "fullstack",
+      },
+    });
+    const community = data?.community;
+
+    expect(response).toMatchObject({
+      data: {
+        joinCommunity: true,
+      },
+    });
+
+    expect(community?.members).toEqual([
+      {
+        id: user?.id.toString(),
+        username: user?.username,
+      },
+    ]);
+
+    expect(community?.numberOfMembers).toBe(1);
+  });
+
+  test("should leave a community", async () => {
+    const user = await getRepository(User).findOne(1);
+    const response = await graphqlCall({
+      source: LEAVE_COMMUNITY_MUTATION,
+      variableValues: {
+        commId: "1",
+      },
+      token: createAccessToken(user!),
+    });
+    const { data } = await graphqlCall({
+      source: COMMUNITY_QUERY,
+      variableValues: {
+        name: "fullstack",
+      },
+    });
+    const community = data?.community;
+
+    expect(response).toMatchObject({
+      data: {
+        leaveCommunity: true,
+      },
+    });
+
+    expect(community?.members).toEqual([]);
+
+    expect(community?.numberOfMembers).toBe(0);
+  });
+
+  test("should add a description", async () => {
+    const community = {
+      id: "1",
+      description: "fjaslfkjadslkfjaslfjaksldfj",
+    };
+    const user = await getRepository(User).findOne(1);
+
+    const response = await graphqlCall({
+      source: ADD_DESCRIPTION_MUTATION,
+      variableValues: community,
+      token: createAccessToken(user!),
+    });
+    const updatedCommunity = await getRepository(Community).findOne(1);
+
+    expect(response).toMatchObject({
+      data: {
+        addDescription: {
+          community: {
+            id: updatedCommunity?.id.toString(),
+            name: updatedCommunity?.name,
+            description: community.description,
+            numberOfMembers: 0,
+            members: [],
+            posts: [],
+          },
+          error: null,
+        },
+      },
+    });
   });
 });
 

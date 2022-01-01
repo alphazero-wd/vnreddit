@@ -20,29 +20,15 @@ export const POST_FRAGMENT = `
       username
     }
     points
-    votes {
-      postId
-      userId
-      point
-    }
-    comments {
-      id
-      body
-      createdAt
-      commentator {
-        id
-        username
-      }
-    }
     community {
       id
       name
     }
-    votes {
+`;
+export const VOTE_FRAGMENT = `
       postId
       userId
       point
-    }
 `;
 
 export const COMMENT_FRAGMENT = `
@@ -53,4 +39,25 @@ export const COMMENT_FRAGMENT = `
         id
         username
       }
+`;
+
+export const COMMUNITY_FRAGMENT = `
+  id
+  name
+  description
+  numberOfMembers
+  members {
+    id
+    username
+  }
+  posts {
+    id
+    title
+    body
+    createdAt
+    creator {
+      id
+      username
+    }
+  }
 `;

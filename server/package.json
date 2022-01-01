@@ -7,7 +7,7 @@
     "start": "node ./dist/index",
     "server": "ts-node-dev --respawn --transpile-only ./src/index.ts",
     "build": "tsc",
-    "test": "ts-node ./src/test-utils/setup.ts && jest --runInBand"
+    "test": "ts-node ./src/test-utils/setup.ts && jest"
   },
   "keywords": [],
   "author": "",
