@@ -1,11 +1,10 @@
+import { USER_FRAGMENT } from "../fragments";
+
 export const SIGNUP_MUTATION = `
 mutation($user: SignupInput!) {
   signup(user: $user) {
     user {
-      id
-      username
-      createdAt
-      isConfirmed
+      ${USER_FRAGMENT}
       token
     }
     error {
@@ -20,10 +19,7 @@ export const LOGIN_MUTATION = `
 mutation($user: LoginInput!) {
   login(user: $user) {
     user {
-      id
-      username
-      createdAt
-      isConfirmed
+      ${USER_FRAGMENT}
       token
     }
     error {
@@ -50,10 +46,7 @@ export const RESET_PASSWORD_MUTATION = `
 mutation ResetPassword($payload: ResetPasswordInput!) {
   resetPassword(payload: $payload) {
     user {
-      id
-      username
-      createdAt
-      isConfirmed
+      ${USER_FRAGMENT}
       token
     }
     error {

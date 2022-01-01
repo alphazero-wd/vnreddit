@@ -1,3 +1,5 @@
+import { ERROR_FRAGMENT } from "../fragments";
+
 export const CREATE_POST_MUTATION = `
 mutation($post: CreatePostInput!) {
   createPost(post: $post) {
@@ -12,8 +14,7 @@ mutation($post: CreatePostInput!) {
       }
     }
     error {
-      field
-      message
+      ${ERROR_FRAGMENT}
     }
   }
 }
@@ -33,8 +34,7 @@ export const EDIT_POST_MUTATION = `
         }
       }
       error {
-        field
-        message
+        ${ERROR_FRAGMENT}
       }
     }
   }

@@ -1,8 +1,7 @@
 import { graphql, GraphQLSchema, Source } from "graphql";
 import { buildSchema } from "type-graphql";
 import { Maybe } from "graphql/jsutils/Maybe";
-import { UserResolver } from "../resolvers/user";
-import { PostResolver } from "../resolvers/post";
+import path from "path";
 
 interface Props {
   source: string | Source;
@@ -12,6 +11,7 @@ interface Props {
   userId?: number;
   token?: string;
 }
+
 let schema: GraphQLSchema;
 export const graphqlCall = async ({
   variableValues,
@@ -21,7 +21,7 @@ export const graphqlCall = async ({
 }: Props) => {
   if (!schema) {
     schema = await buildSchema({
-      resolvers: [UserResolver, PostResolver],
+      resolvers: [path.join(__dirname, "../resolvers/*.*")],
     });
   }
   return graphql({
