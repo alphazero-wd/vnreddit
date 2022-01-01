@@ -28,6 +28,7 @@ export const POST_FRAGMENT = `
     comments {
       id
       body
+      createdAt
       commentator {
         id
         username
@@ -42,4 +43,14 @@ export const POST_FRAGMENT = `
       userId
       point
     }
+`;
+
+export const COMMENT_FRAGMENT = `
+      id
+      body
+      createdAt
+      commentator {
+        id
+        username
+      }
 `;

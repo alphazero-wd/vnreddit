@@ -27,6 +27,13 @@ import {
 import { POSTS_QUERY, POST_QUERY } from "../test-utils/graphql/queries/Post";
 import { CreatePostInput, EditPostInput } from "../types/Post";
 import { VOTE_MUTATION } from "../test-utils/graphql/mutations/Vote";
+import {
+  CREATE_COMMENT_MUTATION,
+  DELETE_COMMENT_MUTATION,
+  EDIT_COMMENT_MUTATION,
+} from "../test-utils/graphql/mutations/Comment";
+import { CreateCommentInput, EditCommentInput } from "../types/Comment";
+import { Comment } from "../entity/Comment";
 
 let connection: Connection;
 beforeAll(async () => {
@@ -38,7 +45,7 @@ afterAll(async () => {
 });
 
 describe("user resolvers", () => {
-  test("should sign up a user", async () => {
+  test("should should sign up a user", async () => {
     const testPassword = "#$QRASDKJFasjfkluqri3qj4QRWaerjqwoiru";
     const user = {
       username: name.firstName(),
@@ -70,7 +77,7 @@ describe("user resolvers", () => {
     });
   });
 
-  test("should be able to login", async () => {
+  test("should should be able to login", async () => {
     const user = await getRepository(User).findOne(1);
 
     const testPassword = "#$QRASDKJFasjfkluqri3qj4QRWaerjqwoiru";
@@ -99,7 +106,7 @@ describe("user resolvers", () => {
     });
   });
 
-  test("me query", async () => {
+  test("should me query", async () => {
     const user = await getRepository(User).findOne(1);
     const response = await graphqlCall({
       source: ME_QUERY,
@@ -117,7 +124,7 @@ describe("user resolvers", () => {
     });
   });
 
-  test("forgot password", async () => {
+  test("should forgot password", async () => {
     const user = await getRepository(User).findOne(1);
     const response = await graphqlCall({
       source: FORGOT_PASSWORD_MUTATION,
@@ -135,7 +142,7 @@ describe("user resolvers", () => {
     });
   });
 
-  test("reset password", async () => {
+  test("should reset password", async () => {
     const user = await getRepository(User).findOne(1);
     const newTestPassword = "#@$@ASFjasdklf3u49iqjriajisjfmiansf";
     const response = await graphqlCall({
@@ -166,7 +173,7 @@ describe("user resolvers", () => {
     expect(compare(updatedUser!.password, newTestPassword)).toBeTruthy();
   });
 
-  test("update username", async () => {
+  test("should update username", async () => {
     const user = await getRepository(User).findOne(1);
     const newUsername = name.firstName();
     const response = await graphqlCall({
@@ -191,7 +198,7 @@ describe("user resolvers", () => {
     expect(updatedUser?.username).toBe(newUsername);
   });
 
-  test("update password", async () => {
+  test("should update password", async () => {
     const user = await getRepository(User).findOne(1);
     const password = "#@$@ASFjasdklf3u49iqjriajisjfmiansf";
     const newPassword = "AF#$@#AFkjfdje3294829";
@@ -218,7 +225,7 @@ describe("user resolvers", () => {
     expect(compare(newPassword, updatedUser!.password)).toBeTruthy();
   });
 
-  test("send confirmation email", async () => {
+  test("should send confirmation email", async () => {
     const user = await getRepository(User).findOne(1);
     const response = await graphqlCall({
       source: SEND_CONFIRMATION_EMAIL_MUTATION,
@@ -231,7 +238,7 @@ describe("user resolvers", () => {
     });
   });
 
-  test("confirm user", async () => {
+  test("should confirm user", async () => {
     const user = await getRepository(User).findOne(1);
     const response = await graphqlCall({
       source: CONFIRM_USER_MUTATION,
@@ -250,7 +257,7 @@ describe("user resolvers", () => {
 });
 
 describe("post resolvers", () => {
-  test("posts", async () => {
+  test("should posts", async () => {
     const posts = await getRepository(Post).find();
     const response = await graphqlCall({
       source: POSTS_QUERY,
@@ -271,9 +278,9 @@ describe("post resolvers", () => {
     expect(posts.length).toBe(0);
   });
 
-  test("get a post", async () => {});
+  test("should get a post", async () => {});
 
-  test("create a post", async () => {
+  test("should create a post", async () => {
     const post = {
       title: "My first post",
       body: "adjfkladsjfkladsjflkjewalrkje",
@@ -308,7 +315,7 @@ describe("post resolvers", () => {
     });
   });
 
-  test("edit a post", async () => {
+  test("should edit a post", async () => {
     const user = await getRepository(User).findOne(1);
     const updatedPostInput = {
       id: "1",
@@ -322,7 +329,9 @@ describe("post resolvers", () => {
       },
       token: createAccessToken(user!),
     });
+
     const updatedPost = await getRepository(Post).findOne(1);
+
     expect(response).toMatchObject({
       data: {
         editPost: {
@@ -343,8 +352,131 @@ describe("post resolvers", () => {
   });
 });
 
+describe("comment resolvers", () => {
+  test("should create a comment", async () => {
+    const user = await getRepository(User).findOne(1);
+    const payload = {
+      postId: "1",
+      body: "ajskldfjewklrjalskfjladsjflkasjrlkaewjrlkj",
+    } as CreateCommentInput;
+    const response = await graphqlCall({
+      source: CREATE_COMMENT_MUTATION,
+      variableValues: {
+        payload,
+      },
+      token: createAccessToken(user!),
+    });
+    const res = await graphqlCall({
+      source: POST_QUERY,
+      variableValues: {
+        id: "1",
+      },
+    });
+
+    const comment = await getRepository(Comment).findOne(1);
+    const post = res.data?.post;
+    const expectedComment = {
+      id: comment?.id.toString(),
+      body: comment?.body,
+      createdAt: comment?.createdAt.toJSON(),
+      commentator: {
+        id: user?.id.toString(),
+        username: user?.username,
+      },
+    };
+
+    expect(response).toMatchObject({
+      data: {
+        createComment: {
+          comment: expectedComment,
+          error: null,
+        },
+      },
+    });
+
+    expect(post?.comments).toEqual([{ ...expectedComment }]);
+  });
+
+  test("should edit a comment", async () => {
+    const payload = {
+      commentId: "1",
+      body: "sdklfjaskldfjakljrio3u4adfkljadklfj",
+    } as EditCommentInput;
+    const user = await getRepository(User).findOne(1);
+    const response = await graphqlCall({
+      source: EDIT_COMMENT_MUTATION,
+      variableValues: {
+        payload,
+      },
+      token: createAccessToken(user!),
+    });
+    const comment = await getRepository(Comment).findOne(1);
+
+    const expectedComment = {
+      id: comment?.id.toString(),
+      body: payload.body,
+      createdAt: comment?.createdAt.toJSON(),
+      commentator: {
+        id: user?.id.toString(),
+        username: user?.username,
+      },
+    };
+    const postResponse = await graphqlCall({
+      source: POST_QUERY,
+      variableValues: { id: "1" },
+    });
+    const post = postResponse.data?.post;
+
+    expect(response).toMatchObject({
+      data: {
+        editComment: {
+          comment: { ...expectedComment },
+          error: null,
+        },
+      },
+    });
+
+    expect(post?.comments).toEqual([
+      {
+        ...expectedComment,
+      },
+    ]);
+    expect(post?.comments.length).toBe(1);
+  });
+
+  test("should delete a comment", async () => {
+    const user = await getRepository(User).findOne(1);
+    const response = await graphqlCall({
+      source: DELETE_COMMENT_MUTATION,
+      variableValues: {
+        id: "1",
+      },
+      token: createAccessToken(user!),
+    });
+
+    const postResponse = await graphqlCall({
+      source: POST_QUERY,
+      variableValues: {
+        id: "1",
+      },
+    });
+    const post = postResponse.data?.post;
+
+    const deletedComment = await getRepository(Comment).findOne(1);
+
+    expect(response).toMatchObject({
+      data: {
+        deleteComment: true,
+      },
+    });
+
+    expect(deletedComment).toBeUndefined();
+    expect(post?.comments.length).toBe(0);
+  });
+});
+
 describe("vote resolver", () => {
-  test("upvote a post", async () => {
+  test("should upvote a post", async () => {
     const user = await getRepository(User).findOne(1);
     const response = await graphqlCall({
       source: VOTE_MUTATION,
@@ -380,10 +512,78 @@ describe("vote resolver", () => {
 
     expect(post?.points).toBe(1);
   });
+
+  test("should downvote a post", async () => {
+    const user = await getRepository(User).findOne(1);
+    const response = await graphqlCall({
+      source: VOTE_MUTATION,
+      variableValues: {
+        postId: "1",
+        point: -1,
+      },
+      token: createAccessToken(user!),
+    });
+
+    const res = await graphqlCall({
+      source: POST_QUERY,
+      variableValues: {
+        id: "1",
+      },
+    });
+
+    const post = res.data?.post;
+
+    expect(response).toMatchObject({
+      data: {
+        vote: true,
+      },
+    });
+
+    expect(post?.votes).toEqual([
+      {
+        postId: post?.id.toString(),
+        userId: user?.id.toString(),
+        point: -1,
+      },
+    ]);
+
+    expect(post?.points).toBe(-1);
+  });
+
+  test("should cancel a vote", async () => {
+    const user = await getRepository(User).findOne(1);
+    const response = await graphqlCall({
+      source: VOTE_MUTATION,
+      variableValues: {
+        postId: "1",
+        point: 0,
+      },
+      token: createAccessToken(user!),
+    });
+
+    const res = await graphqlCall({
+      source: POST_QUERY,
+      variableValues: {
+        id: "1",
+      },
+    });
+
+    const post = res.data?.post;
+
+    expect(response).toMatchObject({
+      data: {
+        vote: true,
+      },
+    });
+
+    expect(post?.votes).toEqual([]);
+
+    expect(post?.points).toBe(0);
+  });
 });
 
 describe("delete mutations", () => {
-  test("delete a post", async () => {
+  test("should delete a post", async () => {
     const user = await getRepository(User).findOne(1);
     const response = await graphqlCall({
       source: DELETE_POST_MUTATION,
@@ -403,7 +603,7 @@ describe("delete mutations", () => {
     expect(deletedPost).toBeUndefined();
     expect(posts.length).toBe(0);
   });
-  test("delete user", async () => {
+  test("should delete user", async () => {
     const user = await getRepository(User).findOne(1);
     const response = await graphqlCall({
       source: DELETE_USER_MUTATION,

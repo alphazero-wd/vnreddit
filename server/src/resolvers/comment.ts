@@ -50,7 +50,6 @@ export class CommentResolver {
       })
       .returning("*")
       .execute();
-    console.log("comment: ", comment.raw[0]);
 
     return { comment: comment.raw[0] };
   }
