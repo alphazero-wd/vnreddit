@@ -45,7 +45,9 @@ const Comment: FC<Props> = ({ comment, id }) => {
         </div>
         <small>
           <a className="font-bold">
-            <Link href="/u/alphazero">{comment.commentator?.username}</Link>
+            <Link href={`/u/profile/${comment.commentator?.username}`}>
+              {comment.commentator?.username}
+            </Link>
           </a>{" "}
           <span className="text-gray-600 ml-3">
             {moment(comment.createdAt).fromNow()}

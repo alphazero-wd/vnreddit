@@ -16,5 +16,9 @@ fragment Post on Post {
   community {
     id
     name
+    members {
+      id
+      username
+    }
   }
 }

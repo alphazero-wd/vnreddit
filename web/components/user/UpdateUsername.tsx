@@ -1,5 +1,5 @@
 import { Formik } from "formik";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { BsCheckCircle } from "react-icons/bs";
 import { useUpdateUsernameMutation, useMeQuery } from "../../generated/graphql";
 import { useAlert } from "../../utils/useAlert";
@@ -54,6 +54,7 @@ const UpdateUsername: FC = () => {
                   name="username"
                   label="Username"
                   errors={errors}
+                  value={values.username}
                 />
                 <small
                   className={`block ${

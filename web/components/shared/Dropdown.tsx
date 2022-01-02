@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import avatar from "../../images/avatar.png";
 import { CgProfile } from "react-icons/cg";
-import { FiMoon, FiSettings } from "react-icons/fi";
+import { FiSettings } from "react-icons/fi";
 import { BiChevronDown, BiLogIn, BiLogOut, BiUser } from "react-icons/bi";
 import { MdOutlineGroupWork, MdPostAdd } from "react-icons/md";
 import { useMeQuery } from "../../generated/graphql";
@@ -56,37 +56,25 @@ const Dropdown: FC<Props> = ({ logout }) => {
           {data?.me && (
             <>
               <Link href={`/u/profile/${data.me.username}`}>
-                <a
-                  onClick={() => setDropdown(false)}
-                  className="text-gray-700 w-full hover:bg-gray-200 flex font-semibold items-center px-4 py-2 text-sm"
-                >
+                <a onClick={() => setDropdown(false)} className="dropdown-item">
                   <CgProfile className="mr-3 text-xl" />
                   Profile
                 </a>
               </Link>
               <Link href="/u/settings">
-                <a
-                  onClick={() => setDropdown(false)}
-                  className="text-gray-700 w-full hover:bg-gray-200 flex font-semibold items-center px-4 py-2 text-sm"
-                >
+                <a onClick={() => setDropdown(false)} className="dropdown-item">
                   <FiSettings className="mr-3 text-xl" />
                   Settings
                 </a>
               </Link>
               <Link href="/vr/create">
-                <a
-                  onClick={() => setDropdown(false)}
-                  className="text-gray-700 w-full hover:bg-gray-200 flex font-semibold items-center px-4 py-2 text-sm"
-                >
+                <a onClick={() => setDropdown(false)} className="dropdown-item">
                   <MdOutlineGroupWork className="mr-3 text-xl" />
                   Create a community
                 </a>
               </Link>
               <Link href="/post/create">
-                <a
-                  onClick={() => setDropdown(false)}
-                  className="text-gray-700 w-full hover:bg-gray-200 flex font-semibold items-center px-4 py-2 text-sm"
-                >
+                <a onClick={() => setDropdown(false)} className="dropdown-item">
                   <MdPostAdd className="mr-3 text-xl" />
                   Create a post
                 </a>
@@ -99,17 +87,14 @@ const Dropdown: FC<Props> = ({ logout }) => {
                 logout();
                 setDropdown(false);
               }}
-              className="text-gray-700 w-full hover:bg-gray-200 font-semibold flex items-center px-4 py-2 text-sm"
+              className="dropdown-item"
             >
               <BiLogOut className="mr-3 text-xl" />
               Logout
             </button>
           ) : (
             <Link href="/u/login" passHref>
-              <a
-                onClick={() => setDropdown(false)}
-                className="text-gray-700 w-full hover:bg-gray-400 font-semibold flex items-center px-4 py-2 text-sm"
-              >
+              <a onClick={() => setDropdown(false)} className="dropdown-item">
                 <BiLogIn className="mr-3 text-xl" />
                 Login / Signup
               </a>

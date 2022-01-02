@@ -1,6 +1,5 @@
 import { FC } from "react";
 import { IconType } from "react-icons";
-import { BsCheckCircle } from "react-icons/bs";
 
 interface Props {
   message: string;

@@ -10,9 +10,6 @@ fragment Community on Community {
   }
   posts {
     ...Post
-    comments {
-      ...Comment
-    }
   }
   numberOfMembers
 }

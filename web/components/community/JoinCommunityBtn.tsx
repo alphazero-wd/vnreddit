@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import { FC } from "react";
 import {
   CommunityFragment,
-  CommunityFragmentDoc,
   useJoinCommunityMutation,
   useLeaveCommunityMutation,
   useMeQuery,

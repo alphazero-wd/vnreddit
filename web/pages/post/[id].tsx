@@ -9,6 +9,7 @@ import ReactMarkdown from "react-markdown";
 import EditDeleteBtn from "../../components/post/EditDeleteBtn";
 import VoteBtn from "../../components/post/VoteBtn";
 import CommentForm from "../../components/comment/CommentForm";
+import Loading from "../../components/shared/Loading";
 
 const PostPage: NextPage = () => {
   const router = useRouter();
@@ -23,10 +24,9 @@ const PostPage: NextPage = () => {
 
   return (
     <div className="container w-full md:w-2/3">
+      {loading && <Loading />}
       <div className="bg-white">
-        <div
-          className={`flex mb-3 rounded-md ${loading ? "animate-pulse" : ""}`}
-        >
+        <div className="flex mb-3 rounded-md">
           {data?.post && <VoteBtn post={data.post} />}
           <div className="flex-grow p-3 bg-white ">
             <small className="text-gray-600">

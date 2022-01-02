@@ -28,7 +28,7 @@ const ProfilePage: NextPage = () => {
               <Image src={postImg} />
             </div>
             <h2 className="text-xl font-semibold mt-3">
-              It seems like you have not post anything.
+              It seems like user {data.user.username} have not post anything.
             </h2>
           </div>
         )}
@@ -57,9 +57,11 @@ const ProfilePage: NextPage = () => {
               </span>
             </span>
           </small>
-          <button className="secondary-btn w-full my-3">
-            <Link href="/post/create">New post</Link>
-          </button>
+          {data?.user?.id === user?.me?.id && (
+            <button className="secondary-btn w-full my-3">
+              <Link href="/post/create">New post</Link>
+            </button>
+          )}
         </div>
         {(data?.user?.communities || []).length > 0 && (
           <div className="mt-3 bg-white px-3 py-4 border border-gray-600 rounded-md">

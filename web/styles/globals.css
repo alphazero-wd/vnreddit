@@ -102,4 +102,8 @@
 .markdown :not(pre) > code.language-text {
   white-space: pre-line;
 }
+
+.dropdown-item {
+  @apply w-full hover:bg-gray-200 flex font-semibold items-center px-4 py-2 text-sm;
+}
 /* purgecss end ignore */
