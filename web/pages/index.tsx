@@ -2,7 +2,6 @@ import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { AiOutlineLoading } from "react-icons/ai";
 import Post from "../components/post/Post";
 import Loading from "../components/shared/Loading";
 import { usePostsQuery } from "../generated/graphql";
@@ -11,7 +10,7 @@ import character from "../images/vnreddit.svg";
 const Home: NextPage = () => {
   const { data, loading, fetchMore, variables } = usePostsQuery({
     variables: {
-      limit: 3,
+      limit: 15,
       cursor: null,
     },
     notifyOnNetworkStatusChange: true,
@@ -19,46 +18,56 @@ const Home: NextPage = () => {
   const sidebar = useRef<HTMLDivElement>(null);
   const sidebarText = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (sidebar.current && sidebarText.current) {
-      const { height } = sidebarText.current.getBoundingClientRect();
-      sidebar.current.style.height = `${height}px`;
+    const onResize = () => {
+      const height = sidebarText.current?.getBoundingClientRect().height;
+      if (sidebar.current && sidebarText.current) {
+        if (sidebarText.current?.style.display === "none") {
+          sidebar.current.style.maxHeight = `0px`;
+        } else {
+          sidebar.current.style.maxHeight = `${height}px`;
+        }
+      }
+    };
+    onResize();
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", onResize);
+      return () => window.removeEventListener("resize", onResize);
     }
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => {
+      const isNearBottom =
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+      if (isNearBottom && !loading && data?.posts.hasMore) {
+        fetchMore({
+          variables: {
+            limit: variables?.limit,
+            cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
+          },
+        });
+      }
+    };
+    if (data?.posts.hasMore) {
+      window.addEventListener("scroll", onScroll);
+      return () => window.removeEventListener("scroll", onScroll);
+    }
+  }, [data]);
+
   return (
-    <div className="md:container grid grid-cols-12 gap-4 w-full lg:w-5/6">
+    <div className="md:container lg:grid grid-cols-12 gap-4 w-full lg:w-5/6">
       <div className="col-span-8">
         {data?.posts.posts.map((post) => (
           <Post key={post.id} post={post} />
         ))}
-        {data?.posts.hasMore && (
-          <div className="text-center mb-3 flex justify-center items-center mt-3">
-            <button
-              onClick={() => {
-                const posts = data!.posts.posts;
-                fetchMore({
-                  variables: {
-                    limit: variables?.limit,
-                    cursor: posts[posts.length - 1].createdAt,
-                  },
-                });
-              }}
-              className="flex justify-center items-center bg-blue-500 font-semibold px-4 py-2 text-white rounded-lg"
-              disabled={loading}
-            >
-              {loading && <AiOutlineLoading className="animate-spin mr-3" />}
-              Load more
-            </button>
-          </div>
-        )}
         {loading && <Loading />}
       </div>
 
       <div
         ref={sidebar}
-        className="col-span-4 bg-white mt-3 border border-gray-600 rounded-md"
+        className="col-span-4 hidden lg:block bg-white mt-3 border border-gray-600 rounded-md"
       >
-        <div ref={sidebarText} className=" p-4">
+        <div ref={sidebarText} className="p-4">
           <div className="flex items-center mb-3">
             <div className="w-11 h-auto object-cover">
               <Image src={character} alt="Character" />

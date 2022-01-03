@@ -9,6 +9,7 @@ import ReactMarkdown from "react-markdown";
 import EditDeleteBtn from "../../components/post/EditDeleteBtn";
 import VoteBtn from "../../components/post/VoteBtn";
 import CommentForm from "../../components/comment/CommentForm";
+import { formatNumber } from "../../utils/formatNumber";
 import Loading from "../../components/shared/Loading";
 
 const PostPage: NextPage = () => {
@@ -53,7 +54,9 @@ const PostPage: NextPage = () => {
             <div className="flex justify-between items-center mt-4">
               <div className="flex items-center text-gray-600 font-semibold">
                 <BsChatSquare className="mr-2 text-xl" />
-                <small>{data?.post?.numberOfComments} comments</small>
+                <small>
+                  {formatNumber(data?.post?.numberOfComments || 0)} comments
+                </small>
               </div>
               {data?.post?.creator.id === user?.me?.id && (
                 <EditDeleteBtn id={id as string} />

@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import VoteBtn from "./VoteBtn";
 import { PostFragment, useMeQuery } from "../../generated/graphql";
 import Link from "next/link";
+import { formatNumber } from "../../utils/formatNumber";
 
 interface Props {
   post: PostFragment;
@@ -44,7 +45,7 @@ const Post: FC<Props> = ({ post }) => {
             </ReactMarkdown>
             <button className="flex mt-3 justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200">
               <BsChatSquare className="mr-2 text-xl" />
-              <small>{post.numberOfComments} comments</small>
+              <small>{formatNumber(post.numberOfComments)} comments</small>
             </button>
           </div>
         </Link>

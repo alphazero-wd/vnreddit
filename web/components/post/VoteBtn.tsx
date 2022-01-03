@@ -10,6 +10,7 @@ import {
   useVoteMutation,
   VoteMutation,
 } from "../../generated/graphql";
+import { formatNumber } from "../../utils/formatNumber";
 
 interface Props {
   post: PostsQuery["posts"]["posts"][0];
@@ -89,7 +90,7 @@ const VoteBtn: FC<Props> = ({ post }) => {
       >
         <FaChevronUp />
       </button>
-      <span className="font-semibold text-md">{post?.points}</span>
+      <span className="font-semibold text-md">{formatNumber(4422432)}</span>
       <button
         className={`${
           userVote && userVote.point === -1
