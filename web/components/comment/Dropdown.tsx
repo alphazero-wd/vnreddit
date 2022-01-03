@@ -33,7 +33,7 @@ const CommentDropdown: FC<Props> = ({ setEdit, comment, id }) => {
           className={`
           ${
             !dropdown
-              ? "transform opacity-0 scale-95"
+              ? "transform opacity-0 scale-0"
               : "transform opacity-100 scale-100"
           } 
         origin-top-left absolute transition-all right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none`}

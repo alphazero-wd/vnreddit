@@ -29,10 +29,8 @@ const Home: NextPage = () => {
       }
     };
     onResize();
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", onResize);
-      return () => window.removeEventListener("resize", onResize);
-    }
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   useEffect(() => {

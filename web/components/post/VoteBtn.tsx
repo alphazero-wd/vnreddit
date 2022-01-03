@@ -90,7 +90,7 @@ const VoteBtn: FC<Props> = ({ post }) => {
       >
         <FaChevronUp />
       </button>
-      <span className="font-semibold text-md">{formatNumber(4422432)}</span>
+      <span className="font-semibold text-md">{formatNumber(post.points)}</span>
       <button
         className={`${
           userVote && userVote.point === -1

@@ -9,14 +9,15 @@ import {
   useMeQuery,
 } from "../../generated/graphql";
 import { useRedirect } from "../../utils/useRedirect";
+import { gql } from "@apollo/client";
 
 const CreateCommunityPage: NextPage = () => {
   const [createCommunity, { loading }] = useCreateCommunityMutation();
   const [joinCommunity] = useJoinCommunityMutation();
-  const { data } = useMeQuery();
+  const { data: user } = useMeQuery();
   const router = useRouter();
 
-  useRedirect(!data?.me, "/u/login");
+  useRedirect(!user?.me, "/u/login");
 
   return (
     <div className="container w-full md:w-3/6">
@@ -32,7 +33,7 @@ const CreateCommunityPage: NextPage = () => {
             variables: {
               name: values.name,
             },
-            update: (cache, { data }) => {
+            update: (cache) => {
               cache.evict({
                 id: "Community:" + data?.createCommunity.community?.id,
                 fieldName: "communities",
@@ -50,8 +51,9 @@ const CreateCommunityPage: NextPage = () => {
               },
             });
             router.push(`/vr/${data.createCommunity.community.name}`);
+            router.reload();
           }
-          return data;
+          return;
         }}
       >
         {({ handleSubmit, handleChange, errors }) => (

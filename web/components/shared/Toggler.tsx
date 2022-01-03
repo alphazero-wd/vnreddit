@@ -16,6 +16,7 @@ const Toggler: FC<Props> = ({ logout }) => {
   const { data } = useMeQuery();
   const [height, setHeight] = useState<number | undefined>(0);
   const menu = useRef<HTMLDivElement>(null);
+  const toggleBtn = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const menuHeight = menu.current?.getBoundingClientRect().height;
@@ -27,14 +28,17 @@ const Toggler: FC<Props> = ({ logout }) => {
       <button
         onClick={() => setToggler(!toggler)}
         className="border-none rounded-md hover:bg-gray-200 transition-colors lg:hidden text-2xl p-3"
+        ref={toggleBtn}
       >
-        <AiOutlineMenu />
+        <AiOutlineMenu pointerEvents="none" />
       </button>
       <div
         ref={menu}
-        className={`w-full ${
-          toggler ? `h-[${height}] transition-all` : "h-0 hidden"
-        } lg:hidden absolute left-0 top-full z-50 bg-white text-gray-800`}
+        className={`w-full transform transition-all absolute ${
+          toggler
+            ? `h-[${height}] scale-100 translate-y-[${height}]`
+            : "h-0 translate-y-0 scale-0"
+        } lg:hidden left-0 top-full z-50 bg-white text-gray-800`}
       >
         {data?.me && (
           <>

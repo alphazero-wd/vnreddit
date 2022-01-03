@@ -46,8 +46,8 @@ const Dropdown: FC<Props> = ({ logout }) => {
         className={`
           ${
             !dropdown
-              ? "transform hidden opacity-0 scale-95"
-              : "transform opacity-100 scale-100 block"
+              ? "transform opacity-0 scale-0"
+              : "transform opacity-100 scale-100"
           } 
         origin-top-right transition-all z-50 absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none border-gray-600 "
         `}
