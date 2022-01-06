@@ -1,4 +1,4 @@
-import { FC, FormEvent, ChangeEvent } from "react";
+import { FC, FormEvent, ChangeEvent, useState } from "react";
 import { BsCheckCircle } from "react-icons/bs";
 import { useUpdateProfileImageMutation } from "../../generated/graphql";
 import { useAlert } from "../../utils/useAlert";
@@ -6,27 +6,24 @@ import Alert from "../shared/Alert";
 
 const UpdateProfileImage: FC = () => {
   const [alert] = useAlert();
+  const [image, setImage] = useState<File>();
   const [updateProfileImage] = useUpdateProfileImageMutation();
-  const onChange = async (e: ChangeEvent<HTMLInputElement>) => {
+
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const file = e.target.files[0];
-    await updateProfileImage({
-      variables: {
-        image: file,
-      },
-    });
+    setImage(file);
   };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    console.log("image: ", image);
+
     e.preventDefault();
-    // await updateProfileImage({ variables: {
-    //     imageUrl,
-    //   },
-    //   update: (cache) => {
-    //     cache.evict({ id: "User:" + data?.me?.id, fieldName: "imageUrl" });
-    //   },
-    // });
-    // setImageUrl("");
+    await updateProfileImage({
+      variables: {
+        image,
+      },
+    });
   };
 
   return (

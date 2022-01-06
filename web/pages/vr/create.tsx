@@ -9,7 +9,6 @@ import {
   useMeQuery,
 } from "../../generated/graphql";
 import { useRedirect } from "../../utils/useRedirect";
-import { gql } from "@apollo/client";
 
 const CreateCommunityPage: NextPage = () => {
   const [createCommunity, { loading }] = useCreateCommunityMutation();

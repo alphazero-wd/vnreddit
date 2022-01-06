@@ -56,7 +56,7 @@ const Signup: NextPage = () => {
           const error = response.data?.signup.error;
 
           if (user) {
-            localStorage.setItem("token", JSON.stringify(user.token));
+            localStorage.setItem("token", user.token);
           } else if (error && error.field) {
             setErrors({ [error.field]: error.message });
           }

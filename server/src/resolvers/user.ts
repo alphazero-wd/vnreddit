@@ -1,10 +1,9 @@
-import {
-  AuthResponse,
-  LoginInput,
-  ResetPasswordInput,
-  SignupInput,
-  UserResponse,
-} from "../types/User";
+import { compare, hash } from "bcryptjs";
+import { createWriteStream, mkdir, rmdir } from "fs";
+import { FileUpload, GraphQLUpload } from "graphql-upload";
+import { verify } from "jsonwebtoken";
+import path from "path";
+import { finished } from "stream/promises";
 import {
   Arg,
   Ctx,
@@ -15,25 +14,26 @@ import {
   Root,
   UseMiddleware,
 } from "type-graphql";
+import { getConnection, getRepository } from "typeorm";
+import { Community } from "../entity/Community";
+import { Post } from "../entity/Post";
+import { User } from "../entity/User";
+import { auth } from "../middleware/auth";
+import { MyContext } from "../types/MyContext";
+import {
+  AuthResponse,
+  LoginInput,
+  ResetPasswordInput,
+  SignupInput,
+  UserResponse,
+} from "../types/User";
+import { sendEmail } from "../utils/sendEmail";
+import { createRefreshToken } from "../utils/token";
 import {
   validateEmail,
   validatePassword,
   validateUsername,
 } from "../utils/validate";
-import { getConnection, getRepository } from "typeorm";
-import { User } from "../entity/User";
-import { compare, hash } from "bcryptjs";
-import { auth } from "../middleware/auth";
-import { MyContext } from "../types/MyContext";
-import { sendEmail } from "../utils/sendEmail";
-import { createRefreshToken } from "../utils/token";
-import { verify } from "jsonwebtoken";
-import { Post } from "../entity/Post";
-import { Community } from "../entity/Community";
-import { GraphQLUpload, FileUpload } from "graphql-upload";
-import { createWriteStream } from "fs";
-import path from "path";
-import { finished } from "stream/promises";
 
 @Resolver(User)
 export class UserResolver {
@@ -180,6 +180,10 @@ export class UserResolver {
       .returning("*")
       .execute();
     const newUser = insertResult.raw[0];
+    mkdir(
+      path.join(__dirname, `../../public/images/u/${newUser.username}`),
+      (error) => console.log("error: ", error)
+    );
     return { user: newUser };
   }
 
@@ -337,23 +341,27 @@ export class UserResolver {
   }
 
   @UseMiddleware(auth)
-  @Mutation(() => Boolean)
+  @Mutation(() => String, { nullable: true })
   async updateProfileImage(
     @Arg("image", () => GraphQLUpload)
     { createReadStream, filename }: FileUpload,
     @Ctx() { req }: MyContext
-  ): Promise<boolean> {
+  ): Promise<string | null> {
     const user = await getRepository(User).findOne(req.payload?.userId);
     if (user) {
+      const { ext } = path.parse(filename);
+      const profileImageFile = user.username + ext;
+      const pathname = path.join(
+        __dirname,
+        `../../public/images/u/${user.username}`
+      );
       const out = createReadStream().pipe(
-        createWriteStream(
-          path.join(__dirname, `../../images/u/${user.username}/${filename}`)
-        )
+        createWriteStream(`${pathname}/${profileImageFile}`)
       );
       await finished(out);
-      return true;
+      return `http://localhost:4000/images/u/${user.username}/${profileImageFile}`;
     }
-    return false;
+    return null;
   }
 
   @UseMiddleware(auth)
@@ -404,6 +412,10 @@ export class UserResolver {
   async deleteUser(@Ctx() { req }: MyContext): Promise<boolean> {
     const user = await getRepository(User).findOne(req.payload?.userId);
     if (user) {
+      rmdir(
+        path.join(__dirname, `../../public/images/u/${user.username}`),
+        (error) => console.log("error: ", error)
+      );
       await getRepository(User)
         .createQueryBuilder()
         .delete()

@@ -32,6 +32,7 @@ const main = async () => {
     await apolloServer.start();
 
     apolloServer.applyMiddleware({ app });
+    app.use(express.static("public"));
 
     const PORT = process.env.PORT || 4000;
 
