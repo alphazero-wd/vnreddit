@@ -30,6 +30,10 @@ import { createRefreshToken } from "../utils/token";
 import { verify } from "jsonwebtoken";
 import { Post } from "../entity/Post";
 import { Community } from "../entity/Community";
+import { GraphQLUpload, FileUpload } from "graphql-upload";
+import { createWriteStream } from "fs";
+import path from "path";
+import { finished } from "stream/promises";
 
 @Resolver(User)
 export class UserResolver {
@@ -330,6 +334,26 @@ export class UserResolver {
     return {
       error: { message: "User not found." },
     };
+  }
+
+  @UseMiddleware(auth)
+  @Mutation(() => Boolean)
+  async updateProfileImage(
+    @Arg("image", () => GraphQLUpload)
+    { createReadStream, filename }: FileUpload,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
+    const user = await getRepository(User).findOne(req.payload?.userId);
+    if (user) {
+      const out = createReadStream().pipe(
+        createWriteStream(
+          path.join(__dirname, `../../images/u/${user.username}/${filename}`)
+        )
+      );
+      await finished(out);
+      return true;
+    }
+    return false;
   }
 
   @UseMiddleware(auth)

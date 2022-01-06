@@ -1,6 +1,7 @@
 import { NextPage } from "next";
 import Delete from "../../components/user/Delete";
 import UpdatePassword from "../../components/user/UpdatePassword";
+import UpdateProfileImage from "../../components/user/UpdateProfileImage";
 import UpdateUsername from "../../components/user/UpdateUsername";
 
 const Settings: NextPage = () => {
@@ -9,6 +10,7 @@ const Settings: NextPage = () => {
       <div className="w-2/5">
         <h2 className="text-xl font-semibold mb-8">Customize profile</h2>
         <UpdateUsername />
+        <UpdateProfileImage />
         <UpdatePassword />
         <Delete />
       </div>

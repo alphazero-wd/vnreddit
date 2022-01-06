@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Post from "../../../components/post/Post";
 import { useMeQuery, useUserQuery } from "../../../generated/graphql";
 import Image from "next/image";
-import avatarImg from "../../../images/avatar.png";
+import avatarImg from "../../../images/vnreddit.svg";
 import { GiCakeSlice } from "react-icons/gi";
 import moment from "moment";
 import Link from "next/link";
@@ -41,7 +41,11 @@ const ProfilePage: NextPage = () => {
         <div className="bg-white px-3 py-4 border border-gray-600 rounded-md">
           <div className="flex flex-col justify-center items-center ">
             <div className="w-2/3">
-              <Image src={avatarImg} />
+              <Image
+                width="100%"
+                height="100%"
+                src={data?.user?.imageUrl || avatarImg}
+              />
             </div>
             <h1 className="text-2xl my-2 font-bold">{data?.user?.username}</h1>
             <small className="text-gray-600 font-bold">

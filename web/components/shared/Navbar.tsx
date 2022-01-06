@@ -26,7 +26,7 @@ const Navbar: FC = () => {
   };
 
   useEffect(() => {
-    const token = JSON.parse(localStorage.getItem("token") as string);
+    const token = localStorage.getItem("token");
     if (token) {
       const decodedData = jwtDecode(token) as any;
       if (Date.now() > (decodedData.exp as number) * 1000) {

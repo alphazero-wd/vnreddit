@@ -6,6 +6,7 @@ import { createConnection } from "typeorm";
 import { __prod__ } from "./constants/constants";
 import express from "express";
 import { buildSchema } from "type-graphql";
+import { graphqlUploadExpress } from "graphql-upload";
 
 const main = async () => {
   try {
@@ -21,13 +22,13 @@ const main = async () => {
       resolvers: [path.join(__dirname, "resolvers/*.*")],
       validate: false,
     });
-
     const apolloServer = new ApolloServer({
       schema,
       context: ({ req, res }) => ({ req, res }),
     });
 
     const app = express();
+    app.use(graphqlUploadExpress());
     await apolloServer.start();
 
     apolloServer.applyMiddleware({ app });

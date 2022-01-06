@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Post from "../components/post/Post";
 import Loading from "../components/shared/Loading";
 import { usePostsQuery } from "../generated/graphql";
@@ -16,22 +16,12 @@ const Home: NextPage = () => {
     notifyOnNetworkStatusChange: true,
   });
   const sidebar = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState<number | undefined>(0);
   const sidebarText = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const onResize = () => {
-      const height = sidebarText.current?.getBoundingClientRect().height;
-      if (sidebar.current && sidebarText.current) {
-        if (sidebarText.current?.style.display === "none") {
-          sidebar.current.style.maxHeight = `0px`;
-        } else {
-          sidebar.current.style.maxHeight = `${height}px`;
-        }
-      }
-    };
-    onResize();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
+    const actualHeight = sidebarText.current?.getBoundingClientRect().height;
+    setHeight(actualHeight);
+  }, [sidebarText.current]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -63,14 +53,14 @@ const Home: NextPage = () => {
 
       <div
         ref={sidebar}
-        className="col-span-4 hidden lg:block bg-white mt-3 border border-gray-600 rounded-md"
+        className={`lg:h-[${height}] col-span-4 hidden lg:block bg-white mt-3 border border-gray-600 rounded-md`}
       >
         <div ref={sidebarText} className="p-4">
           <div className="flex items-center mb-3">
-            <div className="w-11 h-auto object-cover">
+            <div className="w-11 h-auto mr-1 object-cover">
               <Image src={character} alt="Character" />
             </div>
-            <b className="ml-3 block">Home</b>
+            <b className="block">Home</b>
           </div>
           <p className="mb-3">
             Your personal VnReddit frontpage. Come here to check in with your

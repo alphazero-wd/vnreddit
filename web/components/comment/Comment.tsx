@@ -2,7 +2,7 @@ import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
 import { FC, useState } from "react";
-import avatarImg from "../../images/avatar.png";
+import avatarImg from "../../images/vnreddit.svg";
 import ReactMarkdown from "react-markdown";
 import {
   CommentFragment,

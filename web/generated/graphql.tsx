@@ -17,6 +17,8 @@ export type Scalars = {
   Float: number;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type AuthResponse = {
@@ -111,6 +113,7 @@ export type Mutation = {
   sendConfirmationEmail: Scalars['Boolean'];
   signup: UserResponse;
   updatePassword: AuthResponse;
+  updateProfileImage: Scalars['Boolean'];
   updateUsername: AuthResponse;
   vote: Scalars['Boolean'];
 };
@@ -196,6 +199,11 @@ export type MutationUpdatePasswordArgs = {
   confirmPassword: Scalars['String'];
   newPassword: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationUpdateProfileImageArgs = {
+  image: Scalars['Upload'];
 };
 
 
@@ -447,6 +455,13 @@ export type UpdatePasswordMutationVariables = Exact<{
 
 export type UpdatePasswordMutation = { __typename?: 'Mutation', updatePassword: { __typename?: 'AuthResponse', successMessage?: string | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
+export type UpdateProfileImageMutationVariables = Exact<{
+  image: Scalars['Upload'];
+}>;
+
+
+export type UpdateProfileImageMutation = { __typename?: 'Mutation', updateProfileImage: boolean };
+
 export type UpdateUsernameMutationVariables = Exact<{
   username: Scalars['String'];
 }>;
@@ -595,6 +610,7 @@ export type ResolversTypes = {
   ResetPasswordInput: ResetPasswordInput;
   SignupInput: SignupInput;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Upload: ResolverTypeWrapper<Scalars['Upload']>;
   User: ResolverTypeWrapper<User>;
   UserResponse: ResolverTypeWrapper<UserResponse>;
   Vote: ResolverTypeWrapper<Vote>;
@@ -625,6 +641,7 @@ export type ResolversParentTypes = {
   ResetPasswordInput: ResetPasswordInput;
   SignupInput: SignupInput;
   String: Scalars['String'];
+  Upload: Scalars['Upload'];
   User: User;
   UserResponse: UserResponse;
   Vote: Vote;
@@ -698,6 +715,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   sendConfirmationEmail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   signup?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'user'>>;
   updatePassword?: Resolver<ResolversTypes['AuthResponse'], ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'confirmPassword' | 'newPassword' | 'password'>>;
+  updateProfileImage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateProfileImageArgs, 'image'>>;
   updateUsername?: Resolver<ResolversTypes['AuthResponse'], ParentType, ContextType, RequireFields<MutationUpdateUsernameArgs, 'username'>>;
   vote?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVoteArgs, 'point' | 'postId'>>;
 };
@@ -736,6 +754,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   posts?: Resolver<ResolversTypes['PaginatedPosts'], ParentType, ContextType, RequireFields<QueryPostsArgs, 'limit'>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'username'>>;
 };
+
+export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
+  name: 'Upload';
+}
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   comments?: Resolver<Array<ResolversTypes['Comment']>, ParentType, ContextType>;
@@ -776,6 +798,7 @@ export type Resolvers<ContextType = any> = {
   Post?: PostResolvers<ContextType>;
   PostResponse?: PostResponseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Upload?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
   UserResponse?: UserResponseResolvers<ContextType>;
   Vote?: VoteResolvers<ContextType>;
@@ -1513,6 +1536,37 @@ export function useUpdatePasswordMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdatePasswordMutationHookResult = ReturnType<typeof useUpdatePasswordMutation>;
 export type UpdatePasswordMutationResult = Apollo.MutationResult<UpdatePasswordMutation>;
 export type UpdatePasswordMutationOptions = Apollo.BaseMutationOptions<UpdatePasswordMutation, UpdatePasswordMutationVariables>;
+export const UpdateProfileImageDocument = gql`
+    mutation UpdateProfileImage($image: Upload!) {
+  updateProfileImage(image: $image)
+}
+    `;
+export type UpdateProfileImageMutationFn = Apollo.MutationFunction<UpdateProfileImageMutation, UpdateProfileImageMutationVariables>;
+
+/**
+ * __useUpdateProfileImageMutation__
+ *
+ * To run a mutation, you first call `useUpdateProfileImageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProfileImageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProfileImageMutation, { data, loading, error }] = useUpdateProfileImageMutation({
+ *   variables: {
+ *      image: // value for 'image'
+ *   },
+ * });
+ */
+export function useUpdateProfileImageMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProfileImageMutation, UpdateProfileImageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateProfileImageMutation, UpdateProfileImageMutationVariables>(UpdateProfileImageDocument, options);
+      }
+export type UpdateProfileImageMutationHookResult = ReturnType<typeof useUpdateProfileImageMutation>;
+export type UpdateProfileImageMutationResult = Apollo.MutationResult<UpdateProfileImageMutation>;
+export type UpdateProfileImageMutationOptions = Apollo.BaseMutationOptions<UpdateProfileImageMutation, UpdateProfileImageMutationVariables>;
 export const UpdateUsernameDocument = gql`
     mutation UpdateUsername($username: String!) {
   updateUsername(username: $username) {

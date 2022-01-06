@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FC, useState } from "react";
-import avatar from "../../images/avatar.png";
+import avatar from "../../images/vnreddit.svg";
 import { CgProfile } from "react-icons/cg";
 import { FiSettings } from "react-icons/fi";
 import { BiChevronDown, BiLogIn, BiLogOut, BiUser } from "react-icons/bi";
@@ -26,13 +26,10 @@ const Dropdown: FC<Props> = ({ logout }) => {
         >
           {data?.me ? (
             <>
-              <Image
-                src={avatar}
-                className="object-cover"
-                width={40}
-                height={40}
-              />
-              <small className="font-bold text-sm">{data?.me?.username}</small>
+              <Image src={avatar} className="mr-1 rounded-full" />
+              <small className="font-bold text-sm block ml-2">
+                {data?.me?.username}
+              </small>
             </>
           ) : (
             <>
