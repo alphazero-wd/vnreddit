@@ -16,8 +16,7 @@ const ResetPassword: NextPage = () => {
   const [resetPassword, { loading, data }] = useResetPasswordMutation();
   const router = useRouter();
   const { token } = router.query;
-  const { data: user } = useMeQuery();
-  useRedirect(!!user?.me, "/");
+  useRedirect(!!localStorage.getItem("token"), "/");
 
   if (data?.resetPassword.error?.field === "token") {
     return (

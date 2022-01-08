@@ -10,6 +10,7 @@ import Link from "next/link";
 import Communities from "../../../components/user/Communities";
 import postImg from "../../../images/post.svg";
 import { imageLoader } from "../../../utils/imageLoader";
+import { useRedirect } from "../../../utils/useRedirect";
 
 const ProfilePage: NextPage = () => {
   const { query } = useRouter();
@@ -18,7 +19,9 @@ const ProfilePage: NextPage = () => {
       username: query.username as string,
     },
   });
+
   const { data: user } = useMeQuery();
+  useRedirect(!localStorage.getItem("token"), "/u/login");
   return (
     <div className="container lg:w-4/5 lg:grid grid-cols-3 gap-4">
       <div className="col-span-2">

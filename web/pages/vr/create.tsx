@@ -6,17 +6,15 @@ import AuthInput from "../../components/auth/AuthInput";
 import {
   useCreateCommunityMutation,
   useJoinCommunityMutation,
-  useMeQuery,
 } from "../../generated/graphql";
 import { useRedirect } from "../../utils/useRedirect";
 
 const CreateCommunityPage: NextPage = () => {
   const [createCommunity, { loading }] = useCreateCommunityMutation();
   const [joinCommunity] = useJoinCommunityMutation();
-  const { data: user } = useMeQuery();
   const router = useRouter();
 
-  useRedirect(!user?.me, "/u/login");
+  useRedirect(!localStorage.getItem("token"), "/u/login");
 
   return (
     <div className="container w-full md:w-3/6">

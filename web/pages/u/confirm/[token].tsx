@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useConfirmUserMutation, useMeQuery } from "../../../generated/graphql";
-import { useRedirect } from "../../../utils/useRedirect";
 
 const ConfirmUser: NextPage = () => {
   const router = useRouter();
@@ -11,12 +10,9 @@ const ConfirmUser: NextPage = () => {
   const { token } = router.query;
   const [confirmUser, { error }] = useConfirmUserMutation();
 
-  useRedirect(!data?.me, "/u/login");
-  useRedirect(!!data?.me?.isConfirmed, "/");
-
   useEffect(() => {
     (async () => {
-      if (data?.me && !data.me.isConfirmed) {
+      if (data?.me && !error) {
         const response = await confirmUser({
           variables: {
             token: token as string,
@@ -28,7 +24,6 @@ const ConfirmUser: NextPage = () => {
             });
           },
         });
-        console.log("response: ", response);
 
         if (response.data?.confirmUser) {
           const timeout = setTimeout(() => {

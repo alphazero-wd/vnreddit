@@ -1,29 +1,14 @@
 import { Formik } from "formik";
 import { NextPage } from "next";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import AuthInput from "../../components/auth/AuthInput";
-import {
-  MeDocument,
-  MeQuery,
-  useLoginMutation,
-  useMeQuery,
-} from "../../generated/graphql";
+import { MeDocument, MeQuery, useLoginMutation } from "../../generated/graphql";
 import { AiOutlineLoading } from "react-icons/ai";
-import { useEffect } from "react";
 import { useRedirect } from "../../utils/useRedirect";
 
 const Signup: NextPage = () => {
-  const router = useRouter();
   const [login, { loading }] = useLoginMutation();
-  const { data } = useMeQuery();
-  useRedirect(!!data?.me, "/");
-
-  useEffect(() => {
-    if (data?.me) {
-      router.replace("/");
-    }
-  }, [data]);
+  useRedirect(!!localStorage.getItem("token"), "/");
 
   return (
     <div className="container w-full md:w-3/6">

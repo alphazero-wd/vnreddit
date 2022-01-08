@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import Post from "../components/post/Post";
 import Loading from "../components/shared/Loading";
 import { usePostsQuery } from "../generated/graphql";
@@ -10,18 +10,11 @@ import character from "../images/vnreddit.svg";
 const Home: NextPage = () => {
   const { data, loading, fetchMore, variables } = usePostsQuery({
     variables: {
-      limit: 15,
+      limit: 1,
       cursor: null,
     },
     notifyOnNetworkStatusChange: true,
   });
-  const sidebar = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState<number | undefined>(0);
-  const sidebarText = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const actualHeight = sidebarText.current?.getBoundingClientRect().height;
-    setHeight(actualHeight);
-  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -40,11 +33,11 @@ const Home: NextPage = () => {
       window.addEventListener("scroll", onScroll);
       return () => window.removeEventListener("scroll", onScroll);
     }
-  }, [data]);
+  }, [window.scrollY]);
 
   return (
-    <div className="md:container lg:grid grid-cols-12 gap-4 w-full lg:w-5/6">
-      <div className="col-span-8">
+    <div className="md:container lg:grid grid-rows-6 grid-cols-12 gap-4 w-full lg:w-5/6">
+      <div className="col-span-8 row-span-6">
         {data?.posts.posts.map((post) => (
           <Post key={post.id} post={post} />
         ))}
@@ -52,10 +45,9 @@ const Home: NextPage = () => {
       </div>
 
       <div
-        ref={sidebar}
-        className={`lg:max-h-[${height}px] col-span-4 hidden lg:block bg-white mt-3 border border-gray-600 rounded-md`}
+        className={`row-span-1 col-span-4 hidden lg:block bg-white mt-3 border border-gray-600 rounded-md`}
       >
-        <div ref={sidebarText} className="p-4">
+        <div className="p-4">
           <div className="flex items-center mb-3">
             <div className="w-11 h-auto mr-1 object-cover">
               <Image src={character} alt="Character" />
