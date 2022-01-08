@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FC, useState } from "react";
-import avatar from "../../images/vnreddit.svg";
+import avatar from "../../images/vnreddit-logo.svg";
 import { CgProfile } from "react-icons/cg";
 import { FiSettings } from "react-icons/fi";
 import { BiChevronDown, BiLogIn, BiLogOut, BiUser } from "react-icons/bi";
 import { MdOutlineGroupWork, MdPostAdd } from "react-icons/md";
 import { useMeQuery } from "../../generated/graphql";
+import { imageLoader } from "../../utils/imageLoader";
 
 interface Props {
   logout: () => void;
@@ -26,7 +27,13 @@ const Dropdown: FC<Props> = ({ logout }) => {
         >
           {data?.me ? (
             <>
-              <Image src={avatar} className="mr-1 rounded-full" />
+              <Image
+                loader={imageLoader}
+                src={data?.me?.imageUrl ?? avatar}
+                className="mr-1 rounded-full"
+                width="30%"
+                height="30%"
+              />
               <small className="font-bold text-sm block ml-2">
                 {data?.me?.username}
               </small>

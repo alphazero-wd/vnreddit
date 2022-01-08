@@ -18,7 +18,6 @@ const ProfilePage: NextPage = () => {
     },
   });
   const { data: user } = useMeQuery();
-
   return (
     <div className="container lg:w-4/5 lg:grid grid-cols-3 gap-4">
       <div className="col-span-2">

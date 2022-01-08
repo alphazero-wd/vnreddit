@@ -1,6 +1,10 @@
+import { useRouter } from "next/router";
 import { FC, FormEvent, ChangeEvent, useState } from "react";
 import { BsCheckCircle } from "react-icons/bs";
-import { useUpdateProfileImageMutation } from "../../generated/graphql";
+import {
+  useMeQuery,
+  useUpdateProfileImageMutation,
+} from "../../generated/graphql";
 import { useAlert } from "../../utils/useAlert";
 import Alert from "../shared/Alert";
 
@@ -8,6 +12,8 @@ const UpdateProfileImage: FC = () => {
   const [alert] = useAlert();
   const [image, setImage] = useState<File>();
   const [updateProfileImage] = useUpdateProfileImageMutation();
+  const { data } = useMeQuery();
+  const router = useRouter();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -16,14 +22,20 @@ const UpdateProfileImage: FC = () => {
   };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    console.log("image: ", image);
-
     e.preventDefault();
-    await updateProfileImage({
+    const response = await updateProfileImage({
       variables: {
         image,
       },
+      update: (cache) =>
+        cache.evict({
+          id: "User:" + data?.me?.id,
+          fieldName: "imageUrl",
+        }),
     });
+    if (response.data) {
+      router.reload();
+    }
   };
 
   return (
@@ -42,11 +54,7 @@ const UpdateProfileImage: FC = () => {
           <div className="flex items-center">
             <div>
               <label htmlFor="image">Upload your profile image</label>
-              <input
-                type="file"
-                accept="image/jpg, image/png, image/svg"
-                onChange={onChange}
-              />
+              <input type="file" accept="image/*" onChange={onChange} />
             </div>
           </div>
           <button type="submit" className="primary-btn mt-3">

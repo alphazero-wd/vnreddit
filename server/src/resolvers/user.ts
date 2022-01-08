@@ -1,5 +1,5 @@
 import { compare, hash } from "bcryptjs";
-import { createWriteStream, mkdir, rmdir } from "fs";
+import { createWriteStream, mkdir } from "fs";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { verify } from "jsonwebtoken";
 import path from "path";
@@ -34,6 +34,8 @@ import {
   validatePassword,
   validateUsername,
 } from "../utils/validate";
+import { encryptImage } from "../utils/encryptImage";
+import { readdir, rmdir, unlink } from "fs/promises";
 
 @Resolver(User)
 export class UserResolver {
@@ -97,7 +99,7 @@ export class UserResolver {
       const html = `
       <h1>Account confirmation</h1> 
       <p>Click the link below to confirm your account.</p>
-      <a href="http://localhost:3000/u/confirm/${createRefreshToken(
+      <a href="${process.env.CORS_ORIGIN}/u/confirm/${createRefreshToken(
         user
       )}">Confirm account</a>
     `;
@@ -229,9 +231,9 @@ export class UserResolver {
         html: `
           <h1>Password Reset Verification</h1> 
           <p>Click on the link below to reset the password.</p>
-          <a href="http://localhost:3000/user/reset-password/${createRefreshToken(
-            user
-          )}">Reset Password</a>
+          <a href="${
+            process.env.CORS_ORIGIN
+          }/u/reset-password/${createRefreshToken(user)}">Reset Password</a>
         `,
       };
       await sendEmail(info);
@@ -341,27 +343,44 @@ export class UserResolver {
   }
 
   @UseMiddleware(auth)
-  @Mutation(() => String, { nullable: true })
+  @Mutation(() => Boolean)
   async updateProfileImage(
     @Arg("image", () => GraphQLUpload)
     { createReadStream, filename }: FileUpload,
     @Ctx() { req }: MyContext
-  ): Promise<string | null> {
+  ): Promise<boolean> {
     const user = await getRepository(User).findOne(req.payload?.userId);
     if (user) {
-      const { ext } = path.parse(filename);
-      const profileImageFile = user.username + ext;
+      const { ext, name } = path.parse(filename);
+      const profileImageFile = encryptImage(filename + name) + ext;
+      const imageUrl = `${process.env.SERVER_URL}/images/u/${user.username}/${profileImageFile}`;
       const pathname = path.join(
         __dirname,
-        `../../public/images/u/${user.username}`
+        `../../public/images/u/${user.username}/`
       );
       const out = createReadStream().pipe(
-        createWriteStream(`${pathname}/${profileImageFile}`)
+        createWriteStream(`${pathname}${profileImageFile}`)
       );
+      const results = await readdir(pathname);
+      if (results.length > 0) {
+        console.log("results: ", results);
+        try {
+          await unlink(pathname + results[0]);
+        } catch (error) {
+          console.log("error: ", error);
+        }
+      }
+
       await finished(out);
-      return `http://localhost:4000/images/u/${user.username}/${profileImageFile}`;
+      await getRepository(User)
+        .createQueryBuilder()
+        .update()
+        .set({ imageUrl })
+        .execute();
+
+      return true;
     }
-    return null;
+    return false;
   }
 
   @UseMiddleware(auth)
@@ -412,9 +431,8 @@ export class UserResolver {
   async deleteUser(@Ctx() { req }: MyContext): Promise<boolean> {
     const user = await getRepository(User).findOne(req.payload?.userId);
     if (user) {
-      rmdir(
-        path.join(__dirname, `../../public/images/u/${user.username}`),
-        (error) => console.log("error: ", error)
+      await rmdir(
+        path.join(__dirname, `../../public/images/u/${user.username}`)
       );
       await getRepository(User)
         .createQueryBuilder()

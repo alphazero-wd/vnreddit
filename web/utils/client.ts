@@ -4,7 +4,7 @@ import { PaginatedPosts } from "../generated/graphql";
 import { createUploadLink } from "apollo-upload-client";
 
 const httpLink = createUploadLink({
-  uri: "http://localhost:4000/graphql",
+  uri: `${process.env.NEXT_PUBLIC_API_URL}/graphql`,
 });
 
 const authLink = setContext((_, { headers }) => {
