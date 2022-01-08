@@ -76,11 +76,9 @@ const Signup: NextPage = () => {
               label="Password"
               type="password"
             />
-            <Link href="/u/forgot-password">
-              <a className="text-blue-500 mb-3 block hover:text-blue-300">
-                Forgot password?
-              </a>
-            </Link>
+            <span className="text-blue-500 cursor-pointer mb-3 block hover:text-blue-300">
+              <Link href="/u/forgot-password">Forgot password?</Link>
+            </span>
             <button
               disabled={loading}
               type="submit"
@@ -96,9 +94,9 @@ const Signup: NextPage = () => {
       </Formik>
       <div className="text-center">
         Don&apos;t have an account?{" "}
-        <a className="text-blue-500 hover:text-blue-400 transition-colors">
+        <span className="cursor-pointer text-blue-500 hover:text-blue-400 transition-colors">
           <Link href="/u/signup">Sign up</Link>
-        </a>
+        </span>
       </div>
     </div>
   );

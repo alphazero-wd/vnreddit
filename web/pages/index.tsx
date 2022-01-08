@@ -21,7 +21,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     const actualHeight = sidebarText.current?.getBoundingClientRect().height;
     setHeight(actualHeight);
-  }, [sidebarText.current]);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -53,7 +53,7 @@ const Home: NextPage = () => {
 
       <div
         ref={sidebar}
-        className={`lg:h-[${height}] col-span-4 hidden lg:block bg-white mt-3 border border-gray-600 rounded-md`}
+        className={`lg:max-h-[${height}px] col-span-4 hidden lg:block bg-white mt-3 border border-gray-600 rounded-md`}
       >
         <div ref={sidebarText} className="p-4">
           <div className="flex items-center mb-3">

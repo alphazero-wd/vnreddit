@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import moment from "moment";
 import ReactMarkdown from "react-markdown";
 import VoteBtn from "./VoteBtn";
-import { PostFragment, useMeQuery } from "../../generated/graphql";
+import { PostFragment } from "../../generated/graphql";
 import Link from "next/link";
 import { formatNumber } from "../../utils/formatNumber";
 
@@ -14,10 +14,9 @@ interface Props {
 
 const Post: FC<Props> = ({ post }) => {
   const router = useRouter();
-  const { data } = useMeQuery();
 
   return (
-    <div className="bg-white flex mb-3 rounded-md">
+    <div className="bg-white flex mb-3 rounded-md border hover:border-gray-600">
       <VoteBtn post={post} />
       <div className="flex-grow p-3">
         <small className="text-gray-600">

@@ -27,13 +27,23 @@ const Dropdown: FC<Props> = ({ logout }) => {
         >
           {data?.me ? (
             <>
-              <Image
-                loader={imageLoader}
-                src={data?.me?.imageUrl ?? avatar}
-                className="mr-1 rounded-full"
-                width="30%"
-                height="30%"
-              />
+              {data.me.imageUrl ? (
+                <Image
+                  loader={imageLoader}
+                  src={data.me.imageUrl}
+                  className="mr-1 rounded-full"
+                  width="30%"
+                  height="30%"
+                />
+              ) : (
+                <Image
+                  loader={imageLoader}
+                  src={avatar}
+                  className="mr-1 rounded-full"
+                  width="30%"
+                  height="30%"
+                />
+              )}
               <small className="font-bold text-sm block ml-2">
                 {data?.me?.username}
               </small>

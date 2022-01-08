@@ -3,12 +3,13 @@ import { useRouter } from "next/router";
 import Post from "../../../components/post/Post";
 import { useMeQuery, useUserQuery } from "../../../generated/graphql";
 import Image from "next/image";
-import avatarImg from "../../../images/vnreddit.svg";
+import avatar from "../../../images/vnreddit-logo.svg";
 import { GiCakeSlice } from "react-icons/gi";
 import moment from "moment";
 import Link from "next/link";
 import Communities from "../../../components/user/Communities";
 import postImg from "../../../images/post.svg";
+import { imageLoader } from "../../../utils/imageLoader";
 
 const ProfilePage: NextPage = () => {
   const { query } = useRouter();
@@ -39,13 +40,24 @@ const ProfilePage: NextPage = () => {
       <div className="lg:block hidden">
         <div className="bg-white px-3 py-4 border border-gray-600 rounded-md">
           <div className="flex flex-col justify-center items-center ">
-            <div className="w-2/3">
+            {data?.user?.imageUrl ? (
               <Image
+                loader={imageLoader}
+                src={data.user.imageUrl}
                 width="100%"
                 height="100%"
-                src={data?.user?.imageUrl || avatarImg}
+                className="rounded-full"
               />
-            </div>
+            ) : (
+              <Image
+                loader={imageLoader}
+                src={avatar}
+                width="100%"
+                height="100%"
+                className="rounded-full"
+              />
+            )}
+
             <h1 className="text-2xl my-2 font-bold">{data?.user?.username}</h1>
             <small className="text-gray-600 font-bold">
               u/{data?.user?.username}

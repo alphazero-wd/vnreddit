@@ -1,7 +1,11 @@
+import Image from "next/image";
 import router from "next/router";
 import { FC, useState, useEffect } from "react";
 import { RiSearchLine } from "react-icons/ri";
 import { useCommunitiesQuery } from "../../generated/graphql";
+import avatar from "../../images/vnreddit-logo.svg";
+import { formatNumber } from "../../utils/formatNumber";
+import { imageLoader } from "../../utils/imageLoader";
 
 const SearchInput: FC = () => {
   const [search, setSearch] = useState("");
@@ -40,13 +44,36 @@ const SearchInput: FC = () => {
         {data?.communities.map((c) => (
           <div
             key={c.id}
-            className="p-2 cursor-pointer hover:bg-gray-300 w-full"
+            className="p-2 w-full cursor-pointer hover:bg-blue-500 hover:text-white"
             onClick={() => {
               setSearch("");
               router.push(`/vr/${c.name}`);
             }}
           >
-            vr/{c.name}
+            <div className="flex items-center">
+              {c.imageUrl ? (
+                <Image
+                  loader={imageLoader}
+                  src={c.imageUrl}
+                  className="rounded-full"
+                  width="30%"
+                  height="30%"
+                />
+              ) : (
+                <Image
+                  src={avatar}
+                  className="rounded-full"
+                  width="30%"
+                  height="30%"
+                />
+              )}
+              <div className="ml-3">
+                <b className="block">vr/{c.name}</b>
+                <small className="block">
+                  {formatNumber(c.numberOfMembers)} members
+                </small>
+              </div>
+            </div>
           </div>
         ))}
       </div>

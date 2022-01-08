@@ -106,9 +106,9 @@ const Signup: NextPage = () => {
       </Formik>
       <div className="text-center ">
         Already have an account?{" "}
-        <a className="text-blue-500 hover:text-blue-400 transition-colors">
+        <span className="text-blue-500 cursor-pointer hover:text-blue-400 transition-colors">
           <Link href="/u/login">Login</Link>
-        </a>
+        </span>
       </div>
     </div>
   );

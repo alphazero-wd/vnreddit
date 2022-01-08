@@ -13,7 +13,6 @@ const UpdateProfileImage: FC = () => {
   const [image, setImage] = useState<File>();
   const [updateProfileImage] = useUpdateProfileImageMutation();
   const { data } = useMeQuery();
-  const router = useRouter();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -23,7 +22,7 @@ const UpdateProfileImage: FC = () => {
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const response = await updateProfileImage({
+    await updateProfileImage({
       variables: {
         image,
       },
@@ -33,9 +32,6 @@ const UpdateProfileImage: FC = () => {
           fieldName: "imageUrl",
         }),
     });
-    if (response.data) {
-      router.reload();
-    }
   };
 
   return (

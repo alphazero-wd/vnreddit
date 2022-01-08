@@ -352,7 +352,7 @@ export class UserResolver {
     const user = await getRepository(User).findOne(req.payload?.userId);
     if (user) {
       const { ext, name } = path.parse(filename);
-      const profileImageFile = encryptImage(filename + name) + ext;
+      const profileImageFile = encryptImage(user.username + name) + ext;
       const imageUrl = `${process.env.SERVER_URL}/images/u/${user.username}/${profileImageFile}`;
       const pathname = path.join(
         __dirname,
@@ -362,10 +362,11 @@ export class UserResolver {
         createWriteStream(`${pathname}${profileImageFile}`)
       );
       const results = await readdir(pathname);
-      if (results.length > 0) {
-        console.log("results: ", results);
+      if (results.length > 1) {
         try {
-          await unlink(pathname + results[0]);
+          await unlink(
+            pathname + results.find((result) => result !== profileImageFile)
+          );
         } catch (error) {
           console.log("error: ", error);
         }
@@ -376,6 +377,7 @@ export class UserResolver {
         .createQueryBuilder()
         .update()
         .set({ imageUrl })
+        .where("id = :id", { id: user.id })
         .execute();
 
       return true;

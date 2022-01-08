@@ -40,7 +40,7 @@ const PostPage: NextPage = () => {
                 </Link>
               )}
               Posted by{" "}
-              <Link href="/u/alphazero">
+              <Link href={`/u/profile/${data?.post?.creator.username}`}>
                 <a className="hover:underline">
                   u/{data?.post?.creator.username}
                 </a>

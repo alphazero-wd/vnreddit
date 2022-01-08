@@ -48,6 +48,7 @@ export type Community = {
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  imageUrl?: Maybe<Scalars['String']>;
   members: Array<User>;
   name: Scalars['String'];
   numberOfMembers: Scalars['Int'];
@@ -112,6 +113,7 @@ export type Mutation = {
   resetPassword: UserResponse;
   sendConfirmationEmail: Scalars['Boolean'];
   signup: UserResponse;
+  updateCommunityImage: Scalars['Boolean'];
   updatePassword: AuthResponse;
   updateProfileImage: Scalars['Boolean'];
   updateUsername: AuthResponse;
@@ -192,6 +194,12 @@ export type MutationResetPasswordArgs = {
 
 export type MutationSignupArgs = {
   user: SignupInput;
+};
+
+
+export type MutationUpdateCommunityImageArgs = {
+  communityId: Scalars['String'];
+  image: Scalars['Upload'];
 };
 
 
@@ -321,7 +329,7 @@ export type Vote = {
 
 export type CommentFragment = { __typename?: 'Comment', id: string, body: string, createdAt: any, commentator?: { __typename?: 'User', id: string, username: string } | null | undefined };
 
-export type CommunityFragment = { __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> };
+export type CommunityFragment = { __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, imageUrl?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> };
 
 export type ErrorResponseFragment = { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string };
 
@@ -329,7 +337,7 @@ export type PostFragment = { __typename?: 'Post', id: string, title: string, bod
 
 export type PostVoteFragment = { __typename?: 'Post', id: string, points: number, votes: Array<{ __typename?: 'Vote', userId: string, point: number }> };
 
-export type UserFragment = { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> };
+export type UserFragment = { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, imageUrl?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> };
 
 export type CreateCommentMutationVariables = Exact<{
   payload: CreateCommentInput;
@@ -358,14 +366,14 @@ export type AddDescriptionMutationVariables = Exact<{
 }>;
 
 
-export type AddDescriptionMutation = { __typename?: 'Mutation', addDescription: { __typename?: 'CommunityResponse', community?: { __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type AddDescriptionMutation = { __typename?: 'Mutation', addDescription: { __typename?: 'CommunityResponse', community?: { __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, imageUrl?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type CreateCommunityMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type CreateCommunityMutation = { __typename?: 'Mutation', createCommunity: { __typename?: 'CommunityResponse', community?: { __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type CreateCommunityMutation = { __typename?: 'Mutation', createCommunity: { __typename?: 'CommunityResponse', community?: { __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, imageUrl?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type JoinCommunityMutationVariables = Exact<{
   commId: Scalars['String'];
@@ -380,6 +388,14 @@ export type LeaveCommunityMutationVariables = Exact<{
 
 
 export type LeaveCommunityMutation = { __typename?: 'Mutation', leaveCommunity: boolean };
+
+export type UpdateCommunityImageMutationVariables = Exact<{
+  image: Scalars['Upload'];
+  communityId: Scalars['String'];
+}>;
+
+
+export type UpdateCommunityImageMutation = { __typename?: 'Mutation', updateCommunityImage: boolean };
 
 export type CreatePostMutationVariables = Exact<{
   post: CreatePostInput;
@@ -426,14 +442,14 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, imageUrl?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type ResetPasswordMutationVariables = Exact<{
   payload: ResetPasswordInput;
 }>;
 
 
-export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, imageUrl?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type SendConfirmationEmailMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -445,7 +461,7 @@ export type SignupMutationVariables = Exact<{
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, imageUrl?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
 export type UpdatePasswordMutationVariables = Exact<{
   confirmPassword: Scalars['String'];
@@ -483,14 +499,14 @@ export type CommunitiesQueryVariables = Exact<{
 }>;
 
 
-export type CommunitiesQuery = { __typename?: 'Query', communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> };
+export type CommunitiesQuery = { __typename?: 'Query', communities: Array<{ __typename?: 'Community', id: string, name: string, numberOfMembers: number, imageUrl?: string | null | undefined }> };
 
 export type CommunityQueryVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type CommunityQuery = { __typename?: 'Query', community?: { __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> } | null | undefined };
+export type CommunityQuery = { __typename?: 'Query', community?: { __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, imageUrl?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> } | null | undefined };
 
 export type PostQueryVariables = Exact<{
   postId: Scalars['String'];
@@ -510,14 +526,14 @@ export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'Paginate
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, imageUrl?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> } | null | undefined };
 
 export type UserQueryVariables = Exact<{
   username: Scalars['String'];
 }>;
 
 
-export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> } | null | undefined };
+export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, imageUrl?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> } | null | undefined };
 
 
 
@@ -674,6 +690,7 @@ export type CommunityResolvers<ContextType = any, ParentType extends ResolversPa
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   members?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   numberOfMembers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -715,6 +732,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   resetPassword?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'payload'>>;
   sendConfirmationEmail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   signup?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'user'>>;
+  updateCommunityImage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateCommunityImageArgs, 'communityId' | 'image'>>;
   updatePassword?: Resolver<ResolversTypes['AuthResponse'], ParentType, ContextType, RequireFields<MutationUpdatePasswordArgs, 'confirmPassword' | 'newPassword' | 'password'>>;
   updateProfileImage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateProfileImageArgs, 'image'>>;
   updateUsername?: Resolver<ResolversTypes['AuthResponse'], ParentType, ContextType, RequireFields<MutationUpdateUsernameArgs, 'username'>>;
@@ -866,6 +884,7 @@ export const CommunityFragmentDoc = gql`
   name
   createdAt
   description
+  imageUrl
   members {
     id
     username
@@ -1144,6 +1163,38 @@ export function useLeaveCommunityMutation(baseOptions?: Apollo.MutationHookOptio
 export type LeaveCommunityMutationHookResult = ReturnType<typeof useLeaveCommunityMutation>;
 export type LeaveCommunityMutationResult = Apollo.MutationResult<LeaveCommunityMutation>;
 export type LeaveCommunityMutationOptions = Apollo.BaseMutationOptions<LeaveCommunityMutation, LeaveCommunityMutationVariables>;
+export const UpdateCommunityImageDocument = gql`
+    mutation UpdateCommunityImage($image: Upload!, $communityId: String!) {
+  updateCommunityImage(image: $image, communityId: $communityId)
+}
+    `;
+export type UpdateCommunityImageMutationFn = Apollo.MutationFunction<UpdateCommunityImageMutation, UpdateCommunityImageMutationVariables>;
+
+/**
+ * __useUpdateCommunityImageMutation__
+ *
+ * To run a mutation, you first call `useUpdateCommunityImageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCommunityImageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCommunityImageMutation, { data, loading, error }] = useUpdateCommunityImageMutation({
+ *   variables: {
+ *      image: // value for 'image'
+ *      communityId: // value for 'communityId'
+ *   },
+ * });
+ */
+export function useUpdateCommunityImageMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCommunityImageMutation, UpdateCommunityImageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateCommunityImageMutation, UpdateCommunityImageMutationVariables>(UpdateCommunityImageDocument, options);
+      }
+export type UpdateCommunityImageMutationHookResult = ReturnType<typeof useUpdateCommunityImageMutation>;
+export type UpdateCommunityImageMutationResult = Apollo.MutationResult<UpdateCommunityImageMutation>;
+export type UpdateCommunityImageMutationOptions = Apollo.BaseMutationOptions<UpdateCommunityImageMutation, UpdateCommunityImageMutationVariables>;
 export const CreatePostDocument = gql`
     mutation CreatePost($post: CreatePostInput!) {
   createPost(post: $post) {
@@ -1641,10 +1692,13 @@ export type VoteMutationOptions = Apollo.BaseMutationOptions<VoteMutation, VoteM
 export const CommunitiesDocument = gql`
     query Communities($search: String!) {
   communities(search: $search) {
-    ...Community
+    id
+    name
+    numberOfMembers
+    imageUrl
   }
 }
-    ${CommunityFragmentDoc}`;
+    `;
 
 /**
  * __useCommunitiesQuery__

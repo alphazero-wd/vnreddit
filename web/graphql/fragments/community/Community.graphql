@@ -3,6 +3,7 @@ fragment Community on Community {
   name
   createdAt
   description
+  imageUrl
   members {
     id
     username
