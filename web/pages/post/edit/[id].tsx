@@ -21,7 +21,7 @@ const EditPostPage: NextPage = () => {
     variables: { postId: id as string },
   });
 
-  useRedirect(!localStorage.getItem("token"), "/u/login");
+  useRedirect(!user?.me, "/u/login");
   useRedirect(data?.post?.creator.id !== user?.me?.id, "/");
 
   return (

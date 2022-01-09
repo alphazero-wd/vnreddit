@@ -1,11 +1,9 @@
-import moment from "moment";
 import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
-import { BiCake } from "react-icons/bi";
 import AboutCommunity from "../../../components/community/AboutCommunity";
 import CommunityMembers from "../../../components/community/CommunityMembers";
 import CommunityTasks from "../../../components/community/CommunityTasks";
@@ -19,6 +17,7 @@ import {
 } from "../../../generated/graphql";
 import { imageLoader } from "../../../utils/imageLoader";
 import avatar from "../../../images/vnreddit-logo.svg";
+import HeadPage from "../../../components/html/Head";
 
 const CommunityPage: NextPage = () => {
   const { query } = useRouter();
@@ -45,6 +44,7 @@ const CommunityPage: NextPage = () => {
 
   return (
     <>
+      <HeadPage title={`${data?.community?.name}`} />
       <div className="container lg:w-4/5">
         <div className="bg-gray-300 p-3 mb-4 rounded-md">
           <div className="flex justify-between items-center">

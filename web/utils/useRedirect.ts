@@ -4,7 +4,7 @@ import { useEffect } from "react";
 export const useRedirect = (condition: boolean, route: string) => {
   const router = useRouter();
   useEffect(() => {
-    if (condition) {
+    if (condition === true) {
       router.push(route);
     }
   }, []);

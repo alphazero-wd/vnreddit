@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { Formik } from "formik";
-import { useCreatePostMutation } from "../../generated/graphql";
+import { useCreatePostMutation, useMeQuery } from "../../generated/graphql";
 import { useRouter } from "next/router";
 import AuthInput from "../../components/auth/AuthInput";
 import { AiOutlineLoading } from "react-icons/ai";
@@ -9,9 +9,10 @@ import { useRedirect } from "../../utils/useRedirect";
 
 const CreatePost: NextPage = () => {
   const [createPost, { loading }] = useCreatePostMutation();
+  const { data } = useMeQuery();
   const router = useRouter();
 
-  useRedirect(!localStorage.getItem("token"), "/u/login");
+  useRedirect(!data?.me, "/u/login");
 
   return (
     <div className="container w-full md:w-3/6">
