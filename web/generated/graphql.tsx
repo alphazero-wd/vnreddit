@@ -97,6 +97,7 @@ export type LoginInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   addDescription: CommunityResponse;
+  authGoogle?: Maybe<User>;
   confirmUser: Scalars['Boolean'];
   createComment: CommentResponse;
   createCommunity: CommunityResponse;
@@ -124,6 +125,11 @@ export type Mutation = {
 export type MutationAddDescriptionArgs = {
   description: Scalars['String'];
   id: Scalars['String'];
+};
+
+
+export type MutationAuthGoogleArgs = {
+  token: Scalars['String'];
 };
 
 
@@ -417,6 +423,13 @@ export type EditPostMutationVariables = Exact<{
 
 
 export type EditPostMutation = { __typename?: 'Mutation', editPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
+
+export type AuthGoogleMutationVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type AuthGoogleMutation = { __typename?: 'Mutation', authGoogle?: { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, imageUrl?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, imageUrl?: string | null | undefined, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> } | null | undefined };
 
 export type ConfirmUserMutationVariables = Exact<{
   token: Scalars['String'];
@@ -716,6 +729,7 @@ export type ErrorResponseResolvers<ContextType = any, ParentType extends Resolve
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   addDescription?: Resolver<ResolversTypes['CommunityResponse'], ParentType, ContextType, RequireFields<MutationAddDescriptionArgs, 'description' | 'id'>>;
+  authGoogle?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationAuthGoogleArgs, 'token'>>;
   confirmUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationConfirmUserArgs, 'token'>>;
   createComment?: Resolver<ResolversTypes['CommentResponse'], ParentType, ContextType, RequireFields<MutationCreateCommentArgs, 'payload'>>;
   createCommunity?: Resolver<ResolversTypes['CommunityResponse'], ParentType, ContextType, RequireFields<MutationCreateCommunityArgs, 'name'>>;
@@ -1305,6 +1319,39 @@ export function useEditPostMutation(baseOptions?: Apollo.MutationHookOptions<Edi
 export type EditPostMutationHookResult = ReturnType<typeof useEditPostMutation>;
 export type EditPostMutationResult = Apollo.MutationResult<EditPostMutation>;
 export type EditPostMutationOptions = Apollo.BaseMutationOptions<EditPostMutation, EditPostMutationVariables>;
+export const AuthGoogleDocument = gql`
+    mutation AuthGoogle($token: String!) {
+  authGoogle(token: $token) {
+    ...User
+  }
+}
+    ${UserFragmentDoc}`;
+export type AuthGoogleMutationFn = Apollo.MutationFunction<AuthGoogleMutation, AuthGoogleMutationVariables>;
+
+/**
+ * __useAuthGoogleMutation__
+ *
+ * To run a mutation, you first call `useAuthGoogleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAuthGoogleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [authGoogleMutation, { data, loading, error }] = useAuthGoogleMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useAuthGoogleMutation(baseOptions?: Apollo.MutationHookOptions<AuthGoogleMutation, AuthGoogleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AuthGoogleMutation, AuthGoogleMutationVariables>(AuthGoogleDocument, options);
+      }
+export type AuthGoogleMutationHookResult = ReturnType<typeof useAuthGoogleMutation>;
+export type AuthGoogleMutationResult = Apollo.MutationResult<AuthGoogleMutation>;
+export type AuthGoogleMutationOptions = Apollo.BaseMutationOptions<AuthGoogleMutation, AuthGoogleMutationVariables>;
 export const ConfirmUserDocument = gql`
     mutation ConfirmUser($token: String!) {
   confirmUser(token: $token)

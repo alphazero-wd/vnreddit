@@ -1,7 +1,7 @@
 import { compare, hash } from "bcryptjs";
 import { createWriteStream, mkdir } from "fs";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
-import { verify } from "jsonwebtoken";
+import { decode, verify } from "jsonwebtoken";
 import path from "path";
 import { finished } from "stream/promises";
 import {
@@ -36,6 +36,7 @@ import {
 } from "../utils/validate";
 import { encryptImage } from "../utils/encryptImage";
 import { readdir, rmdir, unlink } from "fs/promises";
+import { randomBytes } from "crypto";
 
 @Resolver(User)
 export class UserResolver {
@@ -444,5 +445,31 @@ export class UserResolver {
       return true;
     }
     return false;
+  }
+
+  @Mutation(() => User, { nullable: true })
+  async authGoogle(@Arg("token") token: string) {
+    const payload = decode(token) as any;
+    if (payload) {
+      const { email, name, picture } = payload;
+      const queryBuilder = getRepository(User).createQueryBuilder();
+      const user = await queryBuilder
+        .where("username = :name OR email = :email", { name, email })
+        .getOne();
+      if (user) return user;
+      const newUser = await queryBuilder
+        .insert()
+        .into(User)
+        .values({
+          username: name,
+          email,
+          imageUrl: picture,
+          isConfirmed: true,
+          password: await hash(randomBytes(16).toString("hex"), 12),
+        })
+        .returning("*")
+        .execute();
+      return newUser.raw[0];
+    }
   }
 }

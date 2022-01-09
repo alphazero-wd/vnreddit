@@ -12,6 +12,7 @@ export const auth: MiddlewareFn<MyContext> = async (
     throw new Error("You are not authorized.");
   }
   const token = authHeaders.split(" ")[1];
+
   const payload = verify(token, process.env.JWT_ACCESS_SECRET!);
   req.payload = payload as any;
 

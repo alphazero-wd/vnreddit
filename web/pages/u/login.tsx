@@ -11,6 +11,7 @@ import {
 import { AiOutlineLoading } from "react-icons/ai";
 import { useRedirect } from "../../utils/useRedirect";
 import HeadPage from "../../components/html/Head";
+import GoogleLoginBtn from "../../components/auth/GoogleLoginBtn";
 
 const Signup: NextPage = () => {
   const [login, { loading }] = useLoginMutation();
@@ -83,6 +84,7 @@ const Signup: NextPage = () => {
                 )}{" "}
                 Login
               </button>
+              <GoogleLoginBtn />
             </form>
           )}
         </Formik>

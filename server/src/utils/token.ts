@@ -1,5 +1,7 @@
 import { sign } from "jsonwebtoken";
 import { User } from "../entity/User";
+import { authenticate } from "passport";
+import { MyContext } from "../types/MyContext";
 
 export const createAccessToken = (user: User) => {
   return sign({ userId: user.id }, process.env.JWT_ACCESS_SECRET!, {
