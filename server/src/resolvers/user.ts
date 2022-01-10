@@ -22,6 +22,7 @@ import { auth } from "../middleware/auth";
 import { MyContext } from "../types/MyContext";
 import {
   AuthResponse,
+  FacebookAuth,
   LoginInput,
   ResetPasswordInput,
   SignupInput,
@@ -471,5 +472,29 @@ export class UserResolver {
         .execute();
       return newUser.raw[0];
     }
+  }
+
+  @Mutation(() => User)
+  async authFacebook(
+    @Arg("user") { name, email, imageUrl }: FacebookAuth
+  ): Promise<User> {
+    const queryBuilder = getRepository(User).createQueryBuilder();
+    const user = await queryBuilder
+      .where("username = :name OR email = :email", { name, email })
+      .getOne();
+    if (user) return user;
+    const newUser = await queryBuilder
+      .insert()
+      .into(User)
+      .values({
+        username: name,
+        email,
+        imageUrl,
+        isConfirmed: true,
+        password: await hash(randomBytes(16).toString("hex"), 12),
+      })
+      .returning("*")
+      .execute();
+    return newUser.raw[0];
   }
 }

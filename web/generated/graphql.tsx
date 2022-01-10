@@ -89,6 +89,12 @@ export type ErrorResponse = {
   message: Scalars['String'];
 };
 
+export type FacebookAuth = {
+  email: Scalars['String'];
+  imageUrl: Scalars['String'];
+  name: Scalars['String'];
+};
+
 export type LoginInput = {
   password: Scalars['String'];
   usernameOrEmail: Scalars['String'];
@@ -97,6 +103,7 @@ export type LoginInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   addDescription: CommunityResponse;
+  authFacebook: User;
   authGoogle?: Maybe<User>;
   confirmUser: Scalars['Boolean'];
   createComment: CommentResponse;
@@ -125,6 +132,11 @@ export type Mutation = {
 export type MutationAddDescriptionArgs = {
   description: Scalars['String'];
   id: Scalars['String'];
+};
+
+
+export type MutationAuthFacebookArgs = {
+  user: FacebookAuth;
 };
 
 
@@ -424,6 +436,13 @@ export type EditPostMutationVariables = Exact<{
 
 export type EditPostMutation = { __typename?: 'Mutation', editPost: { __typename?: 'PostResponse', post?: { __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined } | null | undefined, error?: { __typename?: 'ErrorResponse', field?: string | null | undefined, message: string } | null | undefined } };
 
+export type AuthFacebookMutationVariables = Exact<{
+  user: FacebookAuth;
+}>;
+
+
+export type AuthFacebookMutation = { __typename?: 'Mutation', authFacebook: { __typename?: 'User', id: string, username: string, createdAt: any, imageUrl?: string | null | undefined, token: string, isConfirmed: boolean, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }>, communities: Array<{ __typename?: 'Community', id: string, name: string, createdAt: any, description?: string | null | undefined, imageUrl?: string | null | undefined, numberOfMembers: number, members: Array<{ __typename?: 'User', id: string, username: string, imageUrl?: string | null | undefined, createdAt: any }>, posts: Array<{ __typename?: 'Post', id: string, title: string, body?: string | null | undefined, createdAt: any, points: number, numberOfComments: number, creator: { __typename?: 'User', id: string, username: string }, votes: Array<{ __typename?: 'Vote', userId: string, point: number }>, community?: { __typename?: 'Community', id: string, name: string, members: Array<{ __typename?: 'User', id: string, username: string }> } | null | undefined }> }> } };
+
 export type AuthGoogleMutationVariables = Exact<{
   token: Scalars['String'];
 }>;
@@ -629,6 +648,7 @@ export type ResolversTypes = {
   EditCommentInput: EditCommentInput;
   EditPostInput: EditPostInput;
   ErrorResponse: ResolverTypeWrapper<ErrorResponse>;
+  FacebookAuth: FacebookAuth;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   LoginInput: LoginInput;
@@ -660,6 +680,7 @@ export type ResolversParentTypes = {
   EditCommentInput: EditCommentInput;
   EditPostInput: EditPostInput;
   ErrorResponse: ErrorResponse;
+  FacebookAuth: FacebookAuth;
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   LoginInput: LoginInput;
@@ -729,6 +750,7 @@ export type ErrorResponseResolvers<ContextType = any, ParentType extends Resolve
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   addDescription?: Resolver<ResolversTypes['CommunityResponse'], ParentType, ContextType, RequireFields<MutationAddDescriptionArgs, 'description' | 'id'>>;
+  authFacebook?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationAuthFacebookArgs, 'user'>>;
   authGoogle?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationAuthGoogleArgs, 'token'>>;
   confirmUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationConfirmUserArgs, 'token'>>;
   createComment?: Resolver<ResolversTypes['CommentResponse'], ParentType, ContextType, RequireFields<MutationCreateCommentArgs, 'payload'>>;
@@ -1319,6 +1341,39 @@ export function useEditPostMutation(baseOptions?: Apollo.MutationHookOptions<Edi
 export type EditPostMutationHookResult = ReturnType<typeof useEditPostMutation>;
 export type EditPostMutationResult = Apollo.MutationResult<EditPostMutation>;
 export type EditPostMutationOptions = Apollo.BaseMutationOptions<EditPostMutation, EditPostMutationVariables>;
+export const AuthFacebookDocument = gql`
+    mutation AuthFacebook($user: FacebookAuth!) {
+  authFacebook(user: $user) {
+    ...User
+  }
+}
+    ${UserFragmentDoc}`;
+export type AuthFacebookMutationFn = Apollo.MutationFunction<AuthFacebookMutation, AuthFacebookMutationVariables>;
+
+/**
+ * __useAuthFacebookMutation__
+ *
+ * To run a mutation, you first call `useAuthFacebookMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAuthFacebookMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [authFacebookMutation, { data, loading, error }] = useAuthFacebookMutation({
+ *   variables: {
+ *      user: // value for 'user'
+ *   },
+ * });
+ */
+export function useAuthFacebookMutation(baseOptions?: Apollo.MutationHookOptions<AuthFacebookMutation, AuthFacebookMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AuthFacebookMutation, AuthFacebookMutationVariables>(AuthFacebookDocument, options);
+      }
+export type AuthFacebookMutationHookResult = ReturnType<typeof useAuthFacebookMutation>;
+export type AuthFacebookMutationResult = Apollo.MutationResult<AuthFacebookMutation>;
+export type AuthFacebookMutationOptions = Apollo.BaseMutationOptions<AuthFacebookMutation, AuthFacebookMutationVariables>;
 export const AuthGoogleDocument = gql`
     mutation AuthGoogle($token: String!) {
   authGoogle(token: $token) {

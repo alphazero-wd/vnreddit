@@ -40,7 +40,7 @@ const GoogleLoginBtn: FC = () => {
       render={(renderProps) => (
         <button
           type="button"
-          className="uppercase flex justify-center items-center w-full mt-3 font-bold text-gray-800 p-2 border border-gray-600 rounded-md"
+          className="uppercase flex hover:text-white hover:bg-gray-800 transition-colors justify-center items-center w-full my-3 font-bold text-gray-800 p-2 border border-gray-600 rounded-md"
           onClick={renderProps.onClick}
           disabled={renderProps.disabled}
         >

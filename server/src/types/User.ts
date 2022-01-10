@@ -47,6 +47,18 @@ export class UserResponse {
   error?: ErrorResponse;
 }
 
+@InputType()
+export class FacebookAuth {
+  @Field()
+  name!: string;
+
+  @Field()
+  email!: string;
+
+  @Field()
+  imageUrl: string;
+}
+
 @ObjectType()
 export class AuthResponse {
   @Field({ nullable: true })

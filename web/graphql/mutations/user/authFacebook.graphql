@@ -1,0 +1,5 @@
+mutation AuthFacebook($user: FacebookAuth!) {
+  authFacebook(user: $user) {
+    ...User
+  }
+}

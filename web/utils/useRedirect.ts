@@ -7,5 +7,5 @@ export const useRedirect = (condition: boolean, route: string) => {
     if (condition === true) {
       router.push(route);
     }
-  }, []);
+  }, [condition]);
 };
