@@ -32,7 +32,7 @@ const ConfirmUser: NextPage = () => {
         return () => clearTimeout(timeout);
       }
     })();
-  }, [data]);
+  }, [data, confirmUser, token, router]);
 
   if (error) {
     return (

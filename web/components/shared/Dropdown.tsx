@@ -34,6 +34,7 @@ const Dropdown: FC<Props> = ({ logout }) => {
                   className="mr-1 rounded-full"
                   width="30%"
                   height="30%"
+                  alt={data.me.username}
                 />
               ) : (
                 <Image
@@ -42,6 +43,7 @@ const Dropdown: FC<Props> = ({ logout }) => {
                   className="mr-1 rounded-full"
                   width="30%"
                   height="30%"
+                  alt={data.me.username}
                 />
               )}
               <small className="font-bold text-sm block ml-2">

@@ -9,7 +9,7 @@ const ErrorPage: NextPage = () => {
     <>
       <HeadPage title="VnReddit: Page Not Found" />
       <div className="container pt-8 text-center">
-        <Image src={notFoundImage} className="block" />
+        <Image src={notFoundImage} className="block" alt="not found" />
         <h2 className="font-bold text-4xl mb-3">
           Oops, Page does not exist :(
         </h2>

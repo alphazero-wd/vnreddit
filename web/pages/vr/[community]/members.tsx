@@ -8,7 +8,7 @@ import { imageLoader } from "../../../utils/imageLoader";
 import { useState } from "react";
 import Link from "next/link";
 
-export default () => {
+export default function Members() {
   const { query } = useRouter();
   const { data } = useCommunityQuery({
     variables: {
@@ -59,7 +59,7 @@ export default () => {
                           .includes(search.toLowerCase())
                       )
                       .map((member) => (
-                        <tr>
+                        <tr key={member.id}>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10">
@@ -68,7 +68,7 @@ export default () => {
                                     loader={imageLoader}
                                     className="h-10 object-cover w-10 rounded-full"
                                     src={member.imageUrl}
-                                    alt="member url"
+                                    alt={member.username}
                                     width="40%"
                                     height="40%"
                                   />
@@ -81,7 +81,10 @@ export default () => {
                                 )}
                               </div>
                               <div className="ml-4">
-                                <Link href={`/u/profile/${member.username}`}>
+                                <Link
+                                  passHref
+                                  href={`/u/profile/${member.username}`}
+                                >
                                   <div className="text-sm font-medium hover:underline cursor-pointer text-gray-900">
                                     {member.username}
                                   </div>
@@ -103,4 +106,4 @@ export default () => {
       </div>
     </div>
   );
-};
+}

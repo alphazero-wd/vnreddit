@@ -21,7 +21,7 @@ const Post: FC<Props> = ({ post }) => {
       <div className="flex-grow p-3">
         <small className="text-gray-600">
           {post.community && router.pathname !== "/vr/[community]" && (
-            <Link href={`/vr/${post.community?.name}`}>
+            <Link passHref href={`/vr/${post.community?.name}`}>
               <span className="hover:underline font-bold text-gray-900 cursor-pointer">
                 {`vr/${post.community.name}`}
                 <BsDot className="inline" />
@@ -29,14 +29,14 @@ const Post: FC<Props> = ({ post }) => {
             </Link>
           )}
           Posted by{" "}
-          <Link href={`/u/profile/${post.creator.username}`}>
+          <Link passHref href={`/u/profile/${post.creator.username}`}>
             <span className="hover:underline cursor-pointer">
               u/{post.creator.username}
             </span>
           </Link>{" "}
           {moment(post.createdAt).fromNow()}
         </small>
-        <Link href={`/post/${post.id}`}>
+        <Link passHref href={`/post/${post.id}`}>
           <div className="cursor-pointer">
             <h2 className="mb-2 text-2xl font-bold">{post.title}</h2>
             <ReactMarkdown className="markdown">

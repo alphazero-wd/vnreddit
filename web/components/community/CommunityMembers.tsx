@@ -13,7 +13,7 @@ const CommunityMembers: FC<Props> = ({ community }) => {
       </div>
       <div className="px-3 py-4">
         {community?.members.slice(0, 10).map((member) => (
-          <Link href={`/u/profile/${member.username}`}>
+          <Link passHref key={member.id} href={`/u/profile/${member.username}`}>
             <small className="text-blue-500 mb-3 cursor-pointer font-bold block hover:underline">
               u/{member.username}
             </small>
@@ -22,7 +22,7 @@ const CommunityMembers: FC<Props> = ({ community }) => {
         {(community?.members.length || 0) > 10 && (
           <div className="text-right">
             <small className="cursor-pointer font-bold tracking-wider inline-block uppercase text-right text-blue-500 rounded-md p-2">
-              <Link href={`/vr/${community?.name}/members`}>
+              <Link passHref href={`/vr/${community?.name}/members`}>
                 View all members
               </Link>
             </small>

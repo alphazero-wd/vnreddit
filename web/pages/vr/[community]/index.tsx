@@ -57,6 +57,7 @@ const CommunityPage: NextPage = () => {
                     width="60%"
                     height="60%"
                     className="rounded-full object-cover"
+                    alt={data.community.name}
                   />
                 ) : (
                   <Image
@@ -64,6 +65,7 @@ const CommunityPage: NextPage = () => {
                     width="60%"
                     height="60%"
                     className="rounded-full object-cover"
+                    alt={data?.community?.name}
                   />
                 )}
               </div>
@@ -85,7 +87,7 @@ const CommunityPage: NextPage = () => {
             {data?.community?.members.some(
               (member) => member.id === user?.me?.id
             ) && (
-              <Link href={`/vr/${data?.community?.name}/post/create`}>
+              <Link passHref href={`/vr/${data?.community?.name}/post/create`}>
                 <button className="border border-gray-300 px-3 py-2 hover:bg-gray-300 transition-colors flex w-full items-center rounded-md">
                   <button className="bg-blue-200 rounded-full p-2 mr-3">
                     <AiOutlinePlus className="text-blue-500 text-2xl" />

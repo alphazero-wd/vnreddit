@@ -15,7 +15,7 @@ const EditDeleteBtn: FC<Props> = ({ id }) => {
   return (
     <>
       <div className="flex justify-center items-center">
-        <Link href={`/post/edit/${id}`}>
+        <Link passHref href={`/post/edit/${id}`}>
           <button className="flex justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200">
             <FaEdit className="mr-2" />
             <small>Edit</small>

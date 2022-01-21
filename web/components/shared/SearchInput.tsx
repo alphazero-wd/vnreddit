@@ -22,7 +22,7 @@ const SearchInput: FC = () => {
       }, 1000);
       return () => clearTimeout(clearSearch);
     }
-  }, [search]);
+  }, [search, fetchMore]);
 
   return (
     <div className="relative z-50 h-auto lg:w-2/6">
@@ -58,6 +58,7 @@ const SearchInput: FC = () => {
                   className="rounded-full"
                   width="30%"
                   height="30%"
+                  alt={c.name}
                 />
               ) : (
                 <Image
@@ -65,6 +66,7 @@ const SearchInput: FC = () => {
                   className="rounded-full"
                   width="30%"
                   height="30%"
+                  alt={c.name}
                 />
               )}
               <div className="ml-3">

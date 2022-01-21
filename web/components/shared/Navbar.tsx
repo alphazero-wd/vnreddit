@@ -33,11 +33,11 @@ const Navbar: FC = () => {
         logout();
       }
     }
-  }, [data]);
+  }, [data, logout]);
   return (
     <nav className="shadow-sm relative w-full px-3 py-2">
       <div className="flex justify-between items-center container">
-        <Link href="/">
+        <Link href="/" passHref>
           <div className="flex cursor-pointer justify-center items-center">
             <Image src={logo} alt="VnReddit" />
             <div className="ml-2 text-xl font-bold">VnReddit</div>

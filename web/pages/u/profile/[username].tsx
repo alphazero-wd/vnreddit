@@ -29,7 +29,7 @@ const ProfilePage: NextPage = () => {
           {data?.user?.posts.length === 0 && (
             <div className="flex justify-center text-center items-center flex-col">
               <div className="w-3/5">
-                <Image src={postImg} />
+                <Image src={postImg} alt={data.user.username} />
               </div>
               <h2 className="text-xl font-semibold mt-3">
                 It seems like user {data.user.username} have not post anything.
@@ -51,6 +51,7 @@ const ProfilePage: NextPage = () => {
                   width="100%"
                   height="100%"
                   className="rounded-full object-cover"
+                  alt={data.user.username}
                 />
               ) : (
                 <Image
@@ -59,6 +60,7 @@ const ProfilePage: NextPage = () => {
                   width="100%"
                   height="100%"
                   className="rounded-full object-cover"
+                  alt={data?.user?.username}
                 />
               )}
 

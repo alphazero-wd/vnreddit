@@ -24,7 +24,7 @@ const Home: NextPage = () => {
       <div className="md:container lg:grid grid-rows-6 grid-cols-12 gap-4 w-full xl:w-5/6">
         <div className="col-span-8 row-span-6">
           {user?.me && (
-            <Link href="/vr/post/create">
+            <Link passHref href="/vr/post/create">
               <button className="border mb-3 border-gray-300 px-3 py-2 hover:bg-gray-300 transition-colors flex w-full items-center rounded-md">
                 <button className="bg-blue-200 rounded-full p-2 mr-3">
                   <AiOutlinePlus className="text-blue-500 text-2xl" />
@@ -59,12 +59,12 @@ const Home: NextPage = () => {
               Your personal VnReddit frontpage. Come here to check in with your
               favorite communities.
             </p>
-            <Link href="/post/create">
+            <Link passHref href="/post/create">
               <button className="primary-btn block w-full mb-3">
                 Create Post
               </button>
             </Link>
-            <Link href="/vr/create">
+            <Link passHref href="/vr/create">
               <button className="secondary-btn block w-full">
                 Create Community
               </button>
