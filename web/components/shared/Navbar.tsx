@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { FC, useEffect } from "react";
+import { FC, useCallback, useEffect } from "react";
 import logo from "../../images/vnreddit-logo.svg";
 import Dropdown from "./Dropdown";
 import Link from "next/link";
@@ -14,7 +14,7 @@ const Navbar: FC = () => {
   const { data } = useMeQuery();
   const apolloClient = useApolloClient();
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     apolloClient.writeQuery<MeQuery>({
       query: MeDocument,
@@ -23,7 +23,7 @@ const Navbar: FC = () => {
         me: null,
       },
     });
-  };
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
