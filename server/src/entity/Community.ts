@@ -20,6 +20,10 @@ export class Community {
   name!: string;
 
   @Field(() => String, { nullable: true })
+  @Column("text", { nullable: true, unique: true })
+  imageUrl: string | null;
+
+  @Field(() => String, { nullable: true })
   @Column("text", { nullable: true })
   description: string | null;
 

@@ -13,7 +13,7 @@ const Communities: FC<Props> = ({ community, userId }) => {
   return (
     <div className="flex items-center my-2 justify-between">
       <small className="block">
-        <Link href={`/vr/${community?.name}`}>
+        <Link passHref href={`/vr/${community?.name}`}>
           <b className="block hover:underline cursor-pointer">
             vr/{community?.name}
           </b>

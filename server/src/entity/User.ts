@@ -28,6 +28,10 @@ export class User {
   @Column({ unique: true })
   email!: string;
 
+  @Field(() => String, { nullable: true })
+  @Column("text", { nullable: true, unique: true })
+  imageUrl: string | null;
+
   @Field(() => String)
   token(@Root() user: User) {
     return createAccessToken(user);

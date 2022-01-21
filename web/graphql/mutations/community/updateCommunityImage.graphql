@@ -1,0 +1,3 @@
+mutation UpdateCommunityImage($image: Upload!, $communityId: String!) {
+  updateCommunityImage(image: $image, communityId: $communityId)
+}

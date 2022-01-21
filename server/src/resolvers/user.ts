@@ -1,10 +1,9 @@
-import {
-  AuthResponse,
-  LoginInput,
-  ResetPasswordInput,
-  SignupInput,
-  UserResponse,
-} from "../types/User";
+import { compare, hash } from "bcryptjs";
+import { createWriteStream, mkdir } from "fs";
+import { FileUpload, GraphQLUpload } from "graphql-upload";
+import { decode, verify } from "jsonwebtoken";
+import path from "path";
+import { finished } from "stream/promises";
 import {
   Arg,
   Ctx,
@@ -15,25 +14,30 @@ import {
   Root,
   UseMiddleware,
 } from "type-graphql";
+import { getConnection, getRepository } from "typeorm";
+import { Community } from "../entity/Community";
+import { Post } from "../entity/Post";
+import { User } from "../entity/User";
+import { auth } from "../middleware/auth";
+import { MyContext } from "../types/MyContext";
+import {
+  AuthResponse,
+  FacebookAuth,
+  LoginInput,
+  ResetPasswordInput,
+  SignupInput,
+  UserResponse,
+} from "../types/User";
+import { sendEmail } from "../utils/sendEmail";
+import { createRefreshToken } from "../utils/token";
 import {
   validateEmail,
   validatePassword,
   validateUsername,
 } from "../utils/validate";
-import { getConnection, getRepository } from "typeorm";
-import { User } from "../entity/User";
-import { compare, hash } from "bcryptjs";
-import { auth } from "../middleware/auth";
-import { MyContext } from "../types/MyContext";
-import { sendEmail } from "../utils/sendEmail";
-import { createRefreshToken } from "../utils/token";
-import { verify } from "jsonwebtoken";
-import { Post } from "../entity/Post";
-import { Community } from "../entity/Community";
-import { GraphQLUpload, FileUpload } from "graphql-upload";
-import { createWriteStream } from "fs";
-import path from "path";
-import { finished } from "stream/promises";
+import { encryptImage } from "../utils/encryptImage";
+import { readdir, rmdir, unlink } from "fs/promises";
+import { randomBytes } from "crypto";
 
 @Resolver(User)
 export class UserResolver {
@@ -97,7 +101,7 @@ export class UserResolver {
       const html = `
       <h1>Account confirmation</h1> 
       <p>Click the link below to confirm your account.</p>
-      <a href="http://localhost:3000/u/confirm/${createRefreshToken(
+      <a href="${process.env.CORS_ORIGIN}/u/confirm/${createRefreshToken(
         user
       )}">Confirm account</a>
     `;
@@ -180,6 +184,10 @@ export class UserResolver {
       .returning("*")
       .execute();
     const newUser = insertResult.raw[0];
+    mkdir(
+      path.join(__dirname, `../../public/images/u/${newUser.username}`),
+      (error) => console.log("error: ", error)
+    );
     return { user: newUser };
   }
 
@@ -225,9 +233,9 @@ export class UserResolver {
         html: `
           <h1>Password Reset Verification</h1> 
           <p>Click on the link below to reset the password.</p>
-          <a href="http://localhost:3000/user/reset-password/${createRefreshToken(
-            user
-          )}">Reset Password</a>
+          <a href="${
+            process.env.CORS_ORIGIN
+          }/u/reset-password/${createRefreshToken(user)}">Reset Password</a>
         `,
       };
       await sendEmail(info);
@@ -345,12 +353,35 @@ export class UserResolver {
   ): Promise<boolean> {
     const user = await getRepository(User).findOne(req.payload?.userId);
     if (user) {
-      const out = createReadStream().pipe(
-        createWriteStream(
-          path.join(__dirname, `../../images/u/${user.username}/${filename}`)
-        )
+      const { ext, name } = path.parse(filename);
+      const profileImageFile = encryptImage(user.username + name) + ext;
+      const imageUrl = `${process.env.SERVER_URL}/images/u/${user.username}/${profileImageFile}`;
+      const pathname = path.join(
+        __dirname,
+        `../../public/images/u/${user.username}/`
       );
+      const out = createReadStream().pipe(
+        createWriteStream(`${pathname}${profileImageFile}`)
+      );
+      const results = await readdir(pathname);
+      if (results.length > 1) {
+        try {
+          await unlink(
+            pathname + results.find((result) => result !== profileImageFile)
+          );
+        } catch (error) {
+          console.log("error: ", error);
+        }
+      }
+
       await finished(out);
+      await getRepository(User)
+        .createQueryBuilder()
+        .update()
+        .set({ imageUrl })
+        .where("id = :id", { id: user.id })
+        .execute();
+
       return true;
     }
     return false;
@@ -404,6 +435,9 @@ export class UserResolver {
   async deleteUser(@Ctx() { req }: MyContext): Promise<boolean> {
     const user = await getRepository(User).findOne(req.payload?.userId);
     if (user) {
+      await rmdir(
+        path.join(__dirname, `../../public/images/u/${user.username}`)
+      );
       await getRepository(User)
         .createQueryBuilder()
         .delete()
@@ -412,5 +446,55 @@ export class UserResolver {
       return true;
     }
     return false;
+  }
+
+  @Mutation(() => User, { nullable: true })
+  async authGoogle(@Arg("token") token: string) {
+    const payload = decode(token) as any;
+    if (payload) {
+      const { email, name, picture } = payload;
+      const queryBuilder = getRepository(User).createQueryBuilder();
+      const user = await queryBuilder
+        .where("username = :name OR email = :email", { name, email })
+        .getOne();
+      if (user) return user;
+      const newUser = await queryBuilder
+        .insert()
+        .into(User)
+        .values({
+          username: name,
+          email,
+          imageUrl: picture,
+          isConfirmed: true,
+          password: await hash(randomBytes(16).toString("hex"), 12),
+        })
+        .returning("*")
+        .execute();
+      return newUser.raw[0];
+    }
+  }
+
+  @Mutation(() => User)
+  async authFacebook(
+    @Arg("user") { name, email, imageUrl }: FacebookAuth
+  ): Promise<User> {
+    const queryBuilder = getRepository(User).createQueryBuilder();
+    const user = await queryBuilder
+      .where("username = :name OR email = :email", { name, email })
+      .getOne();
+    if (user) return user;
+    const newUser = await queryBuilder
+      .insert()
+      .into(User)
+      .values({
+        username: name,
+        email,
+        imageUrl,
+        isConfirmed: true,
+        password: await hash(randomBytes(16).toString("hex"), 12),
+      })
+      .returning("*")
+      .execute();
+    return newUser.raw[0];
   }
 }

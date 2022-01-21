@@ -32,7 +32,7 @@ const PostPage: NextPage = () => {
           <div className="flex-grow p-3 bg-white ">
             <small className="text-gray-600">
               {data?.post?.community && router.pathname !== "/vr/[community]" && (
-                <Link href={`/vr/${data?.post.community?.name}`}>
+                <Link passHref href={`/vr/${data?.post.community?.name}`}>
                   <span className="hover:underline cursor-pointer">
                     {`vr/${data?.post.community.name}`}
                     <BsDot className="inline" />
@@ -40,7 +40,7 @@ const PostPage: NextPage = () => {
                 </Link>
               )}
               Posted by{" "}
-              <Link href="/u/alphazero">
+              <Link href={`/u/profile/${data?.post?.creator.username}`}>
                 <a className="hover:underline">
                   u/{data?.post?.creator.username}
                 </a>
