@@ -1,11 +1,11 @@
-FROM node:14 AS builder
+FROM node:latest AS builder
 WORKDIR /usr/app
 COPY package*.json ./
 RUN npm i
 COPY . .
 RUN npm run build
 
-FROM node:14
+FROM node:latest
 WORKDIR /usr/app
 COPY package*.json ./
 RUN npm i --production
