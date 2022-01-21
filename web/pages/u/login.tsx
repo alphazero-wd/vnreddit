@@ -78,7 +78,7 @@ const Signup: NextPage = () => {
               <button
                 disabled={loading}
                 type="submit"
-                className="bg-blue-500 flex items-center justify-center hover:bg-blue-400 transition-colors text-white rounded-md font-semibold w-full border-none px-3 py-2"
+                className="bg-blue-500 uppercase flex items-center justify-center hover:bg-blue-400 transition-colors text-white rounded-md font-semibold w-full border-none px-3 py-2"
               >
                 {loading && (
                   <AiOutlineLoading className="animate-spin text-xl mr-2" />

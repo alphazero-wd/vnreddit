@@ -1,7 +1,6 @@
 import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import HeadPage from "../components/html/Head";
 import Post from "../components/post/Post";
@@ -19,29 +18,10 @@ const Home: NextPage = () => {
   });
   const { data: user } = useMeQuery();
 
-  useEffect(() => {
-    const onScroll = () => {
-      const isNearBottom =
-        window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
-      if (isNearBottom && !loading && data?.posts.hasMore) {
-        fetchMore({
-          variables: {
-            limit: variables?.limit,
-            cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
-          },
-        });
-      }
-    };
-    if (data?.posts.hasMore) {
-      window.addEventListener("scroll", onScroll);
-      return () => window.removeEventListener("scroll", onScroll);
-    }
-  }, [data]);
-
   return (
     <>
       <HeadPage title="VnReddit - Share your thoughts" />
-      <div className="md:container lg:grid grid-rows-6 grid-cols-12 gap-4 w-full lg:w-5/6">
+      <div className="md:container lg:grid grid-rows-6 grid-cols-12 gap-4 w-full xl:w-5/6">
         <div className="col-span-8 row-span-6">
           {user?.me && (
             <Link href="/vr/post/create">
@@ -57,8 +37,14 @@ const Home: NextPage = () => {
             <Post key={post.id} post={post} />
           ))}
           {loading && <Loading />}
+          {data?.posts.hasMore && (
+            <div className="text-center">
+              <button className="primary-btn" onClick={() => {}}>
+                Load more
+              </button>
+            </div>
+          )}
         </div>
-
         <div
           className={`row-span-1 col-span-4 hidden lg:block bg-white mt-3 border border-gray-600 rounded-md`}
         >

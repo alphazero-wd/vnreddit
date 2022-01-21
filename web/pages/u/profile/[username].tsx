@@ -50,7 +50,7 @@ const ProfilePage: NextPage = () => {
                   src={data.user.imageUrl}
                   width="100%"
                   height="100%"
-                  className="rounded-full"
+                  className="rounded-full object-cover"
                 />
               ) : (
                 <Image
@@ -58,7 +58,7 @@ const ProfilePage: NextPage = () => {
                   src={avatar}
                   width="100%"
                   height="100%"
-                  className="rounded-full"
+                  className="rounded-full object-cover"
                 />
               )}
 

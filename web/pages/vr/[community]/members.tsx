@@ -5,15 +5,18 @@ import avatar from "../../../images/vnreddit-logo.svg";
 import Image from "next/image";
 import moment from "moment";
 import { imageLoader } from "../../../utils/imageLoader";
+import { useState } from "react";
+import Link from "next/link";
 
 export default () => {
   const { query } = useRouter();
-  console.log(query);
   const { data } = useCommunityQuery({
     variables: {
       name: query.community as string,
     },
   });
+  const [search, setSearch] = useState("");
+
   return (
     <div className="container w-4/5">
       <h2 className="font-bold text-2xl mb-3">
@@ -26,8 +29,9 @@ export default () => {
               type="text"
               className="px-2 py-1 border border-gray-800 w-2/5 outline-none focus:outline-none rounded-l-md"
               placeholder="Search for a user"
+              onChange={(e) => setSearch(e.target.value)}
             />
-            <button className="rounded-r-md px-2 py-2 border-none inline-block bg-gray-600 text-white">
+            <button className="rounded-r-md p-2 border-none inline-block bg-gray-600 text-white">
               <RiSearchLine />
             </button>
           </div>
@@ -48,40 +52,48 @@ export default () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {data?.community?.members.map((member) => (
-                      <tr>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10">
-                              {member?.imageUrl ? (
-                                <Image
-                                  loader={imageLoader}
-                                  className="h-10 w-10 rounded-full"
-                                  src={member.imageUrl}
-                                  alt="member url"
-                                  width="40%"
-                                  height="40%"
-                                />
-                              ) : (
-                                <Image
-                                  className="h-10 w-10 rounded-full"
-                                  src={avatar}
-                                  alt="vnreddit logo"
-                                />
-                              )}
-                            </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">
-                                {member.username}
+                    {data?.community?.members
+                      .filter((member) =>
+                        member.username
+                          .toLowerCase()
+                          .includes(search.toLowerCase())
+                      )
+                      .map((member) => (
+                        <tr>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 h-10 w-10">
+                                {member?.imageUrl ? (
+                                  <Image
+                                    loader={imageLoader}
+                                    className="h-10 object-cover w-10 rounded-full"
+                                    src={member.imageUrl}
+                                    alt="member url"
+                                    width="40%"
+                                    height="40%"
+                                  />
+                                ) : (
+                                  <Image
+                                    className="h-10 w-10 rounded-full"
+                                    src={avatar}
+                                    alt="vnreddit logo"
+                                  />
+                                )}
                               </div>
-                              <div className="text-sm text-gray-500">
-                                {moment(member.createdAt).fromNow()}
+                              <div className="ml-4">
+                                <Link href={`/u/profile/${member.username}`}>
+                                  <div className="text-sm font-medium hover:underline cursor-pointer text-gray-900">
+                                    {member.username}
+                                  </div>
+                                </Link>
+                                <div className="text-sm text-gray-500">
+                                  {moment(member.createdAt).fromNow()}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>

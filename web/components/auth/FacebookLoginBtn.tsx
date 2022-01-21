@@ -12,7 +12,6 @@ const FacebookLoginBtn: FC = () => {
   const [authFacebook] = useAuthFacebookMutation();
   const router = useRouter();
   const responseFacebook = async (res: any) => {
-    console.log("res:", res);
     const {
       name,
       email,

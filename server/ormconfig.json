@@ -5,7 +5,7 @@
   "username": "postgres",
   "password": "Penngstack25811@;",
   "database": "vnreddit",
-  "synchronize": true,
+  "synchronize": false,
   "logging": false,
   "entities": ["dist/entity/**/*.js"],
   "migrations": ["dist/migration/**/*.js"]

@@ -12,6 +12,7 @@ import { AiOutlineLoading } from "react-icons/ai";
 import { useRedirect } from "../../utils/useRedirect";
 import HeadPage from "../../components/html/Head";
 import GoogleLoginBtn from "../../components/auth/GoogleLoginBtn";
+import FacebookLoginBtn from "../../components/auth/FacebookLoginBtn";
 
 const Signup: NextPage = () => {
   const [signup, { loading }] = useSignupMutation();
@@ -88,7 +89,7 @@ const Signup: NextPage = () => {
               />
               <button
                 type="submit"
-                className="bg-blue-500 hover:bg-blue-400 transition-colors flex items-center justify-center text-white rounded-md font-semibold w-full border-none px-3 py-2"
+                className="bg-blue-500 uppercase hover:bg-blue-400 transition-colors flex items-center justify-center text-white rounded-md font-semibold w-full border-none px-3 py-2"
                 disabled={loading}
               >
                 {loading && (
@@ -97,6 +98,7 @@ const Signup: NextPage = () => {
                 Sign up
               </button>
               <GoogleLoginBtn />
+              <FacebookLoginBtn />
             </form>
           )}
         </Formik>

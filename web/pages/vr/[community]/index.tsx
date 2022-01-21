@@ -56,14 +56,14 @@ const CommunityPage: NextPage = () => {
                     src={data.community.imageUrl}
                     width="60%"
                     height="60%"
-                    className="rounded-full"
+                    className="rounded-full object-cover"
                   />
                 ) : (
                   <Image
                     src={avatar}
                     width="60%"
                     height="60%"
-                    className="rounded-full"
+                    className="rounded-full object-cover"
                   />
                 )}
               </div>
