@@ -20,9 +20,8 @@ import { validateCommunityName } from "../utils/validate";
 import { GraphQLUpload, FileUpload } from "graphql-upload";
 import path from "path";
 import { createWriteStream } from "fs";
-import { mkdir, readdir, unlink } from "fs/promises";
+import { readdir, unlink } from "fs/promises";
 import { finished } from "stream/promises";
-import { encryptImage } from "../utils/encryptImage";
 
 @Resolver(Community)
 export class CommunityResolver {
@@ -166,9 +165,6 @@ export class CommunityResolver {
       .returning("*")
       .execute();
     const community = newCommunity.raw[0];
-    await mkdir(
-      path.join(__dirname, `/../../public/images/vr/${community.name}`)
-    );
     return {
       community,
     };
@@ -218,27 +214,19 @@ export class CommunityResolver {
   ): Promise<boolean> {
     const community = await getRepository(Community).findOne(communityId);
     if (community) {
-      const { ext, name } = path.parse(filename);
-      const communityImageFile = encryptImage(community.name + name) + ext;
-      const imageUrl = `${process.env.SERVER_URL}/images/vr/${community.name}/${communityImageFile}`;
-      const pathname = path.join(
-        __dirname,
-        `../../public/images/vr/${community.name}/`
-      );
+      const { ext } = path.parse(filename);
+      const communityImageFile = community.id + ext;
+      const imageUrl = `${process.env.SERVER_URL}/images/vr/${communityImageFile}`;
+      const pathname = path.join(__dirname, `../../public/images/vr/`);
+      const results = await readdir(pathname);
+      results.forEach(async (result) => {
+        if (result.split(".")[0] === community.id.toString()) {
+          await unlink(pathname + imageUrl.split("/").at(-1));
+        }
+      });
       const out = createReadStream().pipe(
         createWriteStream(`${pathname}${communityImageFile}`)
       );
-      const results = await readdir(pathname);
-
-      if (results.length > 1) {
-        try {
-          await unlink(
-            pathname + results.find((result) => result !== communityImageFile)
-          );
-        } catch (error) {
-          console.log("error: ", error);
-        }
-      }
 
       await finished(out);
       await getRepository(Community)

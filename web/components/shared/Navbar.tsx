@@ -43,7 +43,7 @@ const Navbar: FC = () => {
             <div className="ml-2 text-xl font-bold">VnReddit</div>
           </div>
         </Link>
-        <SearchInput />
+        <SearchInput isHidden />
         <div className="hidden lg:flex justify-center items-center">
           {!data?.me && <AuthBtn />}
           <Dropdown logout={logout} />

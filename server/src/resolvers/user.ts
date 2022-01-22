@@ -1,5 +1,7 @@
 import { compare, hash } from "bcryptjs";
-import { createWriteStream, mkdir } from "fs";
+import { randomBytes } from "crypto";
+import { createWriteStream } from "fs";
+import { readdir, unlink } from "fs/promises";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { decode, verify } from "jsonwebtoken";
 import path from "path";
@@ -35,9 +37,6 @@ import {
   validatePassword,
   validateUsername,
 } from "../utils/validate";
-import { encryptImage } from "../utils/encryptImage";
-import { readdir, rmdir, unlink } from "fs/promises";
-import { randomBytes } from "crypto";
 
 @Resolver(User)
 export class UserResolver {
@@ -184,10 +183,6 @@ export class UserResolver {
       .returning("*")
       .execute();
     const newUser = insertResult.raw[0];
-    mkdir(
-      path.join(__dirname, `../../public/images/u/${newUser.username}`),
-      (error) => console.log("error: ", error)
-    );
     return { user: newUser };
   }
 
@@ -353,26 +348,21 @@ export class UserResolver {
   ): Promise<boolean> {
     const user = await getRepository(User).findOne(req.payload?.userId);
     if (user) {
-      const { ext, name } = path.parse(filename);
-      const profileImageFile = encryptImage(user.username + name) + ext;
-      const imageUrl = `${process.env.SERVER_URL}/images/u/${user.username}/${profileImageFile}`;
-      const pathname = path.join(
-        __dirname,
-        `../../public/images/u/${user.username}/`
-      );
+      const { ext } = path.parse(filename);
+      const profileImageFile = user.id + ext;
+      const imageUrl = `${process.env.SERVER_URL}/images/u/${profileImageFile}`;
+      const pathname = path.join(__dirname, `../../public/images/u/`);
+      // loop through the images
+      const results = await readdir(pathname);
+      // if there's one remove it and replace with a new one
+      results.forEach(async (result) => {
+        if (result.split(".")[0] === user.id.toString()) {
+          await unlink(`${pathname}${result}`);
+        }
+      });
       const out = createReadStream().pipe(
         createWriteStream(`${pathname}${profileImageFile}`)
       );
-      const results = await readdir(pathname);
-      if (results.length > 1) {
-        try {
-          await unlink(
-            pathname + results.find((result) => result !== profileImageFile)
-          );
-        } catch (error) {
-          console.log("error: ", error);
-        }
-      }
 
       await finished(out);
       await getRepository(User)
@@ -435,9 +425,9 @@ export class UserResolver {
   async deleteUser(@Ctx() { req }: MyContext): Promise<boolean> {
     const user = await getRepository(User).findOne(req.payload?.userId);
     if (user) {
-      await rmdir(
-        path.join(__dirname, `../../public/images/u/${user.username}`)
-      );
+      // http://localhost:4000/images/u/2.jpg
+      const imageFile = user.imageUrl?.split("/").at(-1);
+      await unlink(path.join(__dirname, `../../public/images/u/${imageFile}`));
       await getRepository(User)
         .createQueryBuilder()
         .delete()
@@ -458,7 +448,7 @@ export class UserResolver {
         .where("username = :name OR email = :email", { name, email })
         .getOne();
       if (user) return user;
-      const newUser = await queryBuilder
+      const { raw } = await queryBuilder
         .insert()
         .into(User)
         .values({
@@ -470,7 +460,8 @@ export class UserResolver {
         })
         .returning("*")
         .execute();
-      return newUser.raw[0];
+      const newUser = raw[0];
+      return newUser;
     }
   }
 
@@ -483,7 +474,7 @@ export class UserResolver {
       .where("username = :name OR email = :email", { name, email })
       .getOne();
     if (user) return user;
-    const newUser = await queryBuilder
+    const { raw } = await queryBuilder
       .insert()
       .into(User)
       .values({
@@ -495,6 +486,7 @@ export class UserResolver {
       })
       .returning("*")
       .execute();
-    return newUser.raw[0];
+    const newUser = raw[0];
+    return newUser;
   }
 }

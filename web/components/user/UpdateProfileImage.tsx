@@ -13,6 +13,7 @@ const UpdateProfileImage: FC = () => {
   const [image, setImage] = useState<File>();
   const [updateProfileImage] = useUpdateProfileImageMutation();
   const { data } = useMeQuery();
+  const router = useRouter();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -32,6 +33,7 @@ const UpdateProfileImage: FC = () => {
           fieldName: "imageUrl",
         }),
     });
+    router.reload();
   };
 
   return (

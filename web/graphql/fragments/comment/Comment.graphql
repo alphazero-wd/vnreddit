@@ -5,5 +5,6 @@ fragment Comment on Comment {
   commentator {
     id
     username
+    imageUrl
   }
 }

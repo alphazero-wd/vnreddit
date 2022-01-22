@@ -7,7 +7,7 @@ import HeadPage from "../../../components/html/Head";
 
 const ConfirmUser: NextPage = () => {
   const router = useRouter();
-  const { data } = useMeQuery();
+  const { data, loading } = useMeQuery();
   const { token } = router.query;
   const [confirmUser, { error }] = useConfirmUserMutation();
 
@@ -36,22 +36,31 @@ const ConfirmUser: NextPage = () => {
 
   if (error) {
     return (
-      <div className="text-center p-4">
-        <h1 className="text-2xl mb-3 font-bold">
-          Oops, something went wrong :(
-        </h1>
-        <Link href="/">
-          <a className="px-3 py-2 font-semibold hover:bg-blue-400 text-white bg-blue-500 rounded-md">
-            Back to home
-          </a>
-        </Link>
-      </div>
+      <>
+        <HeadPage title="Error: Something went wrong." />
+        <div className="text-center p-4">
+          <h1 className="text-2xl mb-3 font-bold">
+            Oops, something went wrong :(
+          </h1>
+          <Link href="/">
+            <a className="px-3 py-2 font-semibold hover:bg-blue-400 text-white bg-blue-500 rounded-md">
+              Back to home
+            </a>
+          </Link>
+        </div>
+      </>
     );
   }
 
   return (
     <>
-      <HeadPage title={`${data?.me?.username} | Confirm`} />
+      <HeadPage
+        title={
+          loading || !data?.me?.username
+            ? "Loading..."
+            : `${data?.me?.username} | Confirm`
+        }
+      />
       <div className="text-center p-4">
         <h1 className="text-2xl mb-3 font-bold">
           Your account has been confirmed.

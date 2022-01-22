@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, MouseEvent } from "react";
 import { BsChatSquare, BsDot } from "react-icons/bs";
 import { useRouter } from "next/router";
 import moment from "moment";
@@ -14,6 +14,10 @@ interface Props {
 
 const Post: FC<Props> = ({ post }) => {
   const router = useRouter();
+  const readMore = (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    router.push(`/post/${post.id}`);
+  };
 
   return (
     <div className="bg-white flex mb-3 rounded-md border hover:border-gray-600">
@@ -36,18 +40,16 @@ const Post: FC<Props> = ({ post }) => {
           </Link>{" "}
           {moment(post.createdAt).fromNow()}
         </small>
-        <Link passHref href={`/post/${post.id}`}>
-          <div className="cursor-pointer">
-            <h2 className="mb-2 text-2xl font-bold">{post.title}</h2>
-            <ReactMarkdown className="markdown">
-              {post.body || ""}
-            </ReactMarkdown>
-            <button className="flex mt-3 justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200">
-              <BsChatSquare className="mr-2 text-xl" />
-              <small>{formatNumber(post.numberOfComments)} comments</small>
-            </button>
-          </div>
-        </Link>
+        <div onClick={readMore} className="cursor-pointer relative z-10">
+          <h2 className="mb-2 text-2xl font-bold">{post.title}</h2>
+          <ReactMarkdown className="markdown z-50 relative">
+            {post.body || ""}
+          </ReactMarkdown>
+          <button className="flex mt-3 justify-center items-center px-2 py-1 text-gray-600 font-semibold rounded-md hover:bg-gray-200">
+            <BsChatSquare className="mr-2 text-xl" />
+            <small>{formatNumber(post.numberOfComments)} comments</small>
+          </button>
+        </div>
       </div>
     </div>
   );

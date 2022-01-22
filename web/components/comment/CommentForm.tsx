@@ -80,8 +80,8 @@ const CommentForm: FC<Props> = ({ id }) => {
           </Formik>
         </>
       ) : (
-        <div className="flex rounded-md p-3 border border-gray-600 justify-between items-center">
-          <p>Login or sign up to leave a comment</p>
+        <div className="lg:flex rounded-md p-3 border border-gray-600 justify-between items-center">
+          <p className=" mb-3 lg:mb-0 ">Login or sign up to leave a comment</p>
           <AuthBtn />
         </div>
       )}

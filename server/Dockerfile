@@ -9,6 +9,7 @@ FROM node:latest
 WORKDIR /usr/app
 COPY package*.json ./
 RUN npm i --production
+COPY --from=builder /usr/app/public ./public
 COPY --from=builder /usr/app/dist ./dist
 
 ENV NODE_ENV=production

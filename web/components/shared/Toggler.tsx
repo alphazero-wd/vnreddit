@@ -6,6 +6,7 @@ import { CgProfile } from "react-icons/cg";
 import { FiSettings } from "react-icons/fi";
 import { MdOutlineGroupWork, MdPostAdd } from "react-icons/md";
 import { useMeQuery } from "../../generated/graphql";
+import SearchInput from "./SearchInput";
 
 interface Props {
   logout: () => void;
@@ -40,6 +41,9 @@ const Toggler: FC<Props> = ({ logout }) => {
             : "h-0 translate-y-0 scale-0"
         } lg:hidden left-0 top-full z-50 bg-white text-gray-800`}
       >
+        <div className="w-full px-4">
+          <SearchInput isHidden={false} />
+        </div>
         {data?.me && (
           <>
             <Link href={`/u/profile/${data.me.username}`}>

@@ -19,7 +19,7 @@ const CreatePost: NextPage = () => {
   const { data } = useMeQuery();
   const router = useRouter();
 
-  const { data: community } = useCommunityQuery({
+  const { data: community, loading: fetching } = useCommunityQuery({
     variables: {
       name: router.query.community as string,
     },
@@ -28,7 +28,13 @@ const CreatePost: NextPage = () => {
 
   return (
     <>
-      <HeadPage title={`Create a post for ${community?.community?.name}`} />
+      <HeadPage
+        title={
+          fetching || !community?.community
+            ? "Loading..."
+            : `Create a post for ${community?.community?.name}`
+        }
+      />
       <div className="container w-full lg:w-3/6">
         <h1 className="text-center font-bold mb-3 text-2xl">Create post</h1>
         <Formik

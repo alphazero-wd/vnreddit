@@ -48,6 +48,7 @@ const Signup: NextPage = () => {
                 });
               },
             });
+            console.log("res:", response);
             const user = response.data?.signup.user;
             const error = response.data?.signup.error;
 

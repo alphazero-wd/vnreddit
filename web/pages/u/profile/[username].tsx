@@ -11,10 +11,11 @@ import Communities from "../../../components/user/Communities";
 import postImg from "../../../images/post.svg";
 import { imageLoader } from "../../../utils/imageLoader";
 import HeadPage from "../../../components/html/Head";
+import Loading from "../../../components/shared/Loading";
 
 const ProfilePage: NextPage = () => {
   const { query } = useRouter();
-  const { data } = useUserQuery({
+  const { data, loading } = useUserQuery({
     variables: {
       username: query.username as string,
     },
@@ -23,7 +24,9 @@ const ProfilePage: NextPage = () => {
   const { data: user } = useMeQuery();
   return (
     <>
-      <HeadPage title={`${data?.user?.username}`} />
+      <HeadPage
+        title={loading || !data?.user ? "Loading..." : data?.user?.username}
+      />
       <div className="container lg:w-4/5 lg:grid grid-cols-3 gap-4">
         <div className="col-span-2">
           {data?.user?.posts.length === 0 && (
@@ -37,9 +40,11 @@ const ProfilePage: NextPage = () => {
             </div>
           )}
 
-          {data?.user?.posts.map((post) => (
-            <Post key={post.id} post={post} />
-          ))}
+          {loading ? (
+            <Loading />
+          ) : (
+            data?.user?.posts.map((post) => <Post key={post.id} post={post} />)
+          )}
         </div>
         <div className="lg:block hidden">
           <div className="bg-white px-3 py-4 border border-gray-600 rounded-md">

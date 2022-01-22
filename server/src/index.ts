@@ -13,7 +13,7 @@ const main = async () => {
     const connection = await createConnection({
       type: "postgres",
       url: process.env.DATABASE_URL,
-      synchronize: !__prod__,
+      // synchronize: !__prod__,
       logging: !__prod__,
       entities: [path.join(__dirname, "entity/*.*")],
       migrations: [path.join(__dirname, "migration/*.*")],
@@ -33,10 +33,18 @@ const main = async () => {
     });
 
     const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: false }));
+    // app.use(
+    //   cors({
+    //     origin: process.env.CORS_ORIGIN,
+    //   })
+    // );
     app.use(graphqlUploadExpress());
     await apolloServer.start();
 
     apolloServer.applyMiddleware({ app });
+
     app.use(express.static("public"));
 
     const PORT = process.env.PORT || 4000;

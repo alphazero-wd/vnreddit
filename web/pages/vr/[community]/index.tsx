@@ -18,10 +18,11 @@ import {
 import { imageLoader } from "../../../utils/imageLoader";
 import avatar from "../../../images/vnreddit-logo.svg";
 import HeadPage from "../../../components/html/Head";
+import Loading from "../../../components/shared/Loading";
 
 const CommunityPage: NextPage = () => {
   const { query } = useRouter();
-  const { data } = useCommunityQuery({
+  const { data, loading } = useCommunityQuery({
     variables: { name: query.community as string },
   });
   const { data: user } = useMeQuery();
@@ -44,7 +45,11 @@ const CommunityPage: NextPage = () => {
 
   return (
     <>
-      <HeadPage title={`${data?.community?.name}`} />
+      <HeadPage
+        title={
+          loading || !data?.community ? "Loading..." : data?.community?.name
+        }
+      />
       <div className="container lg:w-4/5">
         <div className="bg-gray-300 p-3 mb-4 rounded-md">
           <div className="flex justify-between items-center">
@@ -97,9 +102,13 @@ const CommunityPage: NextPage = () => {
               </Link>
             )}
             <div className="mt-4">
-              {data?.community?.posts.map((post) => (
-                <Post key={post.id} post={post} />
-              ))}
+              {loading ? (
+                <Loading />
+              ) : (
+                data?.community?.posts.map((post) => (
+                  <Post key={post.id} post={post} />
+                ))
+              )}
             </div>
           </div>
           <div className="hidden lg:block">

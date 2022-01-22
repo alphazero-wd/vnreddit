@@ -2,7 +2,7 @@ import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
 import { FC, useState } from "react";
-import avatarImg from "../../images/vnreddit.svg";
+import avatarImg from "../../images/vnreddit-logo.svg";
 import ReactMarkdown from "react-markdown";
 import {
   CommentFragment,
@@ -14,6 +14,7 @@ import { ErrorMessage, Formik } from "formik";
 import Markdown from "../shared/Markdown";
 import { MdOutlineError } from "react-icons/md";
 import { gql } from "@apollo/client";
+import { imageLoader } from "../../utils/imageLoader";
 
 interface Props {
   comment: CommentFragment;
@@ -37,13 +38,18 @@ const Comment: FC<Props> = ({ comment, id }) => {
   return (
     <div className="my-3 p-3">
       <div className="flex items-center">
-        <div
-          style={{ maxWidth: "40px", maxHeight: "40px" }}
-          className="object-cover"
-        >
-          <Image src={avatarImg} alt="Avatar" />
-        </div>
-        <small>
+        {comment.commentator?.imageUrl ? (
+          <Image
+            src={comment.commentator.imageUrl}
+            alt={comment.commentator.username}
+            loader={imageLoader}
+            width="30%"
+            height="30%"
+          />
+        ) : (
+          <Image src={avatarImg} alt="Avatar" width="30%" height="30%" />
+        )}
+        <small className="ml-3">
           <a className="font-bold">
             <Link href={`/u/profile/${comment.commentator?.username}`}>
               {comment.commentator?.username}

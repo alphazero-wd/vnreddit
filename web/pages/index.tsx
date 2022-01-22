@@ -7,9 +7,10 @@ import Post from "../components/post/Post";
 import Loading from "../components/shared/Loading";
 import { useMeQuery, usePostsQuery } from "../generated/graphql";
 import character from "../images/vnreddit.svg";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const Home: NextPage = () => {
-  const { data, loading, fetchMore, variables } = usePostsQuery({
+  const { data, fetchMore, variables } = usePostsQuery({
     variables: {
       limit: 15,
       cursor: null,
@@ -21,10 +22,10 @@ const Home: NextPage = () => {
   return (
     <>
       <HeadPage title="VnReddit - Share your thoughts" />
-      <div className="md:container lg:grid grid-rows-6 grid-cols-12 gap-4 w-full xl:w-5/6">
-        <div className="col-span-8 row-span-6">
+      <div className="md:container lg:grid grid-cols-12 gap-4 w-full xl:w-5/6">
+        <div className="col-span-8">
           {user?.me && (
-            <Link passHref href="/vr/post/create">
+            <Link passHref href="/post/create">
               <button className="border mb-3 border-gray-300 px-3 py-2 hover:bg-gray-300 transition-colors flex w-full items-center rounded-md">
                 <button className="bg-blue-200 rounded-full p-2 mr-3">
                   <AiOutlinePlus className="text-blue-500 text-2xl" />
@@ -33,21 +34,25 @@ const Home: NextPage = () => {
               </button>
             </Link>
           )}
-          {data?.posts.posts.map((post) => (
-            <Post key={post.id} post={post} />
-          ))}
-          {loading && <Loading />}
-          {data?.posts.hasMore && (
-            <div className="text-center">
-              <button className="primary-btn" onClick={() => {}}>
-                Load more
-              </button>
-            </div>
-          )}
+          <InfiniteScroll
+            hasMore={data?.posts.hasMore || false}
+            loader={<Loading />}
+            dataLength={data?.posts.posts.length || 0}
+            next={() =>
+              fetchMore({
+                variables: {
+                  limit: variables?.limit,
+                  cursor: data?.posts.posts.at(-1)?.createdAt,
+                },
+              })
+            }
+          >
+            {data?.posts.posts.map((post) => (
+              <Post key={post.id} post={post} />
+            ))}
+          </InfiniteScroll>
         </div>
-        <div
-          className={`row-span-1 col-span-4 hidden lg:block bg-white mt-3 border border-gray-600 rounded-md`}
-        >
+        <div className="col-span-4 hidden lg:inline-block bg-white mt-3 border border-gray-600 rounded-md">
           <div className="p-4">
             <div className="flex items-center mb-3">
               <div className="w-11 h-auto mr-1 object-cover">
