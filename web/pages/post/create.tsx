@@ -1,24 +1,25 @@
-import { NextPage } from "next";
 import { Formik } from "formik";
-import { useCreatePostMutation, useMeQuery } from "../../generated/graphql";
+import { NextPage } from "next";
 import { useRouter } from "next/router";
-import AuthInput from "../../components/auth/AuthInput";
+import { useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
-import Markdown from "../../components/shared/Markdown";
-import { useRedirect } from "../../utils/useRedirect";
+import AuthInput from "../../components/auth/AuthInput";
 import HeadPage from "../../components/html/Head";
+import Markdown from "../../components/shared/Markdown";
+import { useCreatePostMutation, useMeQuery } from "../../generated/graphql";
+import { useRedirect } from "../../utils/useRedirect";
 
 const CreatePost: NextPage = () => {
   const [createPost, { loading }] = useCreatePostMutation();
   const { data } = useMeQuery();
+  const [communityId, setCommunityId] = useState("");
   const router = useRouter();
 
   useRedirect(!data?.me, "/u/login");
-
   return (
     <>
       <HeadPage title="Create a post" />
-      <div className="container w-full md:w-3/6">
+      <div className="container w-full md:w-5/6">
         <h1 className="text-center font-bold mb-3 text-2xl">Create post</h1>
         <Formik
           initialValues={{ title: "", body: "" }}
@@ -26,6 +27,7 @@ const CreatePost: NextPage = () => {
             const { data } = await createPost({
               variables: {
                 post: {
+                  communityId: communityId ?? null,
                   title,
                   body,
                 },

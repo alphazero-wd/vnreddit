@@ -43,11 +43,18 @@ const Comment: FC<Props> = ({ comment, id }) => {
             src={comment.commentator.imageUrl}
             alt={comment.commentator.username}
             loader={imageLoader}
+            className="rounded-full"
             width="30%"
             height="30%"
           />
         ) : (
-          <Image src={avatarImg} alt="Avatar" width="30%" height="30%" />
+          <Image
+            src={avatarImg}
+            alt="Avatar"
+            className="rounded-full"
+            width="30%"
+            height="30%"
+          />
         )}
         <small className="ml-3">
           <a className="font-bold">

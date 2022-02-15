@@ -89,7 +89,7 @@ const EditPostPage: NextPage = () => {
                 <button
                   disabled={loading}
                   type="submit"
-                  className="secondary-btn"
+                  className="secondary-btn flex justify-center items-center"
                 >
                   {loading && (
                     <AiOutlineLoading className="animate-spin mr-3" />

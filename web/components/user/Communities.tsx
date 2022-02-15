@@ -23,6 +23,7 @@ const Communities: FC<Props> = ({ community, userId }) => {
               src={community.imageUrl}
               alt={community.name}
               width="30%"
+              className="rounded-full"
               height="30%"
             />
           ) : (
@@ -30,6 +31,7 @@ const Communities: FC<Props> = ({ community, userId }) => {
               width="30%"
               height="30%"
               loader={imageLoader}
+              className="rounded-full"
               src={logo}
               alt={community?.name}
             />

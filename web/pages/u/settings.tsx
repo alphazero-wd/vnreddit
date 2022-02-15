@@ -13,8 +13,8 @@ const Settings: NextPage = () => {
   return (
     <>
       <HeadPage title="VnReddit Settings" />
-      <div className="container w-5/6 lg:p-4">
-        <div className="w-2/5">
+      <div className="container lg:w-5/6 lg:p-4">
+        <div className="lg:w-2/5">
           <h2 className="text-xl font-semibold mb-8">Customize profile</h2>
           <UpdateUsername />
           <UpdateProfileImage />

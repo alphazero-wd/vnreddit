@@ -15,7 +15,7 @@ const CommentForm: FC<Props> = ({ id }) => {
   const { data } = useMeQuery();
   const [createComment] = useCreateCommentMutation();
   return (
-    <div className="py-4 px-8">
+    <div className="p-2 w-full">
       {data?.me ? (
         <>
           <small className="font-semibold block mb-3">

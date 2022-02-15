@@ -53,12 +53,11 @@ const CreateCommunityPage: NextPage = () => {
                 },
               });
               router.push(`/vr/${data.createCommunity.community.name}`);
-              router.reload();
             }
             return;
           }}
         >
-          {({ handleSubmit, handleChange, errors }) => (
+          {({ handleSubmit, handleChange, errors, values }) => (
             <form className="mt-6 mb-3" onSubmit={handleSubmit}>
               <AuthInput
                 onChange={handleChange}

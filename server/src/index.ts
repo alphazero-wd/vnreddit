@@ -17,9 +17,9 @@ const main = async () => {
       logging: !__prod__,
       entities: [path.join(__dirname, "entity/*.*")],
       migrations: [path.join(__dirname, "migration/*.*")],
-      ssl: {
-        rejectUnauthorized: false,
-      },
+      // ssl: {
+      //   rejectUnauthorized: false,
+      // },
     });
     await connection.runMigrations();
 

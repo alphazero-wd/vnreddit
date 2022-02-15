@@ -51,7 +51,7 @@ const CommunityTasks: FC<Props> = ({ community, tasks, setModal }) => {
       </small>
       <div
         onClick={() =>
-          !tasks[0] && router.push(`/vr/${community?.name}/post/create`)
+          !tasks[0] && router.push(`/vr/post/create/${community?.name}`)
         }
         className={`flex ${
           !tasks[0] ? "cursor-pointer hover:bg-gray-100" : ""
