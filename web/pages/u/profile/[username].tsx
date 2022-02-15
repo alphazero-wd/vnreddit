@@ -27,8 +27,8 @@ const ProfilePage: NextPage = () => {
       <HeadPage
         title={loading || !data?.user ? "Loading..." : data?.user?.username}
       />
-      <div className="container lg:w-4/5 lg:grid grid-cols-3 gap-4">
-        <div className="col-span-2">
+      <div className="container w-full grid lg:grid-cols-12 gap-4">
+        <div className="lg:col-span-8 lg:row-start-1 row-start-2">
           {data?.user?.posts.length === 0 && (
             <div className="flex justify-center text-center items-center flex-col">
               <div className="w-3/5">
@@ -46,7 +46,7 @@ const ProfilePage: NextPage = () => {
             data?.user?.posts.map((post) => <Post key={post.id} post={post} />)
           )}
         </div>
-        <div className="lg:block hidden">
+        <div className="lg:col-span-4 row-start-1">
           <div className="bg-white px-3 py-4 border border-gray-600 rounded-md">
             <div className="flex flex-col justify-center items-center ">
               {data?.user?.imageUrl ? (

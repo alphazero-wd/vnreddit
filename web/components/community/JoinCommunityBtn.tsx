@@ -24,6 +24,7 @@ const JoinCommunityBtn: FC<Props> = ({ community }) => {
         );
         if (!data?.me) {
           router.push("/u/login");
+          return;
         }
         if (existingMember) {
           await leaveCommunity({

@@ -35,13 +35,13 @@ const Toggler: FC<Props> = ({ logout }) => {
       </button>
       <div
         ref={menu}
-        className={`w-full transform transition-all absolute ${
+        className={`w-full absolute transform transition-all ${
           toggler
             ? `h-[${height}] scale-100 translate-y-[${height}]`
             : "h-0 translate-y-0 scale-0"
-        } lg:hidden left-0 top-full z-50 bg-white text-gray-800`}
+        } lg:hidden left-0 top-full p-3 z-50 bg-white text-gray-800`}
       >
-        <div className="w-full px-4">
+        <div className="w-full my-3 px-4">
           <SearchInput isHidden={false} />
         </div>
         {data?.me && (

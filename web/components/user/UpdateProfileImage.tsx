@@ -51,7 +51,9 @@ const UpdateProfileImage: FC = () => {
         <form onSubmit={onSubmit}>
           <div className="flex items-center">
             <div>
-              <label htmlFor="image">Upload your profile image</label>
+              <label htmlFor="image" className="block">
+                Upload your profile image
+              </label>
               <input type="file" accept="image/*" onChange={onChange} />
             </div>
           </div>

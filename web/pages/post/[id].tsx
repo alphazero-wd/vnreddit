@@ -57,7 +57,7 @@ const PostPage: NextPage = () => {
               <ReactMarkdown className="markdown">
                 {data?.post?.body || ""}
               </ReactMarkdown>
-              <div className="flex justify-between items-center mt-4">
+              <div className="lg:flex justify-between items-center mt-4">
                 <div className="flex items-center text-gray-600 font-semibold">
                   <BsChatSquare className="mr-2 text-xl" />
                   <small>

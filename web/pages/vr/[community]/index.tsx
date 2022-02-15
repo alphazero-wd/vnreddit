@@ -1,9 +1,7 @@
 import { NextPage } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { AiOutlinePlus } from "react-icons/ai";
 import AboutCommunity from "../../../components/community/AboutCommunity";
 import CommunityMembers from "../../../components/community/CommunityMembers";
 import CommunityTasks from "../../../components/community/CommunityTasks";
@@ -19,6 +17,7 @@ import { imageLoader } from "../../../utils/imageLoader";
 import avatar from "../../../images/vnreddit-logo.svg";
 import HeadPage from "../../../components/html/Head";
 import Loading from "../../../components/shared/Loading";
+import CreatePostBtn from "../../../components/post/CreatePostBtn";
 
 const CommunityPage: NextPage = () => {
   const { query } = useRouter();
@@ -50,7 +49,7 @@ const CommunityPage: NextPage = () => {
           loading || !data?.community ? "Loading..." : data?.community?.name
         }
       />
-      <div className="container lg:w-4/5">
+      <div className="container lg:w-5/6">
         <div className="bg-gray-300 p-3 mb-4 rounded-md">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
@@ -87,20 +86,11 @@ const CommunityPage: NextPage = () => {
           </div>
           <b className="text-center flex items-center"></b>
         </div>
-        <div className="lg:grid grid-cols-3 gap-4">
-          <div className="col-span-2">
+        <div className="grid lg:grid-cols-3 gap-4">
+          <div className="order-2 lg:order-1 lg:col-span-2">
             {data?.community?.members.some(
               (member) => member.id === user?.me?.id
-            ) && (
-              <Link passHref href={`/vr/${data?.community?.name}/post/create`}>
-                <button className="border border-gray-300 px-3 py-2 hover:bg-gray-300 transition-colors flex w-full items-center rounded-md">
-                  <button className="bg-blue-200 rounded-full p-2 mr-3">
-                    <AiOutlinePlus className="text-blue-500 text-2xl" />
-                  </button>
-                  Create post
-                </button>
-              </Link>
-            )}
+            ) && <CreatePostBtn community={data?.community} />}
             <div className="mt-4">
               {loading ? (
                 <Loading />
@@ -111,7 +101,7 @@ const CommunityPage: NextPage = () => {
               )}
             </div>
           </div>
-          <div className="hidden lg:block">
+          <div className="order-1 lg:order-2">
             <AboutCommunity community={data?.community} />
             {data?.community?.members.find(
               (member) => member.id === user?.me?.id
